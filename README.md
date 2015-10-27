@@ -35,7 +35,7 @@ NUMBER_OF_DIGITS_INTEGRAL
 NUMBER_OF_DIGITS_FRACTIONAL
 TRANSMIT_ROLL - transmits the roll value instead of the GPS position, for testing when no valid GPS fix is available
 
-PREDEFINED SETTINGS:
+Predefined settings
 
 -
 
