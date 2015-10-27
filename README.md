@@ -7,7 +7,7 @@ Format of messages is as follows:
 
 LONG: long, low sound. Corresponds to byte 1.
 SHORT: high, short sound. Corresponds to byte 0.
-nSIGNAL: a sequence of n very high frequency, very short signals 
+nINFO: a sequence of n very high frequency, very short signals 
 
 1INFO: start of a digit.
 2INFO: start and end of a (real) number
@@ -28,6 +28,8 @@ When MAVLINK messages are transmitted again, DroneELT stops sending the rescue s
  
 
 COMPILATION OPTIONS:
+
+The code is based on the openlrs-gitsly implementantion. Currently it works for OrangeLRS Rx and Tx modules.
 
 NUMBER_OF_DIGITS_INTEGRAL 
 NUMBER_OF_DIGITS_FRACTIONAL
