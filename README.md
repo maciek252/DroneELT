@@ -29,7 +29,7 @@ When MAVLINK messages are transmitted again, DroneELT stops sending the rescue s
 
 ##Connection
 
-
+![](https://github.com/maciek252/DroneELT/blob/master/img/DroneELT.svg.png)
 
 ##Compilation options
 
