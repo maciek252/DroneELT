@@ -215,6 +215,7 @@ void failsafeApply() {
 void setupOutputs() {
 	uint8_t i;
 
+/*
 	ppmChannels = getChannelCount(&bind_data);
 	if ((rx_config.RSSIpwm & 0x0f) == ppmChannels) {
 		ppmChannels += 1;
@@ -245,7 +246,7 @@ void setupOutputs() {
 			clearMask.D &= ~OUTPUT_MASKS[i].D;
 		}
 	}
-
+*/
 	for (i = 0; i < OUTPUTS; i++) {
 		switch (rx_config.pinMapping[i]) {
 		case PINMAP_ANALOG:
@@ -263,7 +264,7 @@ void setupOutputs() {
 			if (i == TXD_OUTPUT) {
 				UCSR0B &= 0xF7; //disable serial TXD
 			}
-//      pinMode(OUTPUT_PIN[i], OUTPUT); //PPM,PWM,RSSI,LBEEP // ELT cisza
+      pinMode(OUTPUT_PIN[i], OUTPUT); //PPM,PWM,RSSI,LBEEP // ELT cisza
 			break;
 		}
 	}
@@ -284,13 +285,13 @@ void setupOutputs() {
 
 	if ((rx_config.pinMapping[RSSI_OUTPUT] == PINMAP_RSSI)
 			|| (rx_config.pinMapping[RSSI_OUTPUT] == PINMAP_LBEEP)) {
-//    pinMode(OUTPUT_PIN[RSSI_OUTPUT], OUTPUT);// cisza
-		//  digitalWrite(OUTPUT_PIN[RSSI_OUTPUT], LOW); //cisza
+    pinMode(OUTPUT_PIN[RSSI_OUTPUT], OUTPUT);// cisza
+		  digitalWrite(OUTPUT_PIN[RSSI_OUTPUT], LOW); //cisza
 		if (rx_config.pinMapping[RSSI_OUTPUT] == PINMAP_RSSI) {
 			TCCR2A = (1 << WGM20);
 			TCCR2B = (1 << CS20);
 		} else { // LBEEP
-			/* // cisza
+			 // cisza
 			 TCCR2A = (1 << WGM21); // mode=CTC
 			 #if (F_CPU == 16000000)
 			 TCCR2B = (1 << CS22) | (1 << CS20); // prescaler = 128
@@ -300,7 +301,7 @@ void setupOutputs() {
 			 #error F_CPU not supported
 			 #endif
 			 OCR2A = 62; // 1KHz
-			 */
+			 
 		}
 	}
 
@@ -325,7 +326,7 @@ void setupOutputs() {
 
 void updateLBeep(bool packetLost) {
 	// MS - by nie piszczalo!
-	/*
+
 	 #if defined(LLIND_OUTPUT)
 	 if (rx_config.pinMapping[LLIND_OUTPUT] == PINMAP_LLIND) {
 	 digitalWrite(OUTPUT_PIN[LLIND_OUTPUT],packetLost);
@@ -338,7 +339,7 @@ void updateLBeep(bool packetLost) {
 	 TCCR2A &= ~(1 << COM2B0); // disable tone
 	 }
 	 }
-	 */
+	 
 }
 
 static inline void updateSwitches() {
@@ -585,7 +586,13 @@ void reinitSlave() {
 /////////////////////////////////////////////
 
 void setup() {
-	watchdogConfig (WATCHDOG_OFF);
+        buzzerInit();
+        buzzerOff();
+
+        updateLBeep(false);
+  
+  	watchdogConfig (WATCHDOG_OFF);
+
 
 	//LEDs
 	pinMode(Green_LED, OUTPUT);
@@ -603,15 +610,17 @@ void setup() {
 
 // ELT
 //  Serial.setBuffers(serial_rxbuffer, SERIAL_BUF_RX_SIZE, serial_txbuffer, SERIAL_BUF_TX_SIZE);
-	Serial.begin(115200);
+//	Serial.begin(115200);
+  Serial.begin(57600);
 //	mavlink_comm_0_port = &Serial;
-//  Serial.begin(57600);
+//	mavlink_comm_1_port = &Serial;
+
 //	rxReadEeprom();
 
 //  failsafeLoad(); // ELT
 
-	Serial.print("OpenLRSng RX starting ");
-	printVersion (version);
+	Serial.print("DroneELT RX starting ");
+//	printVersion (version);
 	Serial.print(" on HW ");
 	Serial.println(BOARD_TYPE);
 
@@ -626,12 +635,13 @@ void setup() {
 
 	Serial.flush();
 
-  beacon_send_number(7, 2, 2, 2);
+//      beacon_send_number(7, 2, 2, 2);
 
 //  beacon_send_prelude(6);
 
-        setupOutputs();   // lepiej nie bo piszczy!
+           setupOutputs();   // lepiej nie bo piszczy!
 	watchdogConfig (WATCHDOG_2S);
+return;
 	//beacon_initialize_audio();
 	return;
 	/*  
@@ -690,7 +700,7 @@ void setup() {
 				Serial.println("Saved bind data to EEPROM\n");
 				setupOutputs(); // parameters may have changed
 				Green_LED_ON;
-			}
+   			}
 		}
 	}
         */
@@ -808,17 +818,19 @@ void loop() {
 	uint32_t timeUs, timeMs;
         float mavLinkTimer = 0;
 
-//         read_mavlink();
+//        updateLBeep(false);
+//        buzzerOff();
+         read_mavlink();
 
 //  watchdogReset();
 
 //	 beacon_send_number(7, 2, 2, 2);
-              read_mavlink();
+//              read_mavlink();
 	     if(millis() > mavLinkTimer + 100){
               mavLinkTimer = millis();
 ///       OnMavlinkTimer();
                 
-                read_mavlink();
+//                read_mavlink();
 //                Serial.flush();
 	   }
 
@@ -832,24 +844,26 @@ void loop() {
 	 beacon_finish_audio();
 */
 	 Serial.println("ee");
+//        Serial.println(osd_roll);	 
 	 if(stateLED == true){
 	 stateLED = false;
 	 Green_LED_OFF;
           Red_LED_ON;
 	 } else {
-	 stateLED = true;
-	 Green_LED_ON;
-          Red_LED_OFF;
+         	 stateLED = true;
+         	 Green_LED_ON;
+                 Red_LED_OFF;
 	 }
 	 
-	 }
 	 
 
-	if (mavlink_active == 1) {
+
+      if (mavlink_active == 1) {
 //  	if (mavbeat == 1) {
 		Green_LED_OFF;
 		Red_LED_ON;
 //              Serial.flush();
+                Serial.println("Mavlink active");
 
 		//        beacon_send_prelude(1);
 //               beacon_tone(440,1);
@@ -857,11 +871,11 @@ void loop() {
 //                delay(10);
 //                beacon_finish_audio();
 		
-		 beacon_initialize_audio();
-                beacon_send_prelude(2);
+//		 beacon_initialize_audio();
+//                beacon_send_prelude(2);
 //		 beacon_tone(240,10);
-		 watchdogReset();
-		 beacon_finish_audio();
+//		 watchdogReset();
+//		 beacon_finish_audio();
 //		 delay(300);
 
 	} else {
@@ -869,7 +883,7 @@ void loop() {
 		//           beacon_tone(840,2);
 		//          watchdogReset();
 		//              delay(10);
-
+                Serial.println("NO Mavlink");
 		/*
 		 beacon_initialize_audio();
 		 beacon_tone(740,5);
@@ -881,6 +895,7 @@ void loop() {
 		Red_LED_OFF;*/
 
 	}
+      }
         return;
 //          delay();  
 //while(!Serial.available())

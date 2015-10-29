@@ -620,13 +620,13 @@ void beacon_send_prelude(int8_t numOfSounds){
 
 
 void beacon_short_sound(){
-      beacon_tone(440,5);
+      beacon_tone(540,5);
       watchdogReset();
      delayMicroseconds(1000);
 }
 
 void beacon_long_sound(){
-      beacon_tone(100,8);
+      beacon_tone(350,5);
       watchdogReset();
       delayMicroseconds(1000);
 }
@@ -635,117 +635,183 @@ void beacon_long_sound(){
 void beacon_send_digit(int8_t numm){
 // long - 0
 // short - 1
+  bool playBetween = false;
+
+  int delayInsideDigit = 100;
+
   delay(1000);  
-      
+      delay(delayInsideDigit);
   if( numm == 0){
         beacon_long_sound();
+        if( playBetween)
         beacon_send_prelude(1);
+      delay(delayInsideDigit);
 
         beacon_long_sound();
+                if( playBetween)
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
                 beacon_long_sound();
+                        if( playBetween)
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
                 beacon_long_sound();
     
   } else 
     if( numm == 1){
         beacon_long_sound();
+                if( playBetween)
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
 
         beacon_long_sound();
+                if( playBetween)
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
+              
                 beacon_long_sound();
+             if( playBetween)
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
                 beacon_short_sound();
     
   } else 
     if( numm == 2){
         beacon_long_sound();
+                if( playBetween)
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
 
         beacon_long_sound();
+        if( playBetween)        
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
                 beacon_short_sound();
+        if( playBetween)                
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
                 beacon_long_sound();
     
   } else 
     if( numm == 3){
 
           beacon_long_sound();
+        if( playBetween)          
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
 
         beacon_long_sound();
+        if( playBetween)        
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
+              
                 beacon_short_sound();
+        if( playBetween)                
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
                 beacon_short_sound();
     
   } else 
     if( numm == 4){
 
               beacon_long_sound();
+        if( playBetween)              
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
 
         beacon_short_sound();
+        if( playBetween)        
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
                 beacon_long_sound();
+        if( playBetween)                
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
                 beacon_long_sound();
     
   } else 
     if( numm == 5){
         beacon_long_sound();
+        if( playBetween)        
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
 
         beacon_short_sound();
+        if( playBetween)        
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
                 beacon_long_sound();
+        if( playBetween)                
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
                 beacon_short_sound();
     
   } else 
     if( numm == 6){
         beacon_long_sound();
+        if( playBetween)        
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
 
         beacon_short_sound();
+        if( playBetween)        
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
                 beacon_short_sound();
+        if( playBetween)                
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
                 beacon_long_sound();
     
   } else 
     if( numm == 7){
         beacon_long_sound();
+        if( playBetween)        
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
 
         beacon_short_sound();
+        if( playBetween)        
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
                 beacon_short_sound();
+        if( playBetween)                
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
                 beacon_short_sound();
     
   } else 
     if( numm == 8){
         beacon_short_sound();
+        if( playBetween)        
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
 
         beacon_long_sound();
+        if( playBetween)        
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
         beacon_long_sound();
+        if( playBetween)        
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
         beacon_long_sound();
     
   } else
       if( numm == 9){
         beacon_short_sound();
+        if( playBetween)        
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
 
         beacon_long_sound();
+        if( playBetween)        
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
         beacon_long_sound();
+        if( playBetween)        
         beacon_send_prelude(1);
+              delay(delayInsideDigit);
         beacon_short_sound();
     
   };
@@ -778,6 +844,14 @@ void beacon_send_digit2(int8_t numm){
   
 }
 
+/*
+
+1I - between digits
+2I - beginning, end of the whole number
+3I - dot
+
+*/
+
 void beacon_send_double_num(double num, int numOfDigitsLeftOfDot, int numOfDigitsRightOfDot){
 
   delay(2000);
@@ -785,12 +859,12 @@ void beacon_send_double_num(double num, int numOfDigitsLeftOfDot, int numOfDigit
   if(numOfDigitsLeftOfDot>= 3){
     int s100 = ((int)num % 1000) / 100;
     beacon_send_digit(s100);
-    beacon_send_prelude(2);
+    beacon_send_prelude(1);
   }
   if(numOfDigitsLeftOfDot>= 2){
   int s10 = ((int)num % 100) / 10;
   beacon_send_digit(s10);
-  beacon_send_prelude(2);
+  beacon_send_prelude(1);
   }
   if(numOfDigitsLeftOfDot>= 1){
     int s1 = ((int)num % 10) / 1;
@@ -809,33 +883,33 @@ if(numOfDigitsRightOfDot>0){
 }
 if(numOfDigitsRightOfDot>1){
   uint16_t u1 = ((uint16_t)(num*100.0)) %10;
-  beacon_send_prelude(2);
+  beacon_send_prelude(1);
   beacon_send_digit(u1);
 }
 if(numOfDigitsRightOfDot>2){
   uint16_t u1 = ((uint16_t)(num*1000.0)) %10;
-  beacon_send_prelude(2);
+  beacon_send_prelude(1);
   beacon_send_digit(u1);
 
 }
 if(numOfDigitsRightOfDot>3){
   uint16_t u1 = ((uint16_t)(num*10000.0)) %10;
-  beacon_send_prelude(2);
+  beacon_send_prelude(1);
   beacon_send_digit(u1);
 }
 if(numOfDigitsRightOfDot>4){
   uint16_t u1 = ((uint16_t)(num*100000.0)) %10;
-  beacon_send_prelude(2);
+  beacon_send_prelude(1);
   beacon_send_digit(u1);
 }
 if(numOfDigitsRightOfDot>5){
   uint16_t u1 = ((uint16_t)(num*1000000.0)) %10;
-  beacon_send_prelude(2);
+  beacon_send_prelude(1);
   beacon_send_digit(u1);
 }
 if(numOfDigitsRightOfDot>6){
   uint16_t u1 = ((uint16_t)(num*10000000.0)) %10;
-  beacon_send_prelude(2);
+  beacon_send_prelude(1);
   beacon_send_digit(u1);
 }
 
@@ -947,7 +1021,7 @@ void beacon_send_number(double num, int numOfDigitsLeftOfDot, int numOfDigitsRig
 //             Serial.print("bobo"); 
       
 //   beacon_send_prelude(numOfShortTonesBeforeAndAfter);
-     beacon_send_prelude(4);
+     beacon_send_prelude(2);
      beacon_send_double_num(245.4397,3,5);
       delay(3000);
           beacon_send_prelude(4);

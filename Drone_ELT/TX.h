@@ -1,6 +1,11 @@
 /****************************************************
  * OpenLRSng transmitter code
  ****************************************************/
+
+
+static float lastLED = 0;
+static bool stateLED = false;
+
 uint32_t mavlink_last_inject_time = 0;
 uint16_t rxerrors = 0;
 
@@ -357,8 +362,9 @@ void setup(void)
   Serial.begin(0); // Suppress warning on overflow on Leonardo
   TelemetrySerial.setBuffers(serial_rxbuffer, SERIAL_BUF_RX_SIZE, serial_txbuffer, SERIAL_BUF_TX_SIZE);
 #else
-  Serial.setBuffers(serial_rxbuffer, SERIAL_BUF_RX_SIZE, serial_txbuffer, SERIAL_BUF_TX_SIZE);
-  Serial.begin(115200);
+//  Serial.setBuffers(serial_rxbuffer, SERIAL_BUF_RX_SIZE, serial_txbuffer, SERIAL_BUF_TX_SIZE);
+//  Serial.begin(115200);
+  Serial.begin(57600);
 #endif
   profileInit();
   txReadEeprom();
@@ -384,6 +390,14 @@ void setup(void)
   Serial.print(" on HW ");
   Serial.println(BOARD_TYPE);
 
+//  beacon_send_number(7, 2, 2, 2);
+  // przeniesione tu:
+  init_rfm(0);
+  rfmSetChannel(RF_channel);
+  rx_reset();
+  watchdogConfig(WATCHDOG_2S);
+  return;
+////////////////////////////////////////
   delay(50);
 
   checkBND();
@@ -395,6 +409,10 @@ void setup(void)
     // switch to userdefined baudrate here
     TelemetrySerial.begin(bind_data.serial_baudrate);
   }
+  
+  
+
+  
   checkButton();
 
   Red_LED_OFF;
@@ -610,6 +628,91 @@ uint16_t getChannel(uint8_t ch)
 
 void loop(void)
 {
+  
+  	uint32_t timeUs, timeMs;
+        float mavLinkTimer = 0;
+
+//        updateLBeep(false);
+//        buzzerOff();
+         read_mavlink();
+
+//  watchdogReset();
+
+//	 beacon_send_number(7, 2, 2, 2);
+//              read_mavlink();
+	     if(millis() > mavLinkTimer + 100){
+              mavLinkTimer = millis();
+///       OnMavlinkTimer();
+                
+//                read_mavlink();
+//                Serial.flush();
+	   }
+
+	
+	 if(millis() > lastLED + 1000){
+	 lastLED = millis();
+/*
+	 beacon_initialize_audio();
+	 beacon_tone(840,5);
+	 watchdogReset();
+	 beacon_finish_audio();
+*/
+	 Serial.println("ee");
+//        Serial.println(osd_roll);	 
+	 if(stateLED == true){
+	 stateLED = false;
+	 Green_LED_OFF;
+          Red_LED_ON;
+	 } else {
+         	 stateLED = true;
+         	 Green_LED_ON;
+                 Red_LED_OFF;
+	 }
+	 
+	 
+
+
+      if (mavlink_active == 1) {
+//  	if (mavbeat == 1) {
+		Green_LED_OFF;
+		Red_LED_ON;
+//              Serial.flush();
+                Serial.println("Mavlink active");
+
+		//        beacon_send_prelude(1);
+//               beacon_tone(440,1);
+		//              watchdogReset();
+//                delay(10);
+//                beacon_finish_audio();
+		
+//		 beacon_initialize_audio();
+//                beacon_send_prelude(2);
+//		 beacon_tone(240,10);
+//		 watchdogReset();
+//		 beacon_finish_audio();
+//		 delay(300);
+
+	} else {
+//           beacon
+		//           beacon_tone(840,2);
+		//          watchdogReset();
+		//              delay(10);
+                Serial.println("NO Mavlink");
+		/*
+		 beacon_initialize_audio();
+		 beacon_tone(740,5);
+		 watchdogReset();
+		 beacon_finish_audio();
+		
+
+		Green_LED_ON;
+		Red_LED_OFF;*/
+
+	}
+      }
+        return;
+
+  
 #ifdef DEBUG_DUMP_PPM
   if (ppmDump) {
     uint32_t timeTMP = millis();

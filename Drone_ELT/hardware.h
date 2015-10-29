@@ -237,11 +237,13 @@ void setupRfmInterrupt()
 
 #endif
 
+///////////////////////////////////////////////////////////// ORANGE TXM ////////////////////////////////////////////////////////////////////////////////////////////
+
 #if (BOARD_TYPE == 2)
 #if (__AVR_ATmega328P__ != 1) || (F_CPU != 16000000)
 #warning Possibly wrong board selected, select Arduino Pro/Pro Mini 5V/16MHz w/ ATMega328
 #endif
-
+//---------------------------------------------------------------- Tx -------------------------------------------------------------------------
 #if (COMPILE_TX == 1)
 #define PPM_IN           3
 #define RF_OUT_INDICATOR A0
@@ -256,23 +258,35 @@ void setupRfmInterrupt()
 DefineSerialPort(Serial, 0);
 #define TelemetrySerial Serial
 
+/*
 void buzzerInit()
 {
-  pinMode(BUZZER_ACT, OUTPUT);
-  digitalWrite(BUZZER_ACT, LOW);
+
+  if(1){ // DroneELT
+    pinMode(BUZZER_ACT, OUTPUT);
+    digitalWrite(BUZZER_ACT, LOW);
+  }
+
 }
 
 void buzzerOn(uint16_t freq)
 {
+  // droneELT
+  digitalWrite(BUZZER_ACT,LOW);
+  
+  if(0){ // droneELT
   if (freq) {
     digitalWrite(BUZZER_ACT,HIGH);
   } else {
     digitalWrite(BUZZER_ACT,LOW);
   }
+  }
+  
 }
 
 #define buzzerOff(foo) buzzerOn(0)
-
+*/
+//---------------------------------------------------------------- Rx -------------------------------------------------------------------------
 #else // RX operation
 #define USE_OCR1B // OC1A is used for RFM22, so we use OC1B instead which is buzzer ;)
 #define PPM_OUT 10 // OC1B this is the buzzer input
@@ -318,7 +332,7 @@ DefineSerialPort(Serial, 0);
 
 #endif
 
-
+//---------------------------------------------------------------- Tx and Rx -------------------------------------------------------------------------
 #define Red_LED          13
 #define Green_LED        12
 
@@ -365,13 +379,46 @@ void setupRfmInterrupt()
   attachInterrupt(IRQ_interrupt, RFM22B_Int, FALLING);
 }
 
+// DroneELT: moved from Tx to shared section
+
+#define BUZZER_ACT       10
+void buzzerInit()
+{
+
+  if(1){ // DroneELT
+    pinMode(BUZZER_ACT, OUTPUT);
+    digitalWrite(BUZZER_ACT, LOW);
+  }
+
+}
+
+void buzzerOn(uint16_t freq)
+{
+  // droneELT
+  digitalWrite(BUZZER_ACT,LOW);
+  
+  if(0){ // droneELT
+  if (freq) {
+    digitalWrite(BUZZER_ACT,HIGH);
+  } else {
+    digitalWrite(BUZZER_ACT,LOW);
+  }
+  }
+  
+}
+
+#define buzzerOff(foo) buzzerOn(0)
+
+
 #endif
+
+///////////////////////////////////////////////////////////// ORANGE RXM ////////////////////////////////////////////////////////////////////////////////////////////
 
 #if (BOARD_TYPE == 3)
 #if (__AVR_ATmega328P__ != 1) || (F_CPU != 16000000)
 #warning Possibly wrong board selected, select Arduino Pro/Pro Mini 5V/16MHz w/ ATMega328
 #endif
-
+//---------------------------------------------------------------- Tx -------------------------------------------------------------------------
 #if (COMPILE_TX == 1)
 DefineSerialPort(Serial, 0);
 #define TelemetrySerial Serial
@@ -423,6 +470,7 @@ void buzzerOn(uint16_t freq)
 }
 
 #define buzzerOff(foo) buzzerOn(0)
+//---------------------------------------------------------------- Rx -------------------------------------------------------------------------
 #else // RX
 #define PPM_OUT 9 // OCP1A
 #define RSSI_OUT 3 // PD3 OC2B
@@ -468,6 +516,8 @@ struct rxSpecialPinMap rxSpecialPins[] = {
 };
 
 #endif
+
+//---------------------------------------------------------------- Tx and Rx -------------------------------------------------------------------------
 
 #define Red_LED    A3
 #define Green_LED  13
@@ -524,6 +574,8 @@ void setupRfmInterrupt()
 }
 
 #endif
+
+///////////////////////////////////////////////////////////// kha TXM ////////////////////////////////////////////////////////////////////////////////////////////
 
 #if (BOARD_TYPE == 4) // kha:s openLRSngTX & clones
 #if (__AVR_ATmega328P__ != 1) || (F_CPU != 16000000)
