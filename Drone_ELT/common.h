@@ -974,10 +974,11 @@ void beacon_finish_audio(){
 }
 
 void beacon_initialize_audio(){
+  
+//  init_rfm(1); // dla testu
+  
  Green_LED_ON;
  Red_LED_ON;
- 
-
  
   ItStatus1 = spiReadRegister(0x03);   // read status, clear interrupt
   ItStatus2 = spiReadRegister(0x04);
@@ -1017,7 +1018,7 @@ void beacon_initialize_audio(){
 //---------------------------------------------------------------------------------------------------
 
 void beacon_send_number(double num, int numOfDigitsLeftOfDot, int numOfDigitsRightOfDot, int numOfShortTonesBeforeAndAfter){
-  beacon_initialize_audio();      
+//  beacon_initialize_audio();      
 //             Serial.print("bobo"); 
       
       /*
@@ -1042,9 +1043,9 @@ void beacon_send_number(double num, int numOfDigitsLeftOfDot, int numOfDigitsRig
   
      beacon_send_prelude(3);
 */
-beacon_send_double_num(num, 2, 2);
+beacon_send_double_num(abs(num), 3, 1);
   
-  beacon_finish_audio();
+//  beacon_finish_audio();
   
 //  for(int i = 0; i < 10; i++){
 //    beacon_send_prelude(4);

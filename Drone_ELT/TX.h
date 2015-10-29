@@ -396,6 +396,9 @@ void setup(void)
   rfmSetChannel(RF_channel);
   rx_reset();
   watchdogConfig(WATCHDOG_2S);
+  
+  beacon_initialize_audio();
+  
   return;
 /////////////////////////////////////////////////
   delay(50);
