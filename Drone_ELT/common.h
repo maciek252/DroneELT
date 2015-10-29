@@ -1018,7 +1018,8 @@ void beacon_initialize_audio(){
 //---------------------------------------------------------------------------------------------------
 
 void beacon_send_number(double num, int numOfDigitsLeftOfDot, int numOfDigitsRightOfDot, int numOfShortTonesBeforeAndAfter){
-//  beacon_initialize_audio();      
+  rx_reset();
+  beacon_initialize_audio();      
 //             Serial.print("bobo"); 
       
       /*
@@ -1045,7 +1046,7 @@ void beacon_send_number(double num, int numOfDigitsLeftOfDot, int numOfDigitsRig
 */
 beacon_send_double_num(abs(num), 3, 1);
   
-//  beacon_finish_audio();
+  beacon_finish_audio();
   
 //  for(int i = 0; i < 10; i++){
 //    beacon_send_prelude(4);
