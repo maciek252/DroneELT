@@ -1020,6 +1020,7 @@ void beacon_send_number(double num, int numOfDigitsLeftOfDot, int numOfDigitsRig
   beacon_initialize_audio();      
 //             Serial.print("bobo"); 
       
+      /*
 //   beacon_send_prelude(numOfShortTonesBeforeAndAfter);
      beacon_send_prelude(2);
      beacon_send_double_num(245.4397,3,5);
@@ -1040,7 +1041,10 @@ void beacon_send_number(double num, int numOfDigitsLeftOfDot, int numOfDigitsRig
 
   
      beacon_send_prelude(3);
-
+*/
+beacon_send_double_num(num, 2, 2);
+  
+  beacon_finish_audio();
   
 //  for(int i = 0; i < 10; i++){
 //    beacon_send_prelude(4);

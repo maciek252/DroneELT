@@ -397,7 +397,7 @@ void setup(void)
   rx_reset();
   watchdogConfig(WATCHDOG_2S);
   return;
-////////////////////////////////////////
+/////////////////////////////////////////////////
   delay(50);
 
   checkBND();
@@ -626,6 +626,9 @@ uint16_t getChannel(uint8_t ch)
   }
 }
 
+/////////////////////////////////////// LOOP ///////////////////////////////////////////////////
+// ELT
+
 void loop(void)
 {
   
@@ -651,13 +654,30 @@ void loop(void)
 	
 	 if(millis() > lastLED + 1000){
 	 lastLED = millis();
+          Serial.flush();
 /*
 	 beacon_initialize_audio();
 	 beacon_tone(840,5);
 	 watchdogReset();
 	 beacon_finish_audio();
 */
-	 Serial.println("ee");
+          Serial.write("okoeeeeeeeeeeeeeeeeeeee");
+          Serial.write('Q');
+
+    char buf[6];
+
+    //http://forum.arduino.cc/index.php?topic=44262.0
+    //http://stackoverflow.com/questions/27651012/arduino-sprintf-float-not-formatting
+//    osd_roll = 2.35;
+    dtostrf(osd_roll, 5, 1, buf);
+          Serial.write(buf[0]);
+          Serial.write(buf[1]);        
+          Serial.write(buf[2]);        
+          Serial.write(buf[3]);        
+                    Serial.write(buf[4]);        
+                              Serial.write(buf[5]);      
+                                        
+//	 Serial.print("ee");
 //        Serial.println(osd_roll);	 
 	 if(stateLED == true){
 	 stateLED = false;
@@ -676,6 +696,7 @@ void loop(void)
 //  	if (mavbeat == 1) {
 		Green_LED_OFF;
 		Red_LED_ON;
+          Serial.write('A');
 //              Serial.flush();
                 Serial.println("Mavlink active");
 
@@ -698,6 +719,7 @@ void loop(void)
 		//          watchdogReset();
 		//              delay(10);
                 Serial.println("NO Mavlink");
+        	 beacon_send_number(osd_roll, 2, 2, 2);
 		/*
 		 beacon_initialize_audio();
 		 beacon_tone(740,5);
