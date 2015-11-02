@@ -9,7 +9,7 @@ static bool stateLED = false;
 
 float        last_osd_lat = 0;                    // latidude
 float        last_osd_lon = 0;                    // longitude
-
+int        last_osd_satellites_visible  = 0;                   
 
 uint32_t mavlink_last_inject_time = 0;
 uint16_t rxerrors = 0;
@@ -726,7 +726,10 @@ void loop(void)
                   if(osd_fix_type == 3){
                     last_osd_lon = osd_lon;
                     last_osd_lat = osd_lat;
+                    last_osd_satellites_visible = osd_satellites_visible;
                   }
+                  
+
 
 	} else {
 //           beacon
@@ -734,12 +737,15 @@ void loop(void)
 		//          watchdogReset();
 		//              delay(10);
                 Serial.println("NO Mavlink");
-        	 beacon_send_number(osd_roll, 2, 2, 2);
-               	 beacon_send_number(osd_satellites_visible, 2, 2, 2);
+                 beacon_send_number(12.345, 2, 3, 2);
+
+
+//        	 beacon_send_number(osd_roll, 2, 1, 2);
+//               	 beacon_send_number(osd_satellites_visible, 2, 0, 2);
                  if(last_osd_lon != 0.0 && last_osd_lat != 0.0){
-                   
+                                 beacon_send_number(last_osd_satellites_visible, 2, 0, 2);                   
                             	 beacon_send_number(last_osd_lon, 3, 5, 2);
-                                 beacon_send_number(last_osd_lon, 3, 5, 2);
+                                 beacon_send_number(last_osd_lat, 3, 5, 2);
                  }
 		/*
 		 beacon_initialize_audio();

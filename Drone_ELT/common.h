@@ -1044,7 +1044,10 @@ void beacon_send_number(double num, int numOfDigitsLeftOfDot, int numOfDigitsRig
   
      beacon_send_prelude(3);
 */
-beacon_send_double_num(abs(num), 3, 1);
+if( num < 0.0)
+  num = -num;
+
+beacon_send_double_num(num, numOfDigitsLeftOfDot, numOfDigitsRightOfDot);
   
   beacon_finish_audio();
   

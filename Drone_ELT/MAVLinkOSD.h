@@ -101,7 +101,7 @@ void read_mavlink(){
                 }
                 break;
 */
-/*            case MAVLINK_MSG_ID_GPS_RAW_INT:
+            case MAVLINK_MSG_ID_GPS_RAW_INT:
                 {
                     osd_lat = mavlink_msg_gps_raw_int_get_lat(&msg) / 10000000.0f;
                     osd_lon = mavlink_msg_gps_raw_int_get_lon(&msg) / 10000000.0f;
@@ -111,7 +111,7 @@ void read_mavlink(){
                     eph = mavlink_msg_gps_raw_int_get_eph(&msg);
                 }
                 break; 
-            case MAVLINK_MSG_ID_VFR_HUD:
+/*            case MAVLINK_MSG_ID_VFR_HUD:
                 {
                     osd_airspeed = mavlink_msg_vfr_hud_get_airspeed(&msg);
                     osd_groundspeed = mavlink_msg_vfr_hud_get_groundspeed(&msg);
