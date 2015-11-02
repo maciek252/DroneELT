@@ -1,0 +1,9 @@
+0.1
+
+-works only for OrangeLRS Tx 
+-transmits only osd_roll parameter
+
+0.2
+
+-versions for OrangeLRS Tx and Rx
+-transmits "123.45" (always), number of sats, longitude and latitude, if a valid fix (3D) has been recorded
