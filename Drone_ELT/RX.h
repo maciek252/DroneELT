@@ -586,11 +586,14 @@ void reinitSlave() {
 /////////////////////////////////////////////
 
 void setup() {
-        buzzerInit();
+/*
+  buzzerInit();
         buzzerOff();
 
         updateLBeep(false);
-  
+  */
+    Serial.begin(57600);
+    Serial.println("oko");  
   	watchdogConfig (WATCHDOG_OFF);
 
 
@@ -611,7 +614,7 @@ void setup() {
 // ELT
 //  Serial.setBuffers(serial_rxbuffer, SERIAL_BUF_RX_SIZE, serial_txbuffer, SERIAL_BUF_TX_SIZE);
 //	Serial.begin(115200);
-  Serial.begin(57600);
+//  Serial.begin(57600);
 //	mavlink_comm_0_port = &Serial;
 //	mavlink_comm_1_port = &Serial;
 
@@ -624,15 +627,13 @@ void setup() {
 	Serial.print(" on HW ");
 	Serial.println(BOARD_TYPE);
 
-	rxReadEeprom();
+//	rxReadEeprom();
 	setupRfmInterrupt();
 
 	sei();
 	Red_LED_ON;
 	Green_LED_ON;
-
-      
-
+   
 	Serial.flush();
 
 //      beacon_send_number(7, 2, 2, 2);
@@ -843,7 +844,7 @@ void loop() {
 	 watchdogReset();
 	 beacon_finish_audio();
 */
-	 Serial.println("ee");
+//	 Serial.println("ee");
 //        Serial.println(osd_roll);	 
 	 if(stateLED == true){
 	 stateLED = false;
@@ -884,6 +885,7 @@ void loop() {
 		//          watchdogReset();
 		//              delay(10);
                 Serial.println("NO Mavlink");
+               beacon_send_number(7, 2, 2, 2);
 		/*
 		 beacon_initialize_audio();
 		 beacon_tone(740,5);

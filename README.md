@@ -1,13 +1,15 @@
 # DroneELT
 ELT for drones
 
-DroneELT is an analogue of ELT rescue system for aircrafts. Its core is a Orange LRS module with an antenna and a separate battery, protected by a foam from crash damage, and receiving the MAVLINK data from the drone's flight controller. As soon as the MAVLINK messages stop coming, DroneELT starts to transmit over a predefined PMR channel (default: PMR 6) the last GPS position encoded in the BCD code.
+DroneELT is an analogue of ELT (Emergency Locator Transmitter) rescue system for aircrafts. Its core is a Orange LRS module with an antenna and a separate battery, protected by a foam from crash damage, and receiving the MAVLINK data from the drone's flight controller. As soon as the MAVLINK messages stop coming, DroneELT starts to transmit over a predefined PMR channel (default: PMR 6) the last GPS position encoded in the BCD code.
 
 ##Format of messages is as follows:
 
-LONG: long, low sound. Corresponds to byte 1.
-SHORT: high, short sound. Corresponds to byte 0.
+LONG: low sound. Corresponds to byte 1.
+SHORT: high sound. Corresponds to byte 0.
 nINFO: a sequence of n very high frequency, very short signals 
+
+(the notions of long and short are no longer valid, I've tested that the sounds for 0 and 1 should be of equal length, this makes the decoding easier)
 
 1INFO: start of a digit.
 2INFO: start and end of a (real) number
