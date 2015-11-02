@@ -8,6 +8,8 @@ MavlinkFrameDetector mavlinkIncomingFrame; // Track the incoming mavlink frames 
 static float lastLED = 0;
 static bool stateLED = false;
 
+
+
 uint16_t rxerrors = 0;
 
 #include <avr/eeprom.h>

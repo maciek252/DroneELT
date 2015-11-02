@@ -44,9 +44,9 @@
 
 //####### COMPILATION TARGET #######
 // TX - tx=1, board=2
-// RX  tx=0, board=3
+// RX  tx=1, board=3
 // Enable to compile transmitter code, default is RX (remove leading //)
-#define COMPILE_TX 0 // compile RX code
+#define COMPILE_TX 1 // compile RX code
 //#define COMPILE_TX 1 // compile TX code
 
 //####### TX BOARD TYPE #######
