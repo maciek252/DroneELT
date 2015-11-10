@@ -7,3 +7,7 @@
 
 -versions for OrangeLRS Tx and Rx
 -transmits "123.45" (always), number of sats, longitude and latitude, if a valid fix (3D) has been recorded
+
+0.21 
+
+-transmits "123.4" (always), number of sats, EPH, long, lat for last 5 valid samples 

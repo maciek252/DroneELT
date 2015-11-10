@@ -2,6 +2,7 @@
  * OpenLRSng transmitter code
  ****************************************************/
 
+#include "storeData.h"
 
 static float lastLED = 0;
 static bool stateLED = false;
@@ -727,6 +728,14 @@ void loop(void)
                     last_osd_lon = osd_lon;
                     last_osd_lat = osd_lat;
                     last_osd_satellites_visible = osd_satellites_visible;
+                    
+                    DataRecord r;
+                    r.latitude = osd_lat;
+                    r.longitude = osd_lon;
+                    r.eph = eph;
+                    r.numOfSats = osd_satellites_visible;
+                    addRecord(r);
+                    
                   }
                   
 
@@ -737,16 +746,27 @@ void loop(void)
 		//          watchdogReset();
 		//              delay(10);
                 Serial.println("NO Mavlink");
-                 beacon_send_number(12.345, 2, 3, 2);
+                 beacon_send_number(12.3, 2, 1, 2);
 
 
 //        	 beacon_send_number(osd_roll, 2, 1, 2);
 //               	 beacon_send_number(osd_satellites_visible, 2, 0, 2);
+                 DataRecord previous = getPreviousRecord();
+                 if( previous.isValid()){
+                                  beacon_send_number(previous.numOfSats, 2, 0, 2);                 
+                                    beacon_send_number(previous.eph, 3, 0, 2);    
+                                  beacon_send_number(previous.longitude, 3, 5, 2);
+                                 beacon_send_number(previous.latitude, 3, 5, 2);             
+                 }
+
+/*
+// OK but only single one
                  if(last_osd_lon != 0.0 && last_osd_lat != 0.0){
                                  beacon_send_number(last_osd_satellites_visible, 2, 0, 2);                   
                             	 beacon_send_number(last_osd_lon, 3, 5, 2);
                                  beacon_send_number(last_osd_lat, 3, 5, 2);
                  }
+*/                 
 		/*
 		 beacon_initialize_audio();
 		 beacon_tone(740,5);
