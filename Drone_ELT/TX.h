@@ -4,6 +4,8 @@
 
 #include "storeData.h"
 
+#include "AP_GPS_NMEA.h"
+
 static float lastLED = 0;
 static bool stateLED = false;
 
@@ -339,6 +341,10 @@ uint8_t serial_okToSend; // 2 if it is ok to send serial instead of servo
 
 void setup(void)
 {
+  
+  AP_GPS_NMEA gps;
+  gps.read();
+  
   uint32_t start;
 
   watchdogConfig(WATCHDOG_OFF);
