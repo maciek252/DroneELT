@@ -90,6 +90,7 @@
 
 #include  "MAVLinkOSD.h"
 
+#include "AP_GPS_NMEA.h"
 
 #include <GCS_MAVLink.h>
 
