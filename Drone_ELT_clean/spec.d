@@ -1,2 +1,2 @@
 spec.o: \
- /opt-hdd/opt/ipiSVN/svn/mackowe/PROGRAMMING/.metadata/.plugins/org.eclipse.cdt.managedbuilder.core/spec.C
+ /home/maciek/eclipse-workspace/.metadata/.plugins/org.eclipse.cdt.managedbuilder.core/spec.C

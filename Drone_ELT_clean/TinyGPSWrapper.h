@@ -1,25 +1,25 @@
 /*
-TinyGPS - a small GPS library for Arduino providing basic NMEA parsing
-Based on work by and "distance_to" and "course_to" courtesy of Maarten Lamers.
-Suggestion to add satellites(), course_to(), and cardinal(), by Matt Monson.
-Precision improvements suggested by Wayne Holder.
-Copyright (C) 2008-2013 Mikal Hart
-All rights reserved.
+ TinyGPS - a small GPS library for Arduino providing basic NMEA parsing
+ Based on work by and "distance_to" and "course_to" courtesy of Maarten Lamers.
+ Suggestion to add satellites(), course_to(), and cardinal(), by Matt Monson.
+ Precision improvements suggested by Wayne Holder.
+ Copyright (C) 2008-2013 Mikal Hart
+ All rights reserved.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
 
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #ifndef TinyGPSWrapper_h
 #define TinyGPSWrapper_h
@@ -36,20 +36,18 @@ TinyGPS tinyGPS;
 //const char *  strum = "f4ji$GPGGA,183730,3907.356,N,12102.482,W,1,05,1.6,646.4,M,-24.1,M,,*75\nff3fs$GPRMC,183729,A,3907.356,N,12102.482,W,000.0,360.0,080301,015.5,E*6F";
 //const char *strum4 = "$GNGGA,232924.80,5212.87930,N,02110.59355,E,1,06,3.64,94.9,M,34.1,M,,*7F$GNRMC,232925.00,A,5212.87935,N,02110.59339,E,0.208,,011215,,,A*6C";
 const char *strum5 = //"$GNGGA,232924.80,5212.87930,N,02110.59355,E,1,06,3.64,94.9,M,34.1,M,,*7F\n$GNRMC,232925.00,A,5212.87935,N,02110.59339,E,0.208,,011215,,,A*6C\n";
-"$GPGSV,2,1,05,02,13,138,22,12,67,270,33,14,28,311,34,24,76,177,13*7D\n\
+		"$GPGSV,2,1,05,02,13,138,22,12,67,270,33,14,28,311,34,24,76,177,13*7D\n\
 $GPGSV,2,2,05,25,26,263,35*4E\n\
 $GNRMC,225101.80,A,5212.88580,N,02110.57865,E,0.065,,081215,,,A*6D\n\
 $GLGSV,1,1,02,68,22,308,37,,,,29*5D\n\
 $GNGLL,5212.88581,N,02110.57863,E,225101.60,A,A*71\n";
-
 
 //"$GNGGA,232924.80,5212.87930,N,02110.59355,E,1,06,3.64,94.9,M,34.1,M,,*7F";
 // GNRMC - to! i musi byc newline!
 //"$GNGGA,232924.80,5212.87930,N,02110.59355,E,1,06,3.64,94.9,M,34.1,M,,*7F$GNRMC,232925.00,A,5212.87935,N,02110.59339,E,0.208,,011215,,,A*6C";
 //$GNRMC,232925.00,A,5212.87935,N,02110.59339,E,0.208,,011215,,,A*6C\
 //$GNGLL,5212.88581,N,02110.57863,E,225101.60,A,A*71";
-//$GNRMC,225101.80,A,5212.88580,N,02110.57865,E,0.065,,081215,,,A*6D\
-
+//$GNRMC,225101.80,A,5212.88580,N,02110.57865,E,0.065,,081215,,,A*6D
 //"$GNGGA,225101.60,5212.88581,N,02110.57863,E,1,05,4.02,132.5,M,34.1,M,,*44";
 //"$GNGSA,A,3,14,12,25,24,,,,,,,,,6.57,4.02,5.20*1E"\
 //"$GNGSA,A,3,68,,,,,,,,,,,,6.57,4.02,5.20*17"\
@@ -74,84 +72,124 @@ $GNGLL,5212.88581,N,02110.57863,E,225101.60,A,A*71\n";
 "$GNGLL,5212.87930,N,02110.59355,E,232924.80,A,A*7F"\
 "$GNRMC,232925.00,A,5212.87935,N,02110.59339,E,0.208,,011215,,,A*6C"\
 "$GNVTG,,T,,M,0.208,N,0.385,K,A*39";
-*/
+ */
 
-TinyGPS * giveTinyGPS(){
-  return &tinyGPS;
+TinyGPS * giveTinyGPS() {
+	return &tinyGPS;
 }
 
-void readAndParseTest(){
- for(int i = 0; i < 400; i++){
+void readAndParseTest() {
+	for (int i = 0; i < 400; i++) {
 //    Serial.write(strum2[i]);
-         bool result = tinyGPS.encode(strum5[i]);
-         if(result == true){
-           Serial.write("pozycja=");
-            Serial.print(i);
-            Serial.print(strum5[i]);
-             Serial.write("fix=");
-           Serial.print(tinyGPS.satellites());
-    unsigned long age;
-    float flat, flon;
-    tinyGPS.f_get_position(&flat, &flon, &age);
-    Serial.print("LAT=");
-    Serial.print(flat == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flat, 6);
-    Serial.print(" LON=");
-  Serial.print(flon == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flon, 6);
-    Serial.print(" SAT=");
-    Serial.print(tinyGPS.satellites() == TinyGPS::GPS_INVALID_SATELLITES ? 0 : tinyGPS.satellites());
-    Serial.print(" PREC=");
-    Serial.print(tinyGPS.hdop() == TinyGPS::GPS_INVALID_HDOP ? 0 : tinyGPS.hdop());
-    break;
-/*    //GPS mode
-    Serial.print(" Constellations=");
-    Serial.print(flat == TinyGPS::GPS_INVALID_F_ANGLE ? 0 : tinyGPS.constellations());
-  */
+		bool result = tinyGPS.encode(strum5[i]);
+		if (result == true) {
+			Serial.write("pozycja=");
+			Serial.print(i);
+			Serial.print(strum5[i]);
+			Serial.write("fix=");
+			Serial.print(tinyGPS.satellites());
+			unsigned long age;
+			float flat, flon;
+			tinyGPS.f_get_position(&flat, &flon, &age);
+			Serial.print("LAT=");
+			Serial.print(flat == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flat, 6);
+			Serial.print(" LON=");
+			Serial.print(flon == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flon, 6);
+			Serial.print(" SAT=");
+			Serial.print(
+					tinyGPS.satellites() == TinyGPS::GPS_INVALID_SATELLITES ?
+							0 : tinyGPS.satellites());
+			Serial.print(" PREC=");
+			Serial.print(
+					tinyGPS.hdop() == TinyGPS::GPS_INVALID_HDOP ?
+							0 : tinyGPS.hdop());
+			break;
+			/*    //GPS mode
+			 Serial.print(" Constellations=");
+			 Serial.print(flat == TinyGPS::GPS_INVALID_F_ANGLE ? 0 : tinyGPS.constellations());
+			 */
 
-         }
-  }
-  Serial.print("koniec testu");
+		}
+	}
+	Serial.print("koniec testu");
 }
 
 int StringContains(String s, String search) {
-    int max = s.length() - search.length();
-    int lgsearch = search.length();
+	int max = s.length() - search.length();
+	int lgsearch = search.length();
 
-    for (int i = 0; i <= max; i++) {
-        if (s.substring(i, i + lgsearch) == search) return i;
-    }
+	for (int i = 0; i <= max; i++) {
+		if (s.substring(i, i + lgsearch) == search)
+			return i;
+	}
 
- return -1;
+	return -1;
 }
 
-bool testIfNMEA(){
-	String str;
-	while(Serial.available() > 0) {
+// readAndParse requires valid position to test if NMEA is well formed
+bool testIfNMEA() {
+	String str = "";
+//	  Serial.setTimeout(15000UL);
+
+	while (Serial.available() > 0) {
 		//str = Serial.readString();
-		str = Serial.readStringUntil('\n');
+		//str = Serial.readStringUntil('');
+		//return true;
+		str += char(Serial.read());
+	}
+	// GPRMC - rzadko
+	Serial.print("string:" + str);
+	if (StringContains(str, "$GNGSA,") != -1
+			|| StringContains(str, "$GPGSA,") != -1) {
+		Serial.print("Wynik: true");
 		return true;
 	}
-	if(StringContains(str, "GPRMC")!= -1 ||
-			StringContains(str, "GNRMC") != -1
-	)
-		return true;
+	Serial.print("Wynik: false");
 	return false;
 }
 
-bool readAndParse(){
-//  readAndParseTest();
- while(Serial.available() > 0) {
+bool testIfNMEA2() {
+//	  Serial.setTimeout(15000UL);
 
-  //    mavlink_active = 1;//test
-  //    lastMAVBeat = millis();
-        uint8_t c = Serial.read();
-        Serial.write(c);
-        bool result = tinyGPS.encode(c);
-        if(result)
-         return true;
-        //        Serial.write(c);
- }
-  return false;
+	char inData[200]; // Allocate some space for the string
+	char inChar; // Where to store the character read
+	byte index = 0; // Index into array; where to store the character
+
+	while (Serial.available() > 0) {
+		//str = Serial.readString();
+		//str = Serial.readStringUntil('');
+		//return true;
+		if (index < 191) { // One less than the size of the array
+
+			inChar = Serial.read(); // Read a character
+			inData[index] = inChar; // Store it
+			index++; // Increment where to write next
+			inData[index] = '\0'; // Null terminate the string
+		}
+	}
+	// GPRMC - rzadko
+	if (index > 0 && strstr(inData, "GNGSA")) {
+		Serial.print("Wynik: true");
+		return true;
+	}
+	Serial.print("Wynik: false");
+	return false;
 }
 
+bool readAndParse() {
+//  readAndParseTest();
+	while (Serial.available() > 0) {
+
+		//    mavlink_active = 1;//test
+		//    lastMAVBeat = millis();
+		uint8_t c = Serial.read();
+		//Serial.write(c);
+		bool result = tinyGPS.encode(c);
+		if (result)
+			return true;
+		//        Serial.write(c);
+	}
+	return false;
+}
 
 #endif

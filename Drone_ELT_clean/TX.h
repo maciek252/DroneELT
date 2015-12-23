@@ -9,25 +9,35 @@
 static float lastLED = 0;
 static bool stateLED = false;
 
-static float led_interval_singleBreak = 1000;
-static float led_interval_singleFlash = 100;
-static float led_interval_doubleBreak = 100;
+static long led_interval_singleBreak = 1000;
+static long led_interval_singleFlash = 200;
+static long led_interval_doubleBreak = 200;
+
+static long ledGpsActivityTimer = 0.0;
+static long ledMavlinkActivityTimer = 0.0;
 
 enum LED_STATE {
 	OFF, SINGLE_FLASH, SINGLE_FLASH_REV, DOUBLE_FLASH, TWO_OPPOSITE, ON
 };
 
 enum DEVICE_MODE {
-	NO_GPS, GPS_SERIAL, MAVLINK_SERIAL, GPS_I2C, BOTH_MAVLINKSERIAL_GPSI2C
+	NO_GPS,
+	NO_GPS_TRY_MAVLINK,
+	GPS_SERIAL,
+	MAVLINK_SERIAL,
+	GPS_I2C,
+	BOTH_MAVLINKSERIAL_GPSI2C
 };
 
 static DEVICE_MODE device_mode = NO_GPS;
 
-static LED_STATE led1mode = OFF; // BLUE in Tx100mW
-static LED_STATE led2mode = OFF; // RED in Tx100mW
+static LED_STATE ledGpsMode = OFF; // BLUE in Tx100mW
+static LED_STATE ledMavlinkMode = OFF; // RED in Tx100mW
 
-static float led1Timer = 0.0;
-static float led2Timer = 0.0;
+static long led1Timer = 200.0;
+static long led2Timer = 0.0;
+
+static long detectionTimer = 0.0;
 
 static bool led1State = false;
 static bool led2State = false;
@@ -36,7 +46,7 @@ float last_osd_lat = 0;                    // latidude
 float last_osd_lon = 0;                    // longitude
 int last_osd_satellites_visible = 0;
 
-static void serviceLED(LED_STATE ledMode, float &ledTimer, bool & ledState) {
+static void serviceLED(LED_STATE ledMode, long &ledTimer, bool & ledState) {
 
 	switch (ledMode) {
 	//enum LED_STATE {OFF, SINGLE_FLASH, DOUBLE_FLASH, TWO_OPPOSITE, ON};
@@ -50,23 +60,24 @@ static void serviceLED(LED_STATE ledMode, float &ledTimer, bool & ledState) {
 		}
 		break;
 	case SINGLE_FLASH_REV:
-			if (ledState && millis() - ledTimer > led_interval_singleBreak) {
-				ledState = false;
-				ledTimer = millis();
-			} else if (!ledState && millis() - ledTimer > led_interval_singleFlash) {
-				ledState = true;
-				ledTimer = millis();
-			}
+		if (ledState && millis() - ledTimer > led_interval_singleBreak) {
+			ledState = false;
+			ledTimer = millis();
+		} else if (!ledState
+				&& millis() - ledTimer > led_interval_singleFlash + 1000) {
+			ledState = true;
+			ledTimer = millis();
+		}
 		break;
 	case DOUBLE_FLASH:
-			if (!ledState && millis() - ledTimer > led_interval_singleBreak) {
-				ledState = true;
-				ledTimer = millis();
-			} else if (ledState && millis() - ledTimer > led_interval_singleFlash) {
-				ledState = false;
-				ledTimer = millis();
-			}
-			break;
+		if (!ledState && millis() - ledTimer > led_interval_singleBreak) {
+			ledState = true;
+			ledTimer = millis();
+		} else if (ledState && millis() - ledTimer > led_interval_singleFlash) {
+			ledState = false;
+			ledTimer = millis();
+		}
+		break;
 	case ON:
 		ledState = true;
 		break;
@@ -77,38 +88,42 @@ static void serviceLED(LED_STATE ledMode, float &ledTimer, bool & ledState) {
 }
 
 static void serviceLEDs() {
-	serviceLED(led1mode, led1Timer, led1State);
-	serviceLED(led2mode, led2Timer, led2State);
+	serviceLED(ledGpsMode, led1Timer, led1State);
+	serviceLED(ledMavlinkMode, led2Timer, led2State);
 
-	/*
-	 if (led1State) {
-	 Green_LED_ON;
-	 } else {
-	 Green_LED_OFF;
-	 }
-	 if (led2State) {
-	 Red_LED_ON;
-	 } else {
-	 Red_LED_OFF;
-	 }*/
-	//if (state1Before != led1State)
 	if (led1State) {
-		Red_LED_ON;
-		Green_LED_OFF;
-		//BOTH_LED_ON;
-	} else {
-		Red_LED_OFF;
 		Green_LED_ON;
-		//BOTH_LED_OFF;
+	} else {
+		Green_LED_OFF;
 	}
-
-	/*
 	if (led2State) {
 		Red_LED_ON;
 	} else {
 		Red_LED_OFF;
 	}
-*/
+	//if (state1Before != led1State)
+	/*
+	 if (led1State) {
+	 Red_LED_OFF;
+	 Green_LED_OFF;
+	 Red_LED_OFF;
+	 Green_LED_OFF;
+	 //BOTH_LED_ON;
+	 } else {
+	 Red_LED_ON;
+	 Green_LED_ON;
+	 Red_LED_ON;
+	 Green_LED_ON;
+	 //BOTH_LED_OFF;
+	 }
+	 */
+	/*
+	 if (led2State) {
+	 Red_LED_ON;
+	 } else {
+	 Red_LED_OFF;
+	 }
+	 */
 }
 
 uint32_t mavlink_last_inject_time = 0;
@@ -435,8 +450,8 @@ uint8_t serial_okToSend; // 2 if it is ok to send serial instead of servo
 
 void setup(void) {
 
-	led1mode = OFF; //SINGLE_FLASH;
-	led2mode = OFF; //SINGLE_FLASH; // RED in Tx100mW
+	ledGpsMode = OFF; //SINGLE_FLASH;
+	ledMavlinkMode = OFF; //SINGLE_FLASH; // RED in Tx100mW
 
 	device_mode = NO_GPS;
 
@@ -457,8 +472,8 @@ void setup(void) {
 	pinMode(Green_LED, OUTPUT); //GREEN LED
 
 #ifdef Red_LED2
-			pinMode(Red_LED2, OUTPUT); //RED LED
-			pinMode(Green_LED2, OUTPUT);//GREEN LED
+	pinMode(Red_LED2, OUTPUT); //RED LED
+	pinMode(Green_LED2, OUTPUT);//GREEN LED
 #endif
 	pinMode(BTN, INPUT); //Buton
 	pinMode(PPM_IN, INPUT); //PPM from TX
@@ -739,45 +754,140 @@ uint16_t getChannel(uint8_t ch) {
 /////////////////////////////////////// LOOP ///////////////////////////////////////////////////
 // ELT
 
+void beep() {
+	// https://www.arduino.cc/en/Tutorial/Melody
+	int duration = 300;
+	int tone = 1915;
+	for (long i = 0; i < duration * 1000L; i += tone * 2) {
+		digitalWrite(BUZZER_ACT, HIGH);
+		delayMicroseconds(tone);
+		digitalWrite(BUZZER_ACT, LOW);
+		delayMicroseconds(tone);
+	}
+
+}
+/*
+void updateLEDModes(){
+	switch(device_mode){
+		case NO_GPS:
+			ledMavlinkMode = OFF;
+			ledGpsMode = OFF;
+			break;
+		case NO_GPS_TRY_MAVLINK:
+					ledMavlinkMode = OFF;
+					ledGpsMode = OFF;
+					break;
+		case GPS_SERIAL:
+					ledMavlinkMode = OFF;
+					ledGpsMode = SINGLE_FLASH;
+					break;
+		case MAVLINK_SERIAL:
+					ledMavlinkMode = SINGLE_FLASH;
+					ledGpsMode = OFF;
+					break;
+		default:
+			;
+	}
+}
+*/
 void loop(void) {
 
+	//updateLEDModes();
+	serviceLEDs();
 
 	// bylo gdy dzialalo, zaswieca czerwona diode
 	//beacon_initialize_audio();
 
+	if (millis() - detectionTimer > 3000) {
+		detectionTimer = millis();
+		if (NO_GPS == device_mode) {
+			//updateLBeep(true);
+			device_mode = NO_GPS_TRY_MAVLINK;
+		} else if (NO_GPS_TRY_MAVLINK == device_mode) {
 
-	led2mode = SINGLE_FLASH_REV; // RED in Tx100mW
-	led1mode = SINGLE_FLASH_REV;
-	serviceLEDs();
-	return;
-
-
-	if (device_mode == NO_GPS) {
-		led2mode = SINGLE_FLASH;
-		if (testIfNMEA()) {
-			device_mode = GPS_SERIAL;
-
+			device_mode = NO_GPS;
 		}
 	}
 
-	if (device_mode == GPS_SERIAL) {
+	if (0 == digitalRead(BTN)) {
+		beep();
+		if (OFF == ledMavlinkMode)
+			ledMavlinkMode = SINGLE_FLASH; // RED in Tx100mW
+		else
+			ledMavlinkMode = OFF;
+	}
+
+	float mavLinkTimer = 0;
+
+	//        updateLBeep(false);
+	//        buzzerOff();
+#if 0
+	if (device_mode == NO_GPS_TRY_MAVLINK || device_mode == MAVLINK_SERIAL) {
+		read_mavlink();
+
+		if (mavlink_active) {
+			ledMavlinkActivityTimer = millis();
+			//if (read_mavlink() && device_mode == NO_GPS) {
+			device_mode = MAVLINK_SERIAL;
+			ledMavlinkMode = SINGLE_FLASH;
+		}
+		return;
+	}
+	if (device_mode == MAVLINK_SERIAL && !mavlink_active) {
+		if (millis() - ledMavlinkActivityTimer > 4000) {
+			ledMavlinkActivityTimer = millis();
+			device_mode = NO_GPS_TRY_MAVLINK;
+		}
+		return;
+	}
+	return;
+#endif
+
+	if (millis() > mavLinkTimer + 100) {
+		mavLinkTimer = millis();
+	}
+
+	if (NO_GPS == device_mode) {
+		ledGpsMode = OFF;
+		if (testIfNMEA2()) {
+		//if (readAndParse()) {
+			ledGpsActivityTimer = millis();
+			device_mode = GPS_SERIAL;
+		}
+	}
+
+#if 1
+	if (GPS_SERIAL == device_mode) {
+
+		if (millis() - ledGpsActivityTimer > 2000) {
+			ledGpsActivityTimer = millis();
+			ledGpsMode = OFF;
+			device_mode = NO_GPS;
+			return;
+		}
+
 		if ((millis() - last_beep_time) > 3000) {
 
 			last_beep_time = millis();
-			if (live_tick_sound) {
-				live_tick_sound = false;
-				beacon_send_number(0, 1, 0, 0);
-			} else {
-				live_tick_sound = true;
-				beacon_send_number(1, 1, 0, 0);
-			}
+			/*
+			 if (live_tick_sound) {
+			 live_tick_sound = false;
+			 beacon_send_number(0, 1, 0, 0);
+			 } else {
+			 live_tick_sound = true;
+			 beacon_send_number(1, 1, 0, 0);
+			 }
+			 */
 		}
-		led2mode = OFF;
-		led1mode = SINGLE_FLASH;
+		//led2mode = OFF;
+		ledGpsMode = SINGLE_FLASH;
 		if (readAndParse()) {
+			ledGpsActivityTimer = millis();
+
+
 
 //      giveTinyGPS()->hdop();    
-			if (giveTinyGPS()->satellites() == TinyGPS::GPS_INVALID_SATELLITES)
+			if (TinyGPS::GPS_INVALID_SATELLITES == giveTinyGPS()->satellites())
 				Serial.write("parseOK   NOFIX");
 			else
 				Serial.write("parseOK  SATS: " + giveTinyGPS()->satellites());
@@ -786,15 +896,16 @@ void loop(void) {
 			float flat = 0.0, flon = 0.0;
 			giveTinyGPS()->f_get_position(&flat, &flon, &age);
 			Serial.print("LAT=");
-			if (flat == TinyGPS::GPS_INVALID_F_ANGLE)
+			if (TinyGPS::GPS_INVALID_F_ANGLE == flat)
 				flat = 0.0;
-			if (flon == TinyGPS::GPS_INVALID_F_ANGLE)
+			if (TinyGPS::GPS_INVALID_F_ANGLE == flon)
 				flon = 0.0;
 			Serial.print(flat);
 			Serial.print(" LON=");
 			Serial.print(flon);
 			Serial.print(" SAT=");
 			if (flat != 0.0 && flon != 0.0) {
+				ledGpsMode = ON;
 				beacon_initialize_audio();
 				beacon_send_number(flat, 2, 5, 3);
 				beacon_send_number(flon, 2, 5, 3);
@@ -810,47 +921,30 @@ void loop(void) {
 
 		}
 	}
+
+#endif
+	return;
 	/*
-	// SEND 0 or 1 -- to test PMR
-	if ((millis() - last_beep_time) > 2000) {
+	 // SEND 0 or 1 -- to test PMR
+	 if ((millis() - last_beep_time) > 2000) {
 
-		last_beep_time = millis();
-		if (live_tick_sound) {
-			live_tick_sound = false;
-			beacon_send_number(0, 1, 0, 0);
-		} else {
-			live_tick_sound = true;
-			beacon_send_number(1, 1, 0, 0);
-		}
-	}
-	*/
-
+	 last_beep_time = millis();
+	 if (live_tick_sound) {
+	 live_tick_sound = false;
+	 beacon_send_number(0, 1, 0, 0);
+	 } else {
+	 live_tick_sound = true;
+	 beacon_send_number(1, 1, 0, 0);
+	 }
+	 }
+	 */
 
 	//return;
 	uint32_t timeUs, timeMs;
-	float mavLinkTimer = 0;
-
-//        updateLBeep(false);
-//        buzzerOff();
-	if (device_mode == NO_GPS || device_mode == MAVLINK_SERIAL) {
-		if (read_mavlink() && device_mode == NO_GPS) {
-			device_mode = MAVLINK_SERIAL;
-			led1mode = SINGLE_FLASH;
-		}
-
-	}
-
-//  watchdogReset();
-
-//	 beacon_send_number(7, 2, 2, 2);
-//              read_mavlink();
-	if (millis() > mavLinkTimer + 100) {
-		mavLinkTimer = millis();
-///       OnMavlinkTimer();
+	///       OnMavlinkTimer();
 
 //                read_mavlink();
 //                Serial.flush();
-	}
 
 	if (millis() > lastLED + 1000) {
 		lastLED = millis();

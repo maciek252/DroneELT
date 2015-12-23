@@ -621,18 +621,22 @@ void beacon_send_prelude(int8_t numOfSounds){
 
 void beacon_short_sound(){
 	// green chyba zle dziala... odwrotnie? cos go wygasza.
+	Red_LED_ON;
 	Green_LED_ON;
       beacon_tone(540,5);
       watchdogReset();
      delayMicroseconds(1000);
+     Red_LED_OFF;
      Green_LED_OFF;
 }
 
 void beacon_long_sound(){
 	  Red_LED_ON;
+	  Green_LED_ON;
       beacon_tone(350,5);
       watchdogReset();
       Red_LED_OFF;
+      Green_LED_OFF;
       delayMicroseconds(1000);
 }
 
@@ -982,8 +986,8 @@ void beacon_initialize_audio(){
   
 //  init_rfm(1); // dla testu
   
- //Green_LED_ON;
- //Red_LED_ON;
+ Green_LED_OFF;
+ Red_LED_ON;
  
   ItStatus1 = spiReadRegister(0x03);   // read status, clear interrupt
   ItStatus2 = spiReadRegister(0x04);

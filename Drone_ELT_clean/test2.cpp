@@ -16,9 +16,12 @@
 #define MAVLINK_INJECT_INTERVAL 1000000
 
 
-#define DefineSerialPort(_name, _num) FastSerialPort(_name, _num)
+
+
+
 
 #include <FastSerial.h>
+#define DefineSerialPort(_name, _num) FastSerialPort(_name, _num)
 #include <Arduino.h>
 
 #include "OSD_Vars.h"
@@ -50,6 +53,8 @@
 #endif
 
 
+
+//DefineSerialPort(Serial, 0);
 
 /*
 //DefineSerialPort(Serial, 0);
