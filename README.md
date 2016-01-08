@@ -5,37 +5,36 @@ DroneELT is an analogue of ELT (Emergency Locator Transmitter) rescue system for
 
 ##LEDs 
 
-off - no data, drone not started (detected from data)
-1 flash - receiving data (MAVLINK or NMEA), no valid gps fix
-2 flashes - receiving data, valid fix
-1 flash inverted - receiving data, no valid fix, drone started (move detected), timeout to alarm running
-2 flash inverted - receiving data, valid fix, drone started (move detected)
-ON - drone started, no data, timeout to alarm running
-BOTH LEDS ON: transmitting alarm, long sound
-ONE LED ON: transmitting alarm, short sound
+* off - no data, drone not started (detected from data)
+* 1 flash - receiving data (MAVLINK or NMEA), no valid gps fix
+* 2 flashes - receiving data, valid fix
+* 1 flash inverted - receiving data, no valid fix, drone started (move detected), timeout to alarm running
+* 2 flash inverted - receiving data, valid fix, drone started (move detected)
+* ON - drone started, no data, timeout to alarm running
+* BOTH LEDS ON: transmitting alarm, long sound
+* ONE LED ON: transmitting alarm, short sound
 
 ##Format of messages is as follows:
 
-LONG: low sound. Corresponds to byte 1.
-SHORT: high sound. Corresponds to byte 0.
-nINFO: a sequence of n very high frequency, very short signals 
+* LONG: low sound. Corresponds to byte 1.
+* SHORT: high sound. Corresponds to byte 0.
+* nINFO: a sequence of n very high frequency, very short signals 
 
 (the notions of long and short are no longer valid, I've tested that the sounds for 0 and 1 should be of equal length, this makes the decoding easier)
 
-1INFO: start of a digit.
-2INFO: start and end of a (real) number
-3INFO: a dot: end of the integer part, start of the fractional part
+* 1INFO: start of a digit.
+* 2INFO: start and end of a (real) number
+* 3INFO: a dot: end of the integer part, start of the fractional part
 
 GPS position is transmitted in decimal degrees. Default setting is 2 integral digits, 5 fractional digits. So for example
 
-Latitude: 52.2297700
-Longitude: 21.0117800
+* Latitude: 52.2297700
+* Longitude: 21.0117800
 
-will be
-(nI - nINFO, L - LONG, S - SHORT)
+will be encoded as: (nI - nINFO, L - LONG, S - SHORT)
 
- 2I 1I S L S L 1I S S L S 3I S S L S 1I S S L S 1I L S S L 1I S L L L 1I S L L L 1I S S S S 1I S S S S 2I
- 2I 1I S S L S 1I S S S L 3I S S S S 1I S S S L 1I S S S L 1I S L L L 1I L S S S 1I S S S S 1I S S S S 2I
+* 2I 1I S L S L 1I S S L S 3I S S L S 1I S S L S 1I L S S L 1I S L L L 1I S L L L 1I S S S S 1I S S S S 2I
+* 2I 1I S S L S 1I S S S L 3I S S S S 1I S S S L 1I S S S L 1I S L L L 1I L S S S 1I S S S S 1I S S S S 2I
 
 When MAVLINK messages are transmitted again, DroneELT stops sending the rescue signal, switches the transmitter off and updates the position.
  
@@ -68,7 +67,7 @@ There is an eclipse project, but it currently does not use the arduino plugin, b
 
 ##TODO:
 
--Android app for decoding the messages
--input directly from GPS (NMEA. UBLOX?)
--sign of the position 
--other data (altitude?)
+* -Android app for decoding the messages
+* -input directly from GPS (NMEA. UBLOX?)
+* -sign of the position 
+* -other data (altitude?)
