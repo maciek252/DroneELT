@@ -5,6 +5,8 @@ DroneELT is an analogue of ELT (Emergency Locator Transmitter) rescue system for
 
 ##LEDs 
 
+LEDs are used for signalling the current state of the device:
+
 * off - no data, drone not started (detected from data)
 * 1 flash - receiving data (MAVLINK or NMEA), no valid gps fix
 * 2 flashes - receiving data, valid fix
@@ -15,6 +17,10 @@ DroneELT is an analogue of ELT (Emergency Locator Transmitter) rescue system for
 * ONE LED ON: transmitting alarm, short sound
 
 in OrangeLRS Tx: red LED - MAVlink, blue LED - GPS NMEA
+
+##Button
+
+If present (in OrangeLRS Tx, but no Rx), when pressed the MAVLINK diode and the buzzer go on. The aim is to check if the device is alive.
 
 ##Format of messages is as follows:
 
@@ -40,6 +46,7 @@ will be encoded as: (nI - nINFO, L - LONG, S - SHORT)
 
 When MAVLINK messages are transmitted again, DroneELT stops sending the rescue signal, switches the transmitter off and updates the position.
  
+
  
  
 
@@ -69,7 +76,7 @@ There is an eclipse project, but it currently does not use the arduino plugin, b
 
 ##TODO:
 
-* -Android app for decoding the messages
-* -input directly from GPS (NMEA. UBLOX?)
-* -sign of the position 
-* -other data (altitude?)
+* Android app for decoding the messages
+* sign of the position 
+* transmitting other data (altitude?)
+* configuration from menu over serial link, similarily as in OrangeLRSng software. Storing the configuration in EEPROM memory.
