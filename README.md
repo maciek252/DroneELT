@@ -14,6 +14,8 @@ DroneELT is an analogue of ELT (Emergency Locator Transmitter) rescue system for
 * BOTH LEDS ON: transmitting alarm, long sound
 * ONE LED ON: transmitting alarm, short sound
 
+in OrangeLRS Tx: red LED - MAVlink, blue LED - GPS NMEA
+
 ##Format of messages is as follows:
 
 * LONG: low sound. Corresponds to byte 1.
