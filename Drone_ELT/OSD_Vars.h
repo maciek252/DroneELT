@@ -172,7 +172,7 @@ static boolean      mavbeat = 0;
 //static boolean      iconHA = 0;
 //static boolean      iconMSL = 0;
 //static boolean      landing = 0;
-static float        lastMAVBeat = 0;
+static long        lastMAVBeat = 0;
 static boolean      waitingMAVBeats = 1;
 //static uint8_t      apm_mav_type;
 static uint8_t      apm_mav_system; 
@@ -196,5 +196,6 @@ static uint8_t      osd_rssi = 0; //raw value from mavlink
 static int16_t      rssi = -99; // scaled value 0-100%
 static uint8_t      rssiraw_on = 0; 
 static uint8_t      rssi_warn_level = 0;
+
 
 

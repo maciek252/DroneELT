@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+	<storageModule moduleId="org.eclipse.cdt.core.settings">
+		<cconfiguration id="0.737317688">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="0.737317688" moduleId="org.eclipse.cdt.core.settings" name="Default">
+				<externalSettings/>
+				<extensions>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.VCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration buildProperties="" description="" id="0.737317688" name="Default" parent="org.eclipse.cdt.build.core.prefbase.cfg">
+					<folderInfo id="0.737317688." name="/" resourcePath="">
+						<toolChain id="org.eclipse.cdt.build.core.prefbase.toolchain.209558536" name="No ToolChain" resourceTypeBasedDiscovery="false" superClass="org.eclipse.cdt.build.core.prefbase.toolchain">
+							<targetPlatform id="org.eclipse.cdt.build.core.prefbase.toolchain.209558536.943399679" name=""/>
+							<builder id="org.eclipse.cdt.build.core.settings.default.builder.884223457" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="org.eclipse.cdt.build.core.settings.default.builder"/>
+							<tool id="org.eclipse.cdt.build.core.settings.holder.libs.34088513" name="holder for library settings" superClass="org.eclipse.cdt.build.core.settings.holder.libs"/>
+							<tool id="org.eclipse.cdt.build.core.settings.holder.1734747027" name="Assembly" superClass="org.eclipse.cdt.build.core.settings.holder">
+								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1823124068" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/home/maciek/k/arduino-1.0.3/hardware/arduino/cores/arduino"/>
+									<listOptionValue builtIn="false" value="/home/maciek/k/arduino-1.0.3/hardware/tools/avr/lib/avr/include"/>
+									<listOptionValue builtIn="false" value="/home/maciek/k/arduino-1.0.3/hardware/tools/avr/lib/avr/include/avr"/>
+									<listOptionValue builtIn="false" value="/Drone_ELT/arduino/variant"/>
+								</option>
+								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.760769177" languageId="org.eclipse.cdt.core.assembly" languageName="Assembly" sourceContentType="org.eclipse.cdt.core.asmSource" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
+							</tool>
+							<tool id="org.eclipse.cdt.build.core.settings.holder.377638400" name="GNU C++" superClass="org.eclipse.cdt.build.core.settings.holder">
+								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.2121122316" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Drone_ELT/arduino/core}&quot;"/>
+									<listOptionValue builtIn="false" value="/Drone_ELT/arduino/variant"/>
+								</option>
+								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.568228907" languageId="org.eclipse.cdt.core.g++" languageName="GNU C++" sourceContentType="org.eclipse.cdt.core.cxxSource,org.eclipse.cdt.core.cxxHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
+							</tool>
+							<tool id="org.eclipse.cdt.build.core.settings.holder.1316620410" name="GNU C" superClass="org.eclipse.cdt.build.core.settings.holder">
+								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.645130482" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/home/maciek/k/arduino-1.0.3/hardware/arduino/cores/arduino"/>
+									<listOptionValue builtIn="false" value="/home/maciek/k/arduino-1.0.3/hardware/tools/avr/lib/avr/include"/>
+									<listOptionValue builtIn="false" value="/home/maciek/k/arduino-1.0.3/hardware/tools/avr/lib/avr/include/avr"/>
+									<listOptionValue builtIn="false" value="/Drone_ELT/arduino/variant"/>
+								</option>
+								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1381345681" languageId="org.eclipse.cdt.core.gcc" languageName="GNU C" sourceContentType="org.eclipse.cdt.core.cSource,org.eclipse.cdt.core.cHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
+							</tool>
+							<tool id="org.eclipse.cdt.build.core.settings.holder.20654774" name="LLVM bytecode assembly" superClass="org.eclipse.cdt.build.core.settings.holder">
+								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.2031598033" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/home/maciek/k/arduino-1.0.3/hardware/arduino/cores/arduino"/>
+									<listOptionValue builtIn="false" value="/home/maciek/k/arduino-1.0.3/hardware/tools/avr/lib/avr/include"/>
+									<listOptionValue builtIn="false" value="/home/maciek/k/arduino-1.0.3/hardware/tools/avr/lib/avr/include/avr"/>
+									<listOptionValue builtIn="false" value="/Drone_ELT/arduino/variant"/>
+								</option>
+								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1391259732" languageId="org.eclipse.cdt.managedbuilder.llvm.ui.llvmAssembly" languageName="LLVM bytecode assembly" sourceContentType="org.eclipse.cdt.managedbuilder.llvm.ui.llvmAssemblySource" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
+							</tool>
+							<tool id="org.eclipse.cdt.build.core.settings.holder.133107436" name="UPC" superClass="org.eclipse.cdt.build.core.settings.holder">
+								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.260305937" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/home/maciek/k/arduino-1.0.3/hardware/arduino/cores/arduino"/>
+									<listOptionValue builtIn="false" value="/home/maciek/k/arduino-1.0.3/hardware/tools/avr/lib/avr/include"/>
+									<listOptionValue builtIn="false" value="/home/maciek/k/arduino-1.0.3/hardware/tools/avr/lib/avr/include/avr"/>
+									<listOptionValue builtIn="false" value="/Drone_ELT/arduino/variant"/>
+								</option>
+								<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.1547335398" languageId="org.eclipse.cdt.core.parser.upc.upc" languageName="UPC" sourceContentType="org.eclipse.cdt.core.parser.upc.upcSource" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
+							</tool>
+						</toolChain>
+					</folderInfo>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
+	</storageModule>
+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+		<project id="Drone_ELT_mod.null.1078731630" name="Drone_ELT_mod"/>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="0.737317688">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="0.487573286">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="0.360612801">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="0.1056725043">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="refreshScope"/>
+</cproject>

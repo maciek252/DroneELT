@@ -52,7 +52,9 @@
 #include "RX.h"
 #endif
 
+#define SERIAL_BAUD 57600
 
+//FastSerialPort0(Serial);
 
 //DefineSerialPort(Serial, 0);
 

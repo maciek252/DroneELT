@@ -1,0 +1,10 @@
+#!/bin/bash
+
+rm *.pdf *.ps
+
+for p in *.{h,ino} ; do
+    ./konw.txt $p
+    ps2pdf $p.ps $p.pdf
+done
+
+pdfunite *.pdf all.pdf

@@ -35,7 +35,7 @@ int freeRam () {
 }
 
 enum LED_STATE {
-	OFF, SINGLE_FLASH, SINGLE_FLASH_REV, DOUBLE_FLASH, TRIPLE_FLASH, TWO_OPPOSITE, ON
+	OFF, SINGLE_FLASH, SINGLE_FLASH_REV, DOUBLE_FLASH, DOUBLE_FLASH_REV, TRIPLE_FLASH, TWO_OPPOSITE, ON
 };
 
 enum DEVICE_MODE {
@@ -51,6 +51,9 @@ static DEVICE_MODE device_mode;
 
 static LED_STATE ledGpsMode = OFF; // BLUE in Tx100mW
 static LED_STATE ledMavlinkMode = OFF; // RED in Tx100mW
+
+static int led1FlashCounter = 0;
+static int led2FlashCounter = 0;
 
 static long led1Timer = 200.0;
 static long led2Timer = 0.0;
@@ -128,7 +131,7 @@ uint8_t ppmDump   = 0;
 uint32_t lastDump = 0;
 #endif
 
-static void serviceLED(LED_STATE ledMode, long &ledTimer, bool & ledState) {
+static void serviceLED(LED_STATE ledMode, long &ledTimer, bool & ledState, int &ledFlashCounter) {
 
 	switch (ledMode) {
 	//enum LED_STATE {OFF, SINGLE_FLASH, DOUBLE_FLASH, TWO_OPPOSITE, ON};
@@ -152,14 +155,35 @@ static void serviceLED(LED_STATE ledMode, long &ledTimer, bool & ledState) {
 		}
 		break;
 	case DOUBLE_FLASH:
-		if (!ledState && millis() - ledTimer > led_interval_singleBreak) {
+		if (!ledState && millis() - ledTimer > led_interval_singleBreak && ledFlashCounter == 0) {
+			ledState = true;
+			ledTimer = millis();
+		}else if (!ledState && millis() - ledTimer > led_interval_singleFlash && ledFlashCounter > 0) {
 			ledState = true;
 			ledTimer = millis();
 		} else if (ledState && millis() - ledTimer > led_interval_singleFlash) {
 			ledState = false;
 			ledTimer = millis();
+			ledFlashCounter++;
+			if(ledFlashCounter == 2)
+				ledFlashCounter = 0;
 		}
 		break;
+	case DOUBLE_FLASH_REV:
+			if (ledState && millis() - ledTimer > led_interval_singleBreak && ledFlashCounter == 0) {
+				ledState = false;
+				ledTimer = millis();
+			}else if (ledState && millis() - ledTimer > led_interval_singleFlash && ledFlashCounter > 0) {
+				ledState = false;
+				ledTimer = millis();
+			} else if (!ledState && millis() - ledTimer > led_interval_singleFlash) {
+				ledState = true;
+				ledTimer = millis();
+				ledFlashCounter++;
+				if(ledFlashCounter == 2)
+					ledFlashCounter = 0;
+			}
+			break;
 	case ON:
 		ledState = true;
 		break;
@@ -170,8 +194,8 @@ static void serviceLED(LED_STATE ledMode, long &ledTimer, bool & ledState) {
 }
 
 static void serviceLEDs() {
-	serviceLED(ledGpsMode, led1Timer, led1State);
-	serviceLED(ledMavlinkMode, led2Timer, led2State);
+	serviceLED(ledGpsMode, led1Timer, led1State, led1FlashCounter);
+	serviceLED(ledMavlinkMode, led2Timer, led2State, led2FlashCounter);
 
 	if (led1State) {
 		Green_LED_ON;
@@ -477,7 +501,7 @@ void setup(void)
 {
   //tiny.GPSinit();
 
-  
+
   uint32_t start;
 
   watchdogConfig(WATCHDOG_OFF);
@@ -953,6 +977,10 @@ void loop(void)
                 Serial.write('b');
 		if (OFF == ledMavlinkMode)
 			ledMavlinkMode = SINGLE_FLASH; // RED in Tx100mW
+		else if (SINGLE_FLASH == ledMavlinkMode)
+			ledMavlinkMode = DOUBLE_FLASH;
+		else if (DOUBLE_FLASH == ledMavlinkMode)
+					ledMavlinkMode = DOUBLE_FLASH_REV;
 		else
 			ledMavlinkMode = OFF;
 	}

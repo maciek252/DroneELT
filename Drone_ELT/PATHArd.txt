@@ -1,0 +1,5 @@
+ARDMK_DIR=/home/maciek/k/Arduino-Makefile
+DESKTOP_SESSION=LXDE
+PATH=/home/maciek/.jenv/shims:/home/maciek/.jenv/bin:/opt/stm32/sourcery/bin:/home/maciek/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:JAVA_HOME:/home/maciek/Downloads/kk-multicopter-multiwii/ArduPlane/gcc-arm-none-eabi-4_7-2014q2/bin
+ARDUINO_DIR=/home/maciek/k/arduino-1.0.3
+AVR_TOOLS_DIR=/home/maciek/k/arduino-1.0.3/hardware/tools/avr

@@ -29,6 +29,7 @@ void request_mavlink_rates() {
 
 extern bool oko;
 
+
 bool read_mavlink() {
 	mavlink_message_t msg;
 	mavlink_status_t status;
@@ -45,10 +46,11 @@ bool read_mavlink() {
 		//    mavlink_active = 1;//test
 		//    lastMAVBeat = millis();
 		uint8_t c = Serial.read();
+
 		//mavlink_active = true;
 		//return true;
-		//Serial.write(c);
-		//continue;
+		Serial.write(c);
+
 		/*           if( c == 'q' ){
 		 oko = true;
 		 }

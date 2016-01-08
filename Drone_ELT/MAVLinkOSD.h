@@ -40,8 +40,8 @@ void read_mavlink(){
     mavlink_message_t msg; 
     mavlink_status_t status;
 
-     if(millis() > lastMAVBeat + 1000){
-       mavlink_active = 0;
+     if(millis() - lastMAVBeat > 1000){
+       mavlink_active = false;
 //       Serial.flush()
     }
 
@@ -52,7 +52,8 @@ void read_mavlink(){
   //    mavlink_active = 1;//test
   //    lastMAVBeat = millis();
       uint8_t c = Serial.read();
-//      Serial.write(c); 
+      //Serial.write(c);
+      //continue;
 /*           if( c == 'q' ){
                 oko = true;
               }
@@ -65,6 +66,7 @@ void read_mavlink(){
   */      
 //        if(false){
       if( mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) {
+    	  	  Serial.write("parse mav OK");
             lastMAVBeat = millis();
             mavlink_active = 1;
             //handle msg
@@ -211,4 +213,5 @@ void read_mavlink(){
 //    parse_error += status.parse_error;
 
 }
+
 

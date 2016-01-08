@@ -1,7 +1,7 @@
 // **********************************************************
 // ************************ openLRSng ***********************https://www.google.com/search?q=text%2Fhtml&ie=UTF-8
 // **********************************************************
-// ** by Kari Hautio - kha @ AeroQuad/RCGroups/IRC(Freenode)
+ // ** by Kari Hautio - kha @ AeroQuad/RCGroups/IRC(Freenode)
 // ** other commits by cTn-dev, rlboyd, DTFUHF, pwarren
 //
 // Developer chat at IRC: #openLRS @ freenode
@@ -53,8 +53,8 @@
 // Enable one of the lines below (remove leading //)
 //#define BOARD_TYPE 0 // 0 = Flytron OpenLRS M1 Tx Board (not verified)
 //#define BOARD_TYPE 1 // 1 = Flytron OpenLRS M1 Rx Board as TX (not verified)
-//#define BOARD_TYPE 2 // 2 = Flytron OpenLRS M2/M3 Tx Board / OrangeRx UHF TX
-#define BOARD_TYPE 3 // 3 = Flytron OpenLRS Rx v2 Board / OrangeRx UHF RX / HawkEye UHF RX (RX and TX supported)
+#define BOARD_TYPE 2 // 2 = Flytron OpenLRS M2/M3 Tx Board / OrangeRx UHF TX
+//#define BOARD_TYPE 3 // 3 = Flytron OpenLRS Rx v2 Board / OrangeRx UHF RX / HawkEye UHF RX (RX and TX supported)
 //#define BOARD_TYPE 4 // 4 = OpenLRSngTX / HawkEye UHF TX
 //#define BOARD_TYPE 5 // 5 = OpenLRSngRX-4/6ch (DTF UHF/HawkEye) (RX and TX supported)
 //#define BOARD_TYPE 6 // 6 = DTF UHF/HawkEye DeluxeTX (Atmega32u4)
@@ -64,7 +64,7 @@
 //#define RFMTYPE 915
 
 //### Enabled Features (some features can be enabled / disabled with compile flag)
-#define CLI // Command-line interface
+//#define CLI // Command-line interface
 //#define CONFIGURATOR // Phoenix Serial Protocol (required for Configurator to work)
 
 //### DEBUG flags, may be dangerous
@@ -73,7 +73,8 @@
 //#define TEST_HALT_TX_BY_CH3 // freeze TX
 //#define SLAVE_STATISTICS // output master/slave stats on RX serial
 //#define DEBUG_DUMP_PPM // dump PPM data on serial (both TX/RX)
-
+// test
+//e
 
 //####### Transparant serial #######
 #define COM_BUF_MAXSIZE 32 // maximum downlink packet size. Max value is 64 , No use having higher than SERIAL_BUFSIZE, (also 1 byte per rf packet is dedicated for datalength and flags). Mavlink telemetry mode allows for serial downlink != 9
@@ -120,5 +121,6 @@
 #include "serialPPM.h"
 #include "RX.h"
 #endif
+
 
 

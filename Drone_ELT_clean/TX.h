@@ -16,8 +16,8 @@ static long led_interval_doubleBreak = 200;
 static long ledGpsActivityTimer = 0.0;
 static long ledMavlinkActivityTimer = 0.0;
 
-enum LED_STATE {
-	OFF, SINGLE_FLASH, SINGLE_FLASH_REV, DOUBLE_FLASH, TWO_OPPOSITE, ON
+enum LED_STATE {o
+	OFF, SINGLE_FLASH, SINGLE_FLASH_REV, DOUBLE_FLASH, DOUBLE_FLASH_REV, TWO_OPPOSITE, ON
 };
 
 enum DEVICE_MODE {
@@ -751,12 +751,50 @@ uint16_t getChannel(uint8_t ch) {
 	}
 }
 
+
+bool testIfNMEA3() {
+	//Serial.setTimeout(15000UL);
+
+	char inData[250]; // Allocate some space for the string
+	 int inChar; // Where to store the character read
+	//Serial.write("ddd");
+	int index33 = 0;
+	inData[0] = 0;
+
+
+
+
+
+
+
+	while (Serial.available() > 0) {
+		//str = Serial.readString();
+		//str = Serial.readStringUntil('');
+		//return true;
+		inChar = Serial.read(); // Read a character
+		if (index33 < 203) { // One less than the size of the array
+
+
+			inData[index33] = inChar; // Store it
+			index33++; // Increment where to write next
+			inData[index33] = 0;//'\0'; // Null terminate the string
+		}
+	}
+	// GPRMC - rzadko
+	if (index33 > 0 && strstr(inData, "GNGSA")) {
+		Serial.print("Wynik: true");
+		return true;
+	}
+	Serial.print("NMEA: false");
+	return false;
+}
+
 /////////////////////////////////////// LOOP ///////////////////////////////////////////////////
 // ELT
 
 void beep() {
 	// https://www.arduino.cc/en/Tutorial/Melody
-	int duration = 300;
+	int duration = 30;
 	int tone = 1915;
 	for (long i = 0; i < duration * 1000L; i += tone * 2) {
 		digitalWrite(BUZZER_ACT, HIGH);
@@ -767,29 +805,29 @@ void beep() {
 
 }
 /*
-void updateLEDModes(){
-	switch(device_mode){
-		case NO_GPS:
-			ledMavlinkMode = OFF;
-			ledGpsMode = OFF;
-			break;
-		case NO_GPS_TRY_MAVLINK:
-					ledMavlinkMode = OFF;
-					ledGpsMode = OFF;
-					break;
-		case GPS_SERIAL:
-					ledMavlinkMode = OFF;
-					ledGpsMode = SINGLE_FLASH;
-					break;
-		case MAVLINK_SERIAL:
-					ledMavlinkMode = SINGLE_FLASH;
-					ledGpsMode = OFF;
-					break;
-		default:
-			;
-	}
-}
-*/
+ void updateLEDModes(){
+ switch(device_mode){
+ case NO_GPS:
+ ledMavlinkMode = OFF;
+ ledGpsMode = OFF;
+ break;
+ case NO_GPS_TRY_MAVLINK:
+ ledMavlinkMode = OFF;
+ ledGpsMode = OFF;
+ break;
+ case GPS_SERIAL:
+ ledMavlinkMode = OFF;
+ ledGpsMode = SINGLE_FLASH;
+ break;
+ case MAVLINK_SERIAL:
+ ledMavlinkMode = SINGLE_FLASH;
+ ledGpsMode = OFF;
+ break;
+ default:
+ ;
+ }
+ }
+ */
 void loop(void) {
 
 	//updateLEDModes();
@@ -821,26 +859,33 @@ void loop(void) {
 
 	//        updateLBeep(false);
 	//        buzzerOff();
-#if 0
+#if 1
 	if (device_mode == NO_GPS_TRY_MAVLINK || device_mode == MAVLINK_SERIAL) {
-		read_mavlink();
 
+
+/*
+		if (device_mode == MAVLINK_SERIAL && !mavlink_active)
+			if (millis() - ledMavlinkActivityTimer > 4000) {
+				ledMavlinkActivityTimer = millis();
+				device_mode = NO_GPS_TRY_MAVLINK;
+				ledMavlinkMode = OFF;
+			}
+			*/
+
+		Serial.write("reading MAV");
+		read_mavlink();
+		return;
 		if (mavlink_active) {
+
+
 			ledMavlinkActivityTimer = millis();
 			//if (read_mavlink() && device_mode == NO_GPS) {
 			device_mode = MAVLINK_SERIAL;
 			ledMavlinkMode = SINGLE_FLASH;
 		}
+
 		return;
 	}
-	if (device_mode == MAVLINK_SERIAL && !mavlink_active) {
-		if (millis() - ledMavlinkActivityTimer > 4000) {
-			ledMavlinkActivityTimer = millis();
-			device_mode = NO_GPS_TRY_MAVLINK;
-		}
-		return;
-	}
-	return;
 #endif
 
 	if (millis() > mavLinkTimer + 100) {
@@ -849,8 +894,8 @@ void loop(void) {
 
 	if (NO_GPS == device_mode) {
 		ledGpsMode = OFF;
-		if (testIfNMEA2()) {
-		//if (readAndParse()) {
+		if (testIfNMEA3()) {
+			//if (readAndParse()) {
 			ledGpsActivityTimer = millis();
 			device_mode = GPS_SERIAL;
 		}
@@ -866,6 +911,7 @@ void loop(void) {
 			return;
 		}
 
+		return;
 		if ((millis() - last_beep_time) > 3000) {
 
 			last_beep_time = millis();
@@ -883,8 +929,6 @@ void loop(void) {
 		ledGpsMode = SINGLE_FLASH;
 		if (readAndParse()) {
 			ledGpsActivityTimer = millis();
-
-
 
 //      giveTinyGPS()->hdop();    
 			if (TinyGPS::GPS_INVALID_SATELLITES == giveTinyGPS()->satellites())

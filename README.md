@@ -3,6 +3,17 @@ ELT for drones
 
 DroneELT is an analogue of ELT (Emergency Locator Transmitter) rescue system for aircrafts. Its core is a Orange LRS module with an antenna and a separate battery, protected by a foam from crash damage, and receiving the MAVLINK data from the drone's flight controller. As soon as the MAVLINK messages stop coming, DroneELT starts to transmit over a predefined PMR channel (default: PMR 6) the last GPS position encoded in the BCD code.
 
+##LEDs 
+
+off - no data, drone not started (detected from data)
+1 flash - receiving data (MAVLINK or NMEA), no valid gps fix
+2 flashes - receiving data, valid fix
+1 flash inverted - receiving data, no valid fix, drone started (move detected), timeout to alarm running
+2 flash inverted - receiving data, valid fix, drone started (move detected)
+ON - drone started, no data, timeout to alarm running
+BOTH LEDS ON: transmitting alarm, long sound
+ONE LED ON: transmitting alarm, short sound
+
 ##Format of messages is as follows:
 
 LONG: low sound. Corresponds to byte 1.
@@ -28,6 +39,8 @@ will be
 
 When MAVLINK messages are transmitted again, DroneELT stops sending the rescue signal, switches the transmitter off and updates the position.
  
+ 
+ 
 
 ##Connection
 
@@ -45,6 +58,13 @@ TRANSMIT_ROLL - transmits the roll value instead of the GPS position, for testin
 Predefined settings
 
 -
+
+##Compilation
+
+The main branch is placed in the folder Drone_ELT_mod/.
+The code compiles using Arduino 1.0.3. It is planned to refactor it for more recent versions.  There is a makefile using the project Arduino-Makefile, which can be run by executing the script m.sh (the original Makefile is left for ArduinoIDE).
+
+There is an eclipse project, but it currently does not use the arduino plugin, because it is restricted to versions later than 1.5.x. It is placed in folder Drone_ELT_mod2/, but it refers to the source from Drone_ELT_mod/.
 
 ##TODO:
 
