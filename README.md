@@ -3,16 +3,18 @@ ELT for drones
 
 DroneELT is an analogue of ELT (Emergency Locator Transmitter) rescue system for aircrafts. Its core is a Orange LRS module with an antenna and a separate battery, protected by a foam from crash damage, and receiving the MAVLINK data from the drone's flight controller. As soon as the MAVLINK messages stop coming, DroneELT starts to transmit over a predefined PMR channel (default: PMR 6) the last GPS position encoded in the BCD code.
 
+*WARNING: some features from the description below are currently being implemented. See descriptions of the released versions.*
+
 ##LEDs 
 
 LEDs are used for signalling the current state of the device:
 
-* off - no data, drone not started (detected from data)
+* OFF - no data, drone not started (detected from data)
 * 1 flash (flash means LED ON, otherwise OFF) - receiving data (MAVLINK or NMEA), no valid gps fix
-* 2 flashes - receiving data, valid fix
-* 1 flash inverted (flash means LED OFF, otherwise ON) - receiving data, no valid fix, drone started (move detected), timeout to alarm running
+* 2 flashes - receiving data, valid fix, drone not started yet
+* ON - drone started, receiving no data, timeout to triggering alarm running
+* 1 flash inverted (flash means LED OFF, otherwise ON) - receiving data, no valid fix, drone started (move detected), timeout to triggering alarm running
 * 2 flashes inverted - receiving data, valid fix, drone started (move detected)
-* ON - drone started, no data, timeout to alarm running
 * BOTH LEDS ON: transmitting alarm, long sound
 * ONE LED ON: transmitting alarm, short sound
 
@@ -21,6 +23,20 @@ in OrangeLRS Tx: red LED - MAVlink, blue LED - GPS NMEA
 ##Button
 
 If present (in OrangeLRS Tx, but no Rx), when pressed the MAVLINK diode and the buzzer go on. The aim is to check if the device is alive.
+
+##Start and triggering alarm criteria
+
+Start criterion:
+*valid GPS fix being received
+*5 consecutive positions with distance of 10 meters from the average of the first 5 valid fixes
+
+Triggering alarm criterion:
+alarm is triggered if start criterion has been satisfied and 10 seconds have passed after one of the following events:
+
+*no data received
+*no valid fix
+*valid fix, less than 3 meters between averages from` 0-5 and 10-15 consecutive positions 
+
 
 ##Format of messages is as follows:
 
