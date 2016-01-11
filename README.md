@@ -19,6 +19,7 @@ LEDs are used for signalling the current state of the device with respect to MAV
 * ONE LED ON: transmitting alarm, short sound
 
 OrangeLRS Tx: red LED - MAVlink, blue LED - GPS NMEA
+
 OrangeLRS Rx: red LED - MAVlink, green LED - GPS NMEA
 
 ##Button
@@ -39,6 +40,7 @@ alarm is triggered if start criterion has been satisfied and 10 seconds have pas
 * no valid fix
 * valid fix, less than 3 meters between averages from` 0-5 and 10-15 consecutive positions 
 
+If none of these conditions is true, either trigger timeout or alarm stop.
 
 ##Format of messages is as follows:
 
