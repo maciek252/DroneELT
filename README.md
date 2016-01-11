@@ -27,15 +27,15 @@ If present (in OrangeLRS Tx, but no Rx), when pressed the MAVLINK diode and the 
 ##Start and triggering alarm criteria
 
 Start criterion:
-*valid GPS fix being received
-*5 consecutive positions with distance of 10 meters from the average of the first 5 valid fixes
+* valid GPS fix being received
+* 5 consecutive positions with distance of 10 meters from the average of the first 5 valid fixes
 
 Triggering alarm criterion:
 alarm is triggered if start criterion has been satisfied and 10 seconds have passed after one of the following events:
 
-*no data received
-*no valid fix
-*valid fix, less than 3 meters between averages from` 0-5 and 10-15 consecutive positions 
+* no data received
+* no valid fix
+* valid fix, less than 3 meters between averages from` 0-5 and 10-15 consecutive positions 
 
 
 ##Format of messages is as follows:
