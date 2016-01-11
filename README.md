@@ -7,7 +7,7 @@ DroneELT is an analogue of ELT (Emergency Locator Transmitter) rescue system for
 
 ##LEDs 
 
-LEDs are used for signalling the current state of the device:
+LEDs are used for signalling the current state of the device with respect to MAVlink and/or NMEA data received:
 
 * OFF - no data, drone not started (detected from data)
 * 1 flash (flash means LED ON, otherwise OFF) - receiving data (MAVLINK or NMEA), no valid gps fix
@@ -18,11 +18,13 @@ LEDs are used for signalling the current state of the device:
 * BOTH LEDS ON: transmitting alarm, long sound
 * ONE LED ON: transmitting alarm, short sound
 
-in OrangeLRS Tx: red LED - MAVlink, blue LED - GPS NMEA
+OrangeLRS Tx: red LED - MAVlink, blue LED - GPS NMEA
+OrangeLRS Rx: red LED - MAVlink, green LED - GPS NMEA
 
 ##Button
 
 If present (in OrangeLRS Tx, but no Rx), when pressed the MAVLINK diode and the buzzer go on. The aim is to check if the device is alive.
+For OrangeLRS Rx, the button pressing effect is achieved by connecting CH3 to GND.
 
 ##Start and triggering alarm criteria
 
@@ -39,6 +41,8 @@ alarm is triggered if start criterion has been satisfied and 10 seconds have pas
 
 
 ##Format of messages is as follows:
+
+Last valid position is transmitted:
 
 * LONG: low sound. Corresponds to byte 1.
 * SHORT: high sound. Corresponds to byte 0.
@@ -70,6 +74,8 @@ When MAVLINK messages are transmitted again, DroneELT stops sending the rescue s
 
 ![](https://github.com/maciek252/DroneELT/blob/master/img/DroneELT.svg.png)
 
+Currently the serial port baudrate is fixed at 57600.
+
 ##Compilation options
 
 (not implemented yet)
@@ -92,7 +98,9 @@ There is an eclipse project, but it currently does not use the arduino plugin, b
 
 ##TODO:
 
-* Android app for decoding the messages
+* MAVlink or NMEA over I2C, so that two sources of data are available
+* Android app for decoding messages
 * sign of the position 
 * transmitting other data (altitude?)
 * configuration from menu over serial link, similarily as in OrangeLRSng software. Storing the configuration in EEPROM memory.
+* transmitting not only the last position, but some number of most recent valid positions, or an average?
