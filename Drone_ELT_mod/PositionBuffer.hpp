@@ -8,72 +8,62 @@
 #ifndef DRONE_ELT_MOD_POSITIONBUFFER_HPP_
 #define DRONE_ELT_MOD_POSITIONBUFFER_HPP_
 
-class Position
-{
+class Position {
 public:
-	Position();
+	Position(){
+		latitude = 0.0;
+		longitude = 0.0;
+		hdop = 0.0;
+		numOfSats = 0.0;
+	};
 	Position(double latitude, double longitude, int numOfSats, double hdop);
-	Position(double latitude, double longitude){
+	Position(double latitude, double longitude) {
 		this->latitude = latitude;
 		this->longitude = longitude;
 	}
 
+	double getLatitude() {
+		return latitude;
+	}
+	double getLongitude() {
+		return longitude;
+	}
 private:
 	double latitude, longitude;
 	int numOfSats;
 	double hdop;
 };
 
-static Position positionValidWodynska[1] = {
-		Position(52.207850, 21.185813)
-};
+static Position positionValidWodynska[1] = { Position(52.207850, 21.185813) };
 
-static Position positionValidZyczynska[5] = {
-		Position(52.208367, 21.185661),
-		Position(52.208370, 21.185648),
-		Position(52.208360, 21.185664),
-		Position(52.208371, 21.185662),
-		Position(52.208360, 21.185648)};
+static Position positionValidZyczynska[5] = { Position(52.208367, 21.185661),
+		Position(52.208370, 21.185648), Position(52.208360, 21.185664),
+		Position(52.208371, 21.185662), Position(52.208360, 21.185648) };
 
 /*
-static Position positionValidXXX[5] = {
-		Position(),
-		Position(),
-		Position(),
-		Position(),
-		Position()};
-*/
+ static Position positionValidXXX[5] = {
+ Position(),
+ Position(),
+ Position(),
+ Position(),
+ Position()};
+ */
 
-static Position positionValidPKPWawer[6] = {
-		Position(52.223407, 21.149524),
-		Position(52.223397, 21.149543),
-		Position(52.223406, 21.149556),
-		Position(52.223390, 21.149541),
-		Position(52.223421, 21.149552),
-		Position(52.223413, 21.149540)};
+static Position positionValidPKPWawer[6] = { Position(52.223407, 21.149524),
+		Position(52.223397, 21.149543), Position(52.223406, 21.149556),
+		Position(52.223390, 21.149541), Position(52.223421, 21.149552),
+		Position(52.223413, 21.149540) };
 
-static Position positionValidOstrobramska[7] = {
-		Position(52.234116, 21.126134),
-		Position(52.234104, 21.126128),
-		Position(52.234110, 21.126135),
-		Position(52.234098, 21.126119),
-		Position(52.234110, 21.126116),
-		Position(52.234103, 21.126154),
-		Position(52.234117, 21.126123)};
+static Position positionValidOstrobramska[7] = { Position(52.234116, 21.126134),
+		Position(52.234104, 21.126128), Position(52.234110, 21.126135),
+		Position(52.234098, 21.126119), Position(52.234110, 21.126116),
+		Position(52.234103, 21.126154), Position(52.234117, 21.126123) };
 
-static Position positionValidSiedlce[1] = {
-		Position(52.165221, 22.282902)
-};
+static Position positionValidSiedlce[1] = { Position(52.165221, 22.282902) };
 
-static Position positionValidMoscow[1] = {
-		Position(55.757202, 37.621489)
-};
+static Position positionValidMoscow[1] = { Position(55.757202, 37.621489) };
 
-static Position positionValidCracow[1] = {
-		Position(50.061073, 19.944103)
-};
-
-
+static Position positionValidCracow[1] = { Position(50.061073, 19.944103) };
 
 /*
  * W-wa Miedzylesie Wodynska 52.207850, 21.185813
@@ -94,15 +84,13 @@ static Position positionValidCracow[1] = {
  *
  */
 
-
-class PositionBuffer
-{
+class PositionBuffer {
 public:
-	PositionBuffer(){
+	PositionBuffer() {
 		writePos = 0;
 	}
 
-	void  addGPSPosition(Position position);
+	void addGPSPosition(Position position);
 
 	Position getPreviousPosition(int index);
 
@@ -119,19 +107,18 @@ public:
 
 private:
 
-	static const int BUFFERSIZE=20;
+	static const int BUFFERSIZE = 20;
 	Position positions[BUFFERSIZE];
 
+	void addPosition(Position *array, int index, double time);
+	void addPosition(Position *array, int index);
+	int nextForward(int index, int offset);
+	int nextBackward(int index, int offset);
 
-	int nextForward(int offset);
-	int nextBackward(int offset);
-
-	int nextForward();
-	int nextBackward();
+	int nextForward(int index);
+	int nextBackward(int index);
 
 	int writePos;
 };
-
-
 
 #endif /* DRONE_ELT_MOD_POSITIONBUFFER_HPP_ */
