@@ -6,6 +6,7 @@
  */
 
 #include "PositionBuffer.hpp"
+#include "TinyGPS.h"
 
 
 int PositionBuffer::nextForward(int arg){
@@ -76,5 +77,9 @@ Position PositionBuffer::testWawer5(){
 	return averageFromRange(2,1);
 }
 
-
+double PositionBuffer::testDistanceWawerWodynska1(){
+	Position wawer = positionValidPKPWawer[0];
+	Position wodynska = positionValidWodynska[0];
+	return TinyGPS::distance_between(wawer.getLatitude(), wawer.getLongitude(), wodynska.getLatitude(), wodynska.getLongitude());
+}
 

@@ -104,6 +104,7 @@ public:
 	bool stopAlarmCriterionMet();
 
 	Position testWawer5();
+	double testDistanceWawerWodynska1();
 
 private:
 
