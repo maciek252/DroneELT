@@ -8,6 +8,8 @@
 #ifndef DRONE_ELT_MOD_POSITIONBUFFER_HPP_
 #define DRONE_ELT_MOD_POSITIONBUFFER_HPP_
 
+#include "LinkedList.h"
+
 class Position {
 public:
 	Position(){
@@ -15,6 +17,7 @@ public:
 		longitude = 0.0;
 		hdop = 0.0;
 		numOfSats = 0.0;
+		fired = false;
 	};
 	Position(double latitude, double longitude, int numOfSats, double hdop);
 	Position(double latitude, double longitude) {
@@ -22,13 +25,17 @@ public:
 		this->longitude = longitude;
 	}
 
+
+	bool fired;
+
 	double getLatitude() {
 		return latitude;
 	}
 	double getLongitude() {
 		return longitude;
 	}
-private:
+public:
+
 	double latitude, longitude;
 	int numOfSats;
 	double hdop;
@@ -86,9 +93,7 @@ static Position positionValidCracow[1] = { Position(50.061073, 19.944103) };
 
 class PositionBuffer {
 public:
-	PositionBuffer() {
-		writePos = 0;
-	}
+	PositionBuffer();
 
 	void addGPSPosition(Position position);
 
@@ -106,20 +111,38 @@ public:
 	Position testWawer5();
 	double testDistanceWawerWodynska1();
 
+	void tick();
+
 private:
+
+	LinkedList<Position> positionsForTesting;
+
+	double avgLatForSecond;
+	double avgLongForSecond;
+	long numOfSamplesInSecond;
+	double avgNumOfSatsForSecond;
+	double avgHdopForSecond;
+
 
 	static const int BUFFERSIZE = 20;
 	Position positions[BUFFERSIZE];
 
-	void addPosition(Position *array, int index, double time);
-	void addPosition(Position *array, int index);
+
+	void resetAvgPosition();
+
+	void addPositionToBeTriggered(Position *array, int index, double time);
+
 	int nextForward(int index, int offset);
 	int nextBackward(int index, int offset);
 
 	int nextForward(int index);
 	int nextBackward(int index);
 
+	void oneSecondTick();
 	int writePos;
+
+	long oneSecondTimer;
+
 };
 
 #endif /* DRONE_ELT_MOD_POSITIONBUFFER_HPP_ */

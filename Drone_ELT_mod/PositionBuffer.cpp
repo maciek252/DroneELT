@@ -8,6 +8,15 @@
 #include "PositionBuffer.hpp"
 #include "TinyGPS.h"
 
+PositionBuffer::PositionBuffer(){
+	oneSecondTimer = millis();
+	writePos = 0;
+	resetAvgPosition();
+}
+
+
+
+
 
 int PositionBuffer::nextForward(int arg){
 	if(arg == BUFFERSIZE)
@@ -40,13 +49,7 @@ void  PositionBuffer::addGPSPosition(Position position){
 	writePos = nextForward(writePos);
 }
 
-void PositionBuffer::addPosition(Position *array, int index, double time){
 
-}
-
-void PositionBuffer::addPosition(Position *array, int index){
-	addGPSPosition(array[index]);
-}
 
 Position PositionBuffer::averageFromRange(int previousBegin, int previousEnd){
 	double latitudeAvg = 0.0;
@@ -66,13 +69,15 @@ Position PositionBuffer::averageFromRange(int previousBegin, int previousEnd){
 
 }
 
+
+
 Position PositionBuffer::testWawer5(){
-	addPosition(positionValidPKPWawer, 0);
-	addPosition(positionValidPKPWawer, 1);
-	addPosition(positionValidPKPWawer, 2);
-	addPosition(positionValidPKPWawer, 3);
-	addPosition(positionValidPKPWawer, 4);
-	addPosition(positionValidPKPWawer, 5);
+	addPositionToBeTriggered(positionValidPKPWawer, 0, 1);
+	addPositionToBeTriggered(positionValidPKPWawer, 1, 1);
+	addPositionToBeTriggered(positionValidPKPWawer, 2, 1);
+	addPositionToBeTriggered(positionValidPKPWawer, 3, 1);
+	addPositionToBeTriggered(positionValidPKPWawer, 4, 1);
+	addPositionToBeTriggered(positionValidPKPWawer, 5, 1);
 
 	return averageFromRange(2,1);
 }
@@ -81,5 +86,37 @@ double PositionBuffer::testDistanceWawerWodynska1(){
 	Position wawer = positionValidPKPWawer[0];
 	Position wodynska = positionValidWodynska[0];
 	return TinyGPS::distance_between(wawer.getLatitude(), wawer.getLongitude(), wodynska.getLatitude(), wodynska.getLongitude());
+}
+
+void PositionBuffer::tick(){
+
+	if(millis() - oneSecondTimer > 1000){
+		oneSecondTimer = millis();
+		oneSecondTick();
+	}
+}
+
+void PositionBuffer::oneSecondTick(){
+
+	resetAvgPosition();
+	int i = millis() % 10;
+	if(positionsForTesting.size() > 10)
+		positionsForTesting.pop();
+	Position nowa;
+	nowa.fired = false;
+	nowa.numOfSats = i;
+	positionsForTesting.add(0, nowa);
+}
+
+void PositionBuffer::resetAvgPosition(){
+	avgLatForSecond = 0.0;
+	avgLongForSecond = 0.0;
+	numOfSamplesInSecond = 0;
+		avgNumOfSatsForSecond = 0;
+		avgHdopForSecond = 0;
+}
+
+void PositionBuffer::addPositionToBeTriggered(Position *array, int index, double time){
+
 }
 
