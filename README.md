@@ -10,13 +10,16 @@ DroneELT is an analogue of ELT (Emergency Locator Transmitter) rescue system for
 LEDs are used for signalling the current state of the device with respect to MAVlink and/or NMEA data received:
 
 * OFF - no data, drone not started (detected from data)
-* 1 flash (flash means LED ON, otherwise OFF) - receiving data (MAVLINK or NMEA), no valid gps fix
+* 1 flash (flash means LED ON, otherwise OFF) - receiving data (MAVLINK or NMEA),
+ no valid gps fix
 * 2 flashes - receiving data, valid fix, drone not started yet
-* ON - drone started, receiving no data, timeout to triggering alarm running
-* 1 flash inverted (flash means LED OFF, otherwise ON) - receiving data, no valid fix, drone started (move detected), timeout to triggering alarm running
-* 2 flashes inverted - receiving data, valid fix, drone started (move detected)
+* 1 flash inverted (flash means LED OFF, otherwise ON) - receiving data, valid fix, drone started (move detected)
+* ON - drone started, receiving no data, timeout to triggering alarm running (not used)
 * BOTH LEDS ON: transmitting alarm, long sound
 * ONE LED ON: transmitting alarm, short sound
+* BOTH LEDS ON inverted: transmtting alarm, long sound, timeout to end alarm running
+* ONE LED ON inverted: transmitting alarm, short sound, timeout to end alarm running
+
 
 OrangeLRS Tx: red LED - MAVlink, blue LED - GPS NMEA
 
@@ -35,12 +38,12 @@ Start criterion:
 
 Triggering alarm criterion:
 alarm is triggered if start criterion has been satisfied and 10 seconds have passed after one of the following events:
+for average positions from every last 6 seconds:
 
-* no data received
-* no valid fix
-* valid fix, less than 3 meters between averages from` 0-5 and 10-15 consecutive positions 
+* 0 or 1 valid fixes
+* 2-6 fixes, less than 3 meters between averages from every of these valid samples
 
-If none of these conditions is true, either trigger timeout or alarm stop.
+When the alarm is started, after transmitting a single sequence twice, the position is updated (average from 1 second), then transmitted twice, and so on.
 
 ##Format of messages is as follows:
 
@@ -106,3 +109,4 @@ There is an eclipse project, but it currently does not use the arduino plugin, b
 * transmitting other data (altitude?)
 * configuration from menu over serial link, similarily as in OrangeLRSng software. Storing the configuration in EEPROM memory.
 * transmitting not only the last position, but some number of most recent valid positions, or an average?
+* consider switching the alarm off
