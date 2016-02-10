@@ -9,16 +9,14 @@ DroneELT is an analogue of ELT (Emergency Locator Transmitter) rescue system for
 
 LEDs are used for signalling the current state of the device with respect to MAVlink and/or NMEA data received:
 
-* OFF - no data, drone not started (detected from data)
-* 1 flash (flash means LED ON, otherwise OFF) - receiving data (MAVLINK or NMEA),
+* __OFF__ - no data, drone not started (detected from data)
+* __1 FLASH__ (flash means LED ON, otherwise OFF) - receiving data (MAVLINK or NMEA),
  no valid gps fix
-* 2 flashes - receiving data, valid fix, drone not started yet
-* 1 flash inverted (flash means LED OFF, otherwise ON) - receiving data, valid fix, drone started (move detected)
-* ON - drone started, receiving no data, timeout to triggering alarm running (not used)
-* BOTH LEDS ON: transmitting alarm, long sound
-* ONE LED ON: transmitting alarm, short sound
-* BOTH LEDS ON inverted: transmtting alarm, long sound, timeout to end alarm running
-* ONE LED ON inverted: transmitting alarm, short sound, timeout to end alarm running
+* __2 FLASHES__ - receiving data, valid fix, drone not started yet
+* __1 FLASH INVERTED__ (flash means LED OFF, otherwise ON) - receiving data, valid fix, drone started (move detected)
+~~* ON - drone started, receiving no data, timeout to triggering alarm running (not used)~~
+* __BOTH LEDS ON__: transmitting alarm, long sound
+* __ONE LED ON__: transmitting alarm, short sound
 
 
 OrangeLRS Tx: red LED - MAVlink, blue LED - GPS NMEA
