@@ -1,6 +1,10 @@
 
 //#include "serialport.h"
 
+#define ToDeg(x) (x*57.2957795131)	// *180/pi
+
+#include <AP_Common.h>
+
 #include "../GCS_MAVLink/include/mavlink/v1.0/mavlink_types.h"
 #include "../GCS_MAVLink/include/mavlink/v1.0/ardupilotmega/mavlink.h"
 
@@ -52,7 +56,7 @@ void read_mavlink(){
   //    mavlink_active = 1;//test
   //    lastMAVBeat = millis();
       uint8_t c = Serial.read();
-      Serial.write(c); 
+//      Serial.write(c);
 /*           if( c == 'q' ){
                 oko = true;
               }
@@ -211,4 +215,3 @@ void read_mavlink(){
 //    parse_error += status.parse_error;
 
 }
-

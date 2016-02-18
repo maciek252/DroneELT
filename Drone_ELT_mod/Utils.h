@@ -4,8 +4,8 @@
  *  Created on: Jan 15, 2016
  *      Author: maciek
  */
-#ifndef DRONE_ELT_MOD_UTILS_HPP_
-#define DRONE_ELT_MOD_UTILS_HPP_
+#ifndef _DRONE_ELT_MOD_UTILS_H_
+#define _DRONE_ELT_MOD_UTILS_H_
 
 #include <Arduino.h>
 
@@ -59,4 +59,4 @@ void printDouble( double val, byte precision){
 }
 
 
-#endif /* DRONE_ELT_MOD_UTILS_HPP_ */
+#endif /* DRONE_ELT_MOD_UTILS_H_ */

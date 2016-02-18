@@ -7,10 +7,7 @@
 #include "LEDs.h"
 #include <Arduino.h>
 
-
-
-
-static void serviceLED(LED_STATE ledMode, long &ledTimer, bool & ledState,
+void serviceLED(LED_STATE ledMode, long &ledTimer, bool & ledState,
 		int &ledFlashCounter) {
 
 	switch (ledMode) {
@@ -31,6 +28,15 @@ static void serviceLED(LED_STATE ledMode, long &ledTimer, bool & ledState,
 		} else if (!ledState
 				&& millis() - ledTimer > led_interval_singleFlash + 1000) {
 			ledState = true;
+			ledTimer = millis();
+		}
+		break;
+	case QUICK_FLASH:
+		if (!ledState && millis() - ledTimer > led_interval_quickFlash) {
+			ledState = true;
+			ledTimer = millis();
+		} else if (ledState && millis() - ledTimer > led_interval_quickFlash) {
+			ledState = false;
 			ledTimer = millis();
 		}
 		break;

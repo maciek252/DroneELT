@@ -13,11 +13,20 @@
 static long led_interval_singleBreak = 1000;
 static long led_interval_singleFlash = 200;
 static long led_interval_doubleBreak = 200;
+static long led_interval_quickFlash = 50;
+
+static int led1FlashCounter = 0;
+static int led2FlashCounter = 0;
+
+static long led1Timer = 0.0;
+static long led2Timer = 0.0;
+
 
 
 
 enum LED_STATE {
 	OFF,
+	QUICK_FLASH,
 	SINGLE_FLASH,
 	SINGLE_FLASH_REV,
 	DOUBLE_FLASH,
@@ -29,7 +38,7 @@ enum LED_STATE {
 
 
 
-static void serviceLED(LED_STATE ledMode, long &ledTimer, bool & ledState,
+void serviceLED(LED_STATE ledMode, long &ledTimer, bool & ledState,
 		int &ledFlashCounter);
 
 #endif /* DRONE_ELT_MOD_LEDS_H_ */

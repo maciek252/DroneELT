@@ -8,7 +8,7 @@
 #include "PositionBuffer.h"
 #include <FastSerial.h>
 #include <Arduino.h>
-#include "TinyGPS.h"
+//#include "TinyGPS2.h"
 #include "Utils.h"
 #include "MemoryFree.h"
 

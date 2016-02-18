@@ -33,10 +33,15 @@
 #include "WProgram.h"
 #endif
 */
-#include <FastSerial.h>
-#include "TinyGPS2.h"
+//#include <FastSerial.h>
+#include "TinyGPS.h"
 //#include <stdlib.h>
-TinyGPS tinyGPS;
+static TinyGPS tinyGPS;
+TinyGPS * giveTinyGPS() {
+	return &tinyGPS;
+}
+
+
 //const char *  strum = "f4ji$GPGGA,183730,3907.356,N,12102.482,W,1,05,1.6,646.4,M,-24.1,M,,*75\nff3fs$GPRMC,183729,A,3907.356,N,12102.482,W,000.0,360.0,080301,015.5,E*6F";
 //const char *strum4 = "$GNGGA,232924.80,5212.87930,N,02110.59355,E,1,06,3.64,94.9,M,34.1,M,,*7F$GNRMC,232925.00,A,5212.87935,N,02110.59339,E,0.208,,011215,,,A*6C";
 /*
@@ -123,69 +128,8 @@ void readAndParseTest() {
 }
 #endif
 
-int StringContains(String s, String search) {
-	int max = s.length() - search.length();
-	int lgsearch = search.length();
 
-	for (int i = 0; i <= max; i++) {
-		if (s.substring(i, i + lgsearch) == search)
-			return i;
-	}
 
-	return -1;
-}
-
-// readAndParse requires valid position to test if NMEA is well formed
-bool testIfNMEA() {
-	String str = "";
-//	  Serial.setTimeout(15000UL);
-
-	while (Serial.available() > 0) {
-		//str = Serial.readString();
-		//str = Serial.readStringUntil('');
-		//return true;
-		str += char(Serial.read());
-	}
-	// GPRMC - rzadko
-	Serial.print("string:" + str);
-	if (StringContains(str, "$GNGSA,") != -1
-			|| StringContains(str, "$GPGSA,") != -1) {
-		Serial.print("Wynik: true");
-		return true;
-	}
-	Serial.print("Wynik: false");
-	return false;
-}
-
-bool testIfNMEA2() {
-//	  Serial.setTimeout(15000UL);
-
-	char inData[200]; // Allocate some space for the string
-	char inChar; // Where to store the character read
-	byte index = 0; // Index into array; where to store the character
-
-	while (Serial.available() > 0) {
-		//str = Serial.readString();
-		//str = Serial.readStringUntil('');
-		//return true;
-		if (index < 191) { // One less than the size of the array
-
-			inChar = Serial.read(); // Read a character
-			inData[index] = inChar; // Store it
-			index++; // Increment where to write next
-			inData[index] = '\0'; // Null terminate the string
-		}
-	}
-	// GPRMC - rzadko
-	if (index > 0 && strstr(inData, "GNGSA")) {
-		Serial.print("Wynik: true");
-		return true;
-	}
-	Serial.print("Wynik: false");
-	return false;
-}
-
-/*
 bool readAndParse() {
 //  readAndParseTest();
 	while (Serial.available() > 0) {
@@ -201,5 +145,5 @@ bool readAndParse() {
 	}
 	return false;
 }
-*/
+
 #endif

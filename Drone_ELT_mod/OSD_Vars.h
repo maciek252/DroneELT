@@ -1,3 +1,7 @@
+#ifndef __OSD_VARS_H__
+#define __OSD_VARS_H__
+#include <Arduino.h>
+
 /*Panels variables*/
 //Will come from APM telem port
 
@@ -198,3 +202,4 @@ static uint8_t      rssiraw_on = 0;
 static uint8_t      rssi_warn_level = 0;
 
 
+#endif
