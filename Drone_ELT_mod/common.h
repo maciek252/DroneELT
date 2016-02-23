@@ -635,6 +635,8 @@ void beacon_long_sound(){
 void beacon_send_digit(int8_t numm){
 // long - 0
 // short - 1
+
+
   bool playBetween = false;
 
   int delayInsideDigit = 100;

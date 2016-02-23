@@ -4,6 +4,8 @@
 #include "../GCS_MAVLink/include/mavlink/v1.0/mavlink_types.h"
 #include "../GCS_MAVLink/include/mavlink/v1.0/ardupilotmega/mavlink.h"
 
+#define ToRad(x) (x*0.01745329252)	// *pi/180
+#define ToDeg(x) (x*57.2957795131)	// *180/pi
 
 
 
