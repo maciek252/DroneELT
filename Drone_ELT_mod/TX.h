@@ -20,6 +20,8 @@ TinyGPS * giveTinyGPS() {
 static long ledGpsActivityTimer = 0.0;
 static long ledMavlinkActivityTimer = 0.0;
 
+static int nmeaDetectionCounter = 0;
+
 enum DEVICE_MODE {
 	NO_GPS,
 	NO_GPS_TRY_MAVLINK,
@@ -30,7 +32,7 @@ enum DEVICE_MODE {
 };
 
 static DEVICE_MODE device_mode = NO_GPS;
-		//NO_GPS_TRY_MAVLINK; //NO_GPS;
+//NO_GPS_TRY_MAVLINK; //NO_GPS;
 
 enum ELT_STATE {
 	NO_POSITION_DATA_RCV, // leds off
@@ -416,6 +418,7 @@ void setup(void) {
 //  Serial.setBuffers(serial_rxbuffer, SERIAL_BUF_RX_SIZE, serial_txbuffer, SERIAL_BUF_TX_SIZE);
 //  Serial.begin(115200);
 	Serial.begin(57600);
+	//Serial.setTimeout(15000UL);
 #endif
 	profileInit();
 	txReadEeprom();
@@ -689,20 +692,200 @@ static void serviceLEDs() {
 	}
 }
 
-bool testIfNMEA3() {
+bool testIfNMEA6(uint8_t inChar) {
 	//Serial.setTimeout(15000UL);
 
+	//String str = Serial.readString();
+	//str = Serial.readStringUntil('');
+	//return true;
+	//uint8_t
+	//byte inChar = Serial.read(); // Read a character
+	//continue;
+
+	//	 if (!( (inChar >= 'a' && inChar <= 'z') || (inChar >= 'A' && inChar <= 'Z') || (inChar >= '0' && inChar <= '9')))
+	//	 continue;
+
+#if 0
+	Serial.write('v');
+	Serial.write(inChar);
+#endif
+
+	//return true;
+
+	if (nmeaDetectionCounter == 0 && inChar == 'G') {
+		nmeaDetectionCounter = 1;
+	} else if (nmeaDetectionCounter == 1 && inChar == 'N') {
+		nmeaDetectionCounter = 2;
+	} else if (nmeaDetectionCounter == 2 && inChar == 'G') {
+		nmeaDetectionCounter = 3;
+	} else if (nmeaDetectionCounter == 3 && inChar == 'S') {
+		nmeaDetectionCounter = 4;
+	} else if (nmeaDetectionCounter == 4 && inChar == 'A') {
+		nmeaDetectionCounter = 0;
+		Serial.write('T');
+		return true;
+	} else {
+		nmeaDetectionCounter = 0;
+	}
+
+	return false;
+
+}
+////////////////////////////////////////////////// service mavlink /////////////////////////////////////
+void serviceMavlink() {
+
+	uint32_t timeUs, timeMs;
+	float mavLinkTimer = 0;
+
+	//        updateLBeep(false);
+	//        buzzerOff();
+
+	//read_mavlink(c);
+	//    return;
+	//  watchdogReset();
+
+#if 0
+	if (millis() > mavLinkTimer + 100) {
+		mavLinkTimer = millis();
+		///       OnMavlinkTimer();
+
+		//                read_mavlink();
+		//                Serial.flush();
+	}
+#endif
+	if (millis() > lastLED + 1000) {
+		lastLED = millis();
+		//Serial.flush();
+		/*
+		 beacon_initialize_audio();
+		 beacon_tone(840,5);
+		 watchdogReset();
+		 beacon_finish_audio();
+		 */
+		Serial.write("okoeee");
+		Serial.write('Q');
+		//return;
+		char buf[6];
+
+		//http://forum.arduino.cc/index.php?topic=44262.0
+		//http://stackoverflow.com/questions/27651012/arduino-sprintf-float-not-formatting
+		//    osd_roll = 2.35;
+		dtostrf(osd_roll, 5, 1, buf);
+		Serial.write(buf[0]);
+		Serial.write(buf[1]);
+		Serial.write(buf[2]);
+		Serial.write(buf[3]);
+		Serial.write(buf[4]);
+		Serial.write(buf[5]);
+#if 0
+		if(osd_roll > 45.0 && osd_roll < 53.0) {
+			Serial.write('!');
+			Serial.write('!');
+			osd_roll = 0;
+			//Serial.flush();
+			Serial.end();
+			beacon_send_number(02.953, 2, 3, 2);
+			//Serial.flush();
+			Serial.begin(57600);
+		}
+#endif
+		//Serial.flush();
+
+		//	 Serial.print("ee");
+		//        Serial.println(osd_roll);
+
+		if (mavlink_active == 1) {
+
+			device_mode = MAVLINK_SERIAL;
+			ledMavlinkMode = DOUBLE_FLASH;
+
+			//  	if (mavbeat == 1) {
+			//Green_LED_OFF;
+			//Red_LED_ON;
+			Serial.write('A');
+			//              Serial.flush();
+			//Serial.println("Mavlink active");
+
+			//        beacon_send_prelude(1);
+			//               beacon_tone(440,1);
+			//              watchdogReset();
+			//                delay(10);
+			//                beacon_finish_audio();
+
+			//		 beacon_initialize_audio();
+			//                beacon_send_prelude(2);
+			//		 beacon_tone(240,10);
+			//		 watchdogReset();
+			//		 beacon_finish_audio();
+			//		 delay(300);
+			//	 beacon_send_number(7, 2, 2, 2);
+
+			//static uint8_t      osd_satellites_visible = 0;     // number of satelites
+			//static uint8_t      osd_fix_type = 0;               // GPS lock 0-1=no fix, 2=2D, 3=3D
+			if (osd_fix_type == 3) {
+				last_osd_lon = osd_lon;
+				last_osd_lat = osd_lat;
+				last_osd_satellites_visible = osd_satellites_visible;
+			}
+
+		} else {
+			//           beacon
+			//           beacon_tone(840,2);
+			//          watchdogReset();
+			//              delay(10);
+
+			//Serial.println("NO Mavlink");
+			return;
+			beacon_send_number(12.345, 2, 3, 2);
+
+			//        	 beacon_send_number(osd_roll, 2, 1, 2);
+			//               	 beacon_send_number(osd_satellites_visible, 2, 0, 2);
+			if (last_osd_lon != 0.0 && last_osd_lat != 0.0) {
+				beacon_send_number(last_osd_satellites_visible, 2, 0, 2);
+				beacon_send_number(last_osd_lon, 3, 5, 2);
+				beacon_send_number(last_osd_lat, 3, 5, 2);
+			}
+			/*
+			 beacon_initialize_audio();
+			 beacon_tone(740,5);
+			 watchdogReset();
+			 beacon_finish_audio();
+
+
+			 Green_LED_ON;
+			 Red_LED_OFF;*/
+
+		}
+	}
+}
+//////////////////////////////////////////////////////////////////////////////////////
+
+bool testIfNMEA5() {
+	Serial.setTimeout(15000UL);
+
 	char inData[250]; // Allocate some space for the string
-	char inChar; // Where to store the character read
+	uint8_t inChar; // Where to store the character read
 	//Serial.write("ddd");
 	int index33 = 0;
 	inData[0] = 0;
 
 	while (Serial.available() > 0) {
-		//str = Serial.readString();
+		//String str = Serial.readString();
 		//str = Serial.readStringUntil('');
 		//return true;
 		inChar = Serial.read(); // Read a character
+		//continue;
+
+		if (!((inChar >= 'a' && inChar <= 'z')
+				|| (inChar >= 'A' && inChar <= 'Z')
+				|| (inChar >= '0' && inChar <= '9')))
+			continue;
+
+#if 1
+		Serial.write('v');
+		Serial.write(inChar);
+#endif
+
 		if (index33 < 203) { // One less than the size of the array
 
 			inData[index33] = inChar; // Store it
@@ -711,12 +894,13 @@ bool testIfNMEA3() {
 		}
 	}
 	// GPRMC - rzadko
-	if (index33 > 0)
-		if (strstr(inData, "GNGSA")) {
+	if (index33 >= 5) {
+		if (strstr(inData, "GNGSA") != NULL) {
 			//Serial.print("Wynik: true");
-			Serial.write('t');
+			Serial.write('T');
 			return true;
 		}
+	}
 	//Serial.write('f');
 	//Serial.print("NMEA: false");
 	return false;
@@ -753,6 +937,7 @@ void loop(void) {
 		detectionTimer = millis();
 		//Serial.flush();
 		Serial.write('D');
+
 		if (NO_GPS == device_mode) {
 			//updateLBeep(true);
 			device_mode = NO_GPS_TRY_MAVLINK;
@@ -811,450 +996,114 @@ void loop(void) {
 
 	/////////////////////////////////////////////////// GPS SERIAL ////////////////////////////////////////
 
-	#if 0
+	while (Serial.available() > 0) {
+
+		uint8_t c = Serial.read();
+
+#if 1
 		if (NO_GPS == device_mode) {
 			//ledGpsMode = OFF;
-			if (testIfNMEA3()) {
+			if (testIfNMEA6(c)) {
 				//if (readAndParse()) {
-				ledGpsActivityTimer = millis();
+				//ledGpsActivityTimer = millis();
 				device_mode = GPS_SERIAL;
-				ledGpsMode = SINGLE_FLASH;
+				//ledGpsMode = SINGLE_FLASH;
+				// PROBLEM Z SINGLE_FLASH!! wiesza sie
+				ledGpsMode = DOUBLE_FLASH;
 			}
 		}
-	#endif
+#endif
+#if 1
+		if ((NO_GPS_TRY_MAVLINK == device_mode || MAVLINK_SERIAL == device_mode)) {
 
-	#if 0
-		if (GPS_SERIAL == device_mode) {
+			uint32_t timeUs, timeMs;
+			float mavLinkTimer = 0;
 
-			if (millis() - ledGpsActivityTimer > 6000) {
-				ledGpsActivityTimer = millis();
-				ledGpsMode = OFF;
-				device_mode = NO_GPS;
-				return;
-			}
-			ledGpsMode = SINGLE_FLASH;
-			//Serial.write('S');
-			//return;
-	#if 0
-			if ((millis() - last_beep_time) > 3000) {
-				last_beep_time = millis();
-				/*
-				 if (live_tick_sound) {
-				 live_tick_sound = false;
-				 beacon_send_number(0, 1, 0, 0);
-				 } else {
-				 live_tick_sound = true;
-				 beacon_send_number(1, 1, 0, 0);
-				 }
-				 */
-			}
-	#endif
-			//led2mode = OFF;
+			//        updateLBeep(false);
+			//        buzzerOff();
 
-			if (readAndParse()) {
-				ledGpsActivityTimer = millis();
-
-				//      giveTinyGPS()->hdop();
-				if (TinyGPS::GPS_INVALID_SATELLITES
-						== tinyGPS.satellites()) {
-					//Serial.write("parseOK   NOFIX");
-					Serial.write('P');
-				} else {
-					//Serial.write("parseOK  SATS: " + giveTinyGPS()->satellites());
-					Serial.write('p');
-				}
-				return;
-				unsigned long age;
-				float flat = 0.0, flon = 0.0;
-				giveTinyGPS()->f_get_position(&flat, &flon, &age);
-				Serial.print("LAT=");
-				if (TinyGPS::GPS_INVALID_F_ANGLE == flat)
-					flat = 0.0;
-				if (TinyGPS::GPS_INVALID_F_ANGLE == flon)
-					flon = 0.0;
-				Serial.print(flat);
-				Serial.print(" LON=");
-				Serial.print(flon);
-				Serial.print(" SAT=");
-				if (flat != 0.0 && flon != 0.0) {
-					ledGpsMode = ON;
-					beacon_initialize_audio();
-					beacon_send_number(flat, 2, 5, 3);
-					beacon_send_number(flon, 2, 5, 3);
-				}
-				Serial.print(
-						giveTinyGPS()->satellites()
-								== TinyGPS::GPS_INVALID_SATELLITES ?
-								0 : giveTinyGPS()->satellites());
-				Serial.print(" PREC=");
-				Serial.print(
-						giveTinyGPS()->hdop() == TinyGPS::GPS_INVALID_HDOP ?
-								0 : giveTinyGPS()->hdop());
-
-			}
+			read_mavlink(c);
+			serviceMavlink();
 		}
-	#endif
-		////////////////////////////////////////////////////END GPS SERIAL ////////////////////////////////////
-		//return;
 
-		//if(!(NO_GPS_TRY_MAVLINK == device_mode || MAVLINK_SERIAL == device_mode))
-			//	return;
+#endif
 
-	uint32_t timeUs, timeMs;
-	float mavLinkTimer = 0;
-
-//        updateLBeep(false);
-//        buzzerOff();
-
-	read_mavlink();
-     //    return;
-//  watchdogReset();
-
-
-#if 0
-	if (millis() > mavLinkTimer + 100) {
-		mavLinkTimer = millis();
-///       OnMavlinkTimer();
-
-//                read_mavlink();
-//                Serial.flush();
 	}
-#endif
-	if (millis() > lastLED + 1000) {
-		lastLED = millis();
-		//Serial.flush();
-		/*
-		 beacon_initialize_audio();
-		 beacon_tone(840,5);
-		 watchdogReset();
-		 beacon_finish_audio();
-		 */
-		Serial.write("okoeee");
-		Serial.write('Q');
-		//return;
-		char buf[6];
 
-		//http://forum.arduino.cc/index.php?topic=44262.0
-		//http://stackoverflow.com/questions/27651012/arduino-sprintf-float-not-formatting
-//    osd_roll = 2.35;
-		dtostrf(osd_roll, 5, 1, buf);
-		Serial.write(buf[0]);
-		Serial.write(buf[1]);
-		Serial.write(buf[2]);
-		Serial.write(buf[3]);
-		Serial.write(buf[4]);
-		Serial.write(buf[5]);
 #if 0
-		if(osd_roll > 45.0 && osd_roll < 53.0) {
-			Serial.write('!');
-			Serial.write('!');
-			osd_roll = 0;
-			//Serial.flush();
-			Serial.end();
-			beacon_send_number(02.953, 2, 3, 2);
-			//Serial.flush();
-			Serial.begin(57600);
-		}
-#endif
-		//Serial.flush();
+	if (GPS_SERIAL == device_mode) {
 
-//	 Serial.print("ee");
-//        Serial.println(osd_roll);	 
-
-		if (mavlink_active == 1) {
-
-			device_mode = MAVLINK_SERIAL;
-			ledMavlinkMode = DOUBLE_FLASH;
-
-//  	if (mavbeat == 1) {
-			//Green_LED_OFF;
-			//Red_LED_ON;
-			Serial.write('A');
-//              Serial.flush();
-			//Serial.println("Mavlink active");
-
-			//        beacon_send_prelude(1);
-//               beacon_tone(440,1);
-			//              watchdogReset();
-//                delay(10);
-//                beacon_finish_audio();
-
-//		 beacon_initialize_audio();
-//                beacon_send_prelude(2);
-//		 beacon_tone(240,10);
-//		 watchdogReset();
-//		 beacon_finish_audio();
-//		 delay(300);
-			//	 beacon_send_number(7, 2, 2, 2);
-
-//static uint8_t      osd_satellites_visible = 0;     // number of satelites
-//static uint8_t      osd_fix_type = 0;               // GPS lock 0-1=no fix, 2=2D, 3=3D
-			if (osd_fix_type == 3) {
-				last_osd_lon = osd_lon;
-				last_osd_lat = osd_lat;
-				last_osd_satellites_visible = osd_satellites_visible;
-			}
-
-		} else {
-//           beacon
-			//           beacon_tone(840,2);
-			//          watchdogReset();
-			//              delay(10);
-
-			//Serial.println("NO Mavlink");
+		if (millis() - ledGpsActivityTimer > 6000) {
+			ledGpsActivityTimer = millis();
+			ledGpsMode = OFF;
+			device_mode = NO_GPS;
 			return;
-			beacon_send_number(12.345, 2, 3, 2);
-
-//        	 beacon_send_number(osd_roll, 2, 1, 2);
-//               	 beacon_send_number(osd_satellites_visible, 2, 0, 2);
-			if (last_osd_lon != 0.0 && last_osd_lat != 0.0) {
-				beacon_send_number(last_osd_satellites_visible, 2, 0, 2);
-				beacon_send_number(last_osd_lon, 3, 5, 2);
-				beacon_send_number(last_osd_lat, 3, 5, 2);
-			}
+		}
+		ledGpsMode = SINGLE_FLASH;
+		//Serial.write('S');
+		//return;
+#if 0
+		if ((millis() - last_beep_time) > 3000) {
+			last_beep_time = millis();
 			/*
-			 beacon_initialize_audio();
-			 beacon_tone(740,5);
-			 watchdogReset();
-			 beacon_finish_audio();
-
-
-			 Green_LED_ON;
-			 Red_LED_OFF;*/
-
+			 if (live_tick_sound) {
+			 live_tick_sound = false;
+			 beacon_send_number(0, 1, 0, 0);
+			 } else {
+			 live_tick_sound = true;
+			 beacon_send_number(1, 1, 0, 0);
+			 }
+			 */
 		}
-	}
-	return;
-
-#ifdef DEBUG_DUMP_PPM
-	if (ppmDump) {
-		uint32_t timeTMP = millis();
-		Serial.print(timeTMP - lastDump);
-		lastDump = timeTMP;
-		TelemetrySerial.print(':');
-		for (uint8_t i = 0; i < 16; i++) {
-			TelemetrySerial.print(PPM[i]);
-			TelemetrySerial.print(',');
-		}
-		TelemetrySerial.println();
-		ppmDump = 0;
-	}
 #endif
+		//led2mode = OFF;
 
-	if (spiReadRegister(0x0C) == 0) {     // detect the locked module and reboot
-		Serial.println("module locked?");
-		Red_LED_ON;
-		init_rfm(0);
-		rx_reset();
-		Red_LED_OFF;
-	}
+		if (readAndParse()) {
+			ledGpsActivityTimer = millis();
 
-	if (serialMode) {
-		while (TelemetrySerial.available()) {
-			uint8_t ch = TelemetrySerial.read();
-			processChannelsFromSerial(ch);
-		}
-	}
-
-#ifdef __AVR_ATmega32U4__
-	if (serialMode) {
-		while (Serial.available()) {
-			processChannelsFromSerial(Serial.read());
-		}
-	}
-#endif
-
-	if (RF_Mode == Received) {
-		// got telemetry packet
-		lastTelemetry = micros();
-		if (!lastTelemetry) {
-			lastTelemetry = 1; //fixup rare case of zero
-		}
-		linkQuality |= 1;
-		RF_Mode = Receive;
-		spiSendAddress(0x7f); // Send the package read command
-		for (int16_t i = 0; i < bind_data.serial_downlink; i++) {
-			rx_buf[i] = spiReadData();
-		}
-
-		if ((tx_buf[0] ^ rx_buf[0]) & 0x40) {
-			tx_buf[0] ^= 0x40; // swap sequence to ack
-
-			if ((bind_data.flags & TELEMETRY_MASK) == TELEMETRY_MAVLINK) { // Mavlink Rx only sends transparent serial data
-				const uint8_t byteCount = rx_buf[0] & 0x3F;
-
-				uint8_t i;
-				for (i = 0; i < byteCount; i++) {
-					const uint8_t ch = rx_buf[i + 1];
-					TelemetrySerial.write(ch);
-				}
-			} else if ((rx_buf[0] & 0x38) == 0x38) {
-				uint8_t i;
-				// transparent serial data...
-				for (i = 0; i <= (rx_buf[0] & 7);) {
-					i++;
-					if (bind_data.flags & TELEMETRY_FRSKY) {
-						frskyUserData(rx_buf[i]);
-					} else {
-						TelemetrySerial.write(rx_buf[i]);
-					}
-				}
-			} else if ((rx_buf[0] & 0x3F) == 0) {
-				RSSI_rx = rx_buf[1];
-				RX_ain0 = rx_buf[2];
-				RX_ain1 = rx_buf[3];
-#ifdef TEST_DUMP_AFCC
-#define SIGNIT(x) ((int16_t)(((x&0x200)?0xFC00U:0)|(x&0x3FF)))
-				Serial.print(SIGNIT(rfmGetAFCC()));
-				Serial.print(':');
-				Serial.println(SIGNIT((rx_buf[4] << 8) + rx_buf[5]));
-#endif
-				linkQualityRX = rx_buf[6];
-			}
-		}
-		if (serial_okToSend == 1) {
-			serial_okToSend = 2;
-		}
-		if (serial_okToSend == 3) {
-			serial_okToSend = 0;
-		}
-	}
-
-	uint32_t time = micros();
-
-	if ((sampleRSSI) &&((time - sampleRSSI) >= 3000)) {
-		RSSI_tx = rfmGetRSSI();
-		sampleRSSI = 0;
-	}
-
-	if ((time - lastSent) >= getInterval(&bind_data)) {
-		lastSent = time;
-
-		watchdogReset();
-
-#ifdef TEST_HALT_TX_BY_CH3
-		while (PPM[2] > 1013);
-#endif
-
-		if ((ppmAge < 8) || (!TX_CONFIG_GETMINCH())) {
-			ppmAge++;
-
-			if (lastTelemetry) {
-				if ((time - lastTelemetry) > getInterval(&bind_data)) {
-					// telemetry lost
-					if (!(tx_config.flags & MUTE_TX)) {
-						buzzerOn(BZ_FREQ);
-					}
-					rxerrors++;
-					lastTelemetry = 0;
-				} else {
-					// telemetry link re-established
-					buzzerOff();
-				}
-			}
-
-			// Construct packet to be sent
-			tx_buf[0] &= 0xc0; //preserve seq. bits
-			if (TelemetrySerial.available() > 0 && (serial_okToSend == 2)) {
-				tx_buf[0] ^= 0x80; // signal new data on line
-				uint8_t bytes = 0;
-				uint8_t maxbytes = 8;
-				if (getPacketSize(&bind_data) < 9) {
-					maxbytes = getPacketSize(&bind_data) - 1;
-				}
-				while ((bytes < maxbytes) && TelemetrySerial.available() > 0) {
-					bytes++;
-					const uint8_t ch = (uint8_t) TelemetrySerial.read();
-					tx_buf[bytes] = ch;
-					serial_resend[bytes] = ch;
-				}
-				tx_buf[0] |= (0x37 + bytes);
-				serial_resend[0] = bytes;
-				serial_okToSend = 3; // sent but not acked
-			} else if (serial_okToSend == 4) {
-				uint8_t i;
-				for (i = 0; i < serial_resend[0]; i++) {
-					tx_buf[i + 1] = serial_resend[i + 1];
-				}
-				tx_buf[0] |= (0x37 + serial_resend[0]);
-				serial_okToSend = 3; // sent but not acked
+			//      giveTinyGPS()->hdop();
+			if (TinyGPS::GPS_INVALID_SATELLITES
+					== tinyGPS.satellites()) {
+				//Serial.write("parseOK   NOFIX");
+				Serial.write('P');
 			} else {
-				uint16_t PPMout[16];
-				if (FSstate == 2) {
-					tx_buf[0] |= 0x01; // save failsafe
-					Red_LED_ON
-				} else {
-					tx_buf[0] |= 0x00; // servo positions
-					Red_LED_OFF
-					if (serial_okToSend == 0) {
-						serial_okToSend = 1;
-					}
-					if (serial_okToSend == 3) {
-						serial_okToSend = 4;  // resend
-					}
-				}
-				for (uint8_t i = 0; i < 16; i++) {
-					PPMout[i] = getChannel(tx_config.chmap[i]);
-				}
-				packChannels(bind_data.flags & 7, PPMout, tx_buf + 1);
+				//Serial.write("parseOK  SATS: " + giveTinyGPS()->satellites());
+				Serial.write('p');
 			}
-			//Green LED will be on during transmission
-			Green_LED_ON;
-
-			// Send the data over RF
-			if (altPwrIndex && bind_data.rf_power) {
-				if (altPwrCount++ == altPwrIndex) {
-					altPwrCount = 0;
-					rfmSetPower(bind_data.rf_power - 1);
-				} else {
-					rfmSetPower(bind_data.rf_power);
-				}
+			return;
+			unsigned long age;
+			float flat = 0.0, flon = 0.0;
+			giveTinyGPS()->f_get_position(&flat, &flon, &age);
+			Serial.print("LAT=");
+			if (TinyGPS::GPS_INVALID_F_ANGLE == flat)
+			flat = 0.0;
+			if (TinyGPS::GPS_INVALID_F_ANGLE == flon)
+			flon = 0.0;
+			Serial.print(flat);
+			Serial.print(" LON=");
+			Serial.print(flon);
+			Serial.print(" SAT=");
+			if (flat != 0.0 && flon != 0.0) {
+				ledGpsMode = ON;
+				beacon_initialize_audio();
+				beacon_send_number(flat, 2, 5, 3);
+				beacon_send_number(flon, 2, 5, 3);
 			}
+			Serial.print(
+					giveTinyGPS()->satellites()
+					== TinyGPS::GPS_INVALID_SATELLITES ?
+					0 : giveTinyGPS()->satellites());
+			Serial.print(" PREC=");
+			Serial.print(
+					giveTinyGPS()->hdop() == TinyGPS::GPS_INVALID_HDOP ?
+					0 : giveTinyGPS()->hdop());
 
-			rfmSetChannel(RF_channel);
-
-			tx_packet_async(tx_buf, getPacketSize(&bind_data));
-
-			//Hop to the next frequency
-			RF_channel++;
-
-			if ((RF_channel == MAXHOPS)
-					|| (bind_data.hopchannel[RF_channel] == 0)) {
-				RF_channel = 0;
-			}
-
-		} else {
-			if (ppmAge == 8) {
-				Red_LED_ON
-			}
-			ppmAge = 9;
-			// PPM data outdated - do not send packets
 		}
 	}
+#endif
+	////////////////////////////////////////////////////END GPS SERIAL ////////////////////////////////////
 
-	if ((bind_data.flags & TELEMETRY_MASK) && (RF_Mode == Transmitted)) {
-		linkQuality <<= 1;
-		RF_Mode = Receive;
-		rx_reset();
-		// tell loop to sample downlink RSSI
-		sampleRSSI = micros();
-		if (sampleRSSI == 0) {
-			sampleRSSI = 1;
-		}
-	}
-
-	if (bind_data.flags & TELEMETRY_FRSKY) {
-		uint8_t linkQualityTX = countSetBits(linkQuality & 0xfffe);
-
-		uint8_t compRX = compositeRSSI(RSSI_rx, linkQualityRX);
-		uint8_t compTX = compositeRSSI(RSSI_tx, linkQualityTX);
-
-		frskyUpdate(RX_ain0, RX_ain1, compRX, compTX, activeProfile);
-		//frskyUpdate(RX_ain0,RX_ain1,lastTelemetry?RSSI_rx:0,lastTelemetry?RSSI_tx:0);
-	}
-	//Green LED will be OFF
-	Green_LED_OFF;
-
-	checkFS();
 }
+
+
 #endif
