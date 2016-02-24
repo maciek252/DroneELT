@@ -752,7 +752,7 @@ void loop(void) {
 	if (millis() - detectionTimer > 6000) {
 		detectionTimer = millis();
 		//Serial.flush();
-		//Serial.write('D');
+		Serial.write('D');
 		if (NO_GPS == device_mode) {
 			//updateLBeep(true);
 			device_mode = NO_GPS_TRY_MAVLINK;
@@ -809,6 +809,97 @@ void loop(void) {
 
 	/////////////////////////////////////////////////// GPS SERIAL ////////////////////////////////////////
 
+	/////////////////////////////////////////////////// GPS SERIAL ////////////////////////////////////////
+
+	#if 0
+		if (NO_GPS == device_mode) {
+			//ledGpsMode = OFF;
+			if (testIfNMEA3()) {
+				//if (readAndParse()) {
+				ledGpsActivityTimer = millis();
+				device_mode = GPS_SERIAL;
+				ledGpsMode = SINGLE_FLASH;
+			}
+		}
+	#endif
+
+	#if 0
+		if (GPS_SERIAL == device_mode) {
+
+			if (millis() - ledGpsActivityTimer > 6000) {
+				ledGpsActivityTimer = millis();
+				ledGpsMode = OFF;
+				device_mode = NO_GPS;
+				return;
+			}
+			ledGpsMode = SINGLE_FLASH;
+			//Serial.write('S');
+			//return;
+	#if 0
+			if ((millis() - last_beep_time) > 3000) {
+				last_beep_time = millis();
+				/*
+				 if (live_tick_sound) {
+				 live_tick_sound = false;
+				 beacon_send_number(0, 1, 0, 0);
+				 } else {
+				 live_tick_sound = true;
+				 beacon_send_number(1, 1, 0, 0);
+				 }
+				 */
+			}
+	#endif
+			//led2mode = OFF;
+
+			if (readAndParse()) {
+				ledGpsActivityTimer = millis();
+
+				//      giveTinyGPS()->hdop();
+				if (TinyGPS::GPS_INVALID_SATELLITES
+						== tinyGPS.satellites()) {
+					//Serial.write("parseOK   NOFIX");
+					Serial.write('P');
+				} else {
+					//Serial.write("parseOK  SATS: " + giveTinyGPS()->satellites());
+					Serial.write('p');
+				}
+				return;
+				unsigned long age;
+				float flat = 0.0, flon = 0.0;
+				giveTinyGPS()->f_get_position(&flat, &flon, &age);
+				Serial.print("LAT=");
+				if (TinyGPS::GPS_INVALID_F_ANGLE == flat)
+					flat = 0.0;
+				if (TinyGPS::GPS_INVALID_F_ANGLE == flon)
+					flon = 0.0;
+				Serial.print(flat);
+				Serial.print(" LON=");
+				Serial.print(flon);
+				Serial.print(" SAT=");
+				if (flat != 0.0 && flon != 0.0) {
+					ledGpsMode = ON;
+					beacon_initialize_audio();
+					beacon_send_number(flat, 2, 5, 3);
+					beacon_send_number(flon, 2, 5, 3);
+				}
+				Serial.print(
+						giveTinyGPS()->satellites()
+								== TinyGPS::GPS_INVALID_SATELLITES ?
+								0 : giveTinyGPS()->satellites());
+				Serial.print(" PREC=");
+				Serial.print(
+						giveTinyGPS()->hdop() == TinyGPS::GPS_INVALID_HDOP ?
+								0 : giveTinyGPS()->hdop());
+
+			}
+		}
+	#endif
+		////////////////////////////////////////////////////END GPS SERIAL ////////////////////////////////////
+		//return;
+
+		//if(!(NO_GPS_TRY_MAVLINK == device_mode || MAVLINK_SERIAL == device_mode))
+			//	return;
+
 	uint32_t timeUs, timeMs;
 	float mavLinkTimer = 0;
 
@@ -816,11 +907,11 @@ void loop(void) {
 //        buzzerOff();
 
 	read_mavlink();
-//         return;
+     //    return;
 //  watchdogReset();
 
-//	 beacon_send_number(7, 2, 2, 2);
-//              read_mavlink();
+
+#if 0
 	if (millis() > mavLinkTimer + 100) {
 		mavLinkTimer = millis();
 ///       OnMavlinkTimer();
@@ -828,7 +919,7 @@ void loop(void) {
 //                read_mavlink();
 //                Serial.flush();
 	}
-
+#endif
 	if (millis() > lastLED + 1000) {
 		lastLED = millis();
 		//Serial.flush();
@@ -838,9 +929,9 @@ void loop(void) {
 		 watchdogReset();
 		 beacon_finish_audio();
 		 */
-		Serial.write("okoe");
+		Serial.write("okoeee");
 		Serial.write('Q');
-
+		//return;
 		char buf[6];
 
 		//http://forum.arduino.cc/index.php?topic=44262.0
@@ -853,7 +944,7 @@ void loop(void) {
 		Serial.write(buf[3]);
 		Serial.write(buf[4]);
 		Serial.write(buf[5]);
-#if 1
+#if 0
 		if(osd_roll > 45.0 && osd_roll < 53.0) {
 			Serial.write('!');
 			Serial.write('!');
@@ -871,12 +962,16 @@ void loop(void) {
 //        Serial.println(osd_roll);	 
 
 		if (mavlink_active == 1) {
+
+			device_mode = MAVLINK_SERIAL;
+			ledMavlinkMode = DOUBLE_FLASH;
+
 //  	if (mavbeat == 1) {
 			//Green_LED_OFF;
 			//Red_LED_ON;
 			Serial.write('A');
 //              Serial.flush();
-			Serial.println("Mavlink active");
+			//Serial.println("Mavlink active");
 
 			//        beacon_send_prelude(1);
 //               beacon_tone(440,1);
@@ -890,6 +985,7 @@ void loop(void) {
 //		 watchdogReset();
 //		 beacon_finish_audio();
 //		 delay(300);
+			//	 beacon_send_number(7, 2, 2, 2);
 
 //static uint8_t      osd_satellites_visible = 0;     // number of satelites
 //static uint8_t      osd_fix_type = 0;               // GPS lock 0-1=no fix, 2=2D, 3=3D
