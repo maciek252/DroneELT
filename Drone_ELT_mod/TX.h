@@ -4,6 +4,7 @@
 #ifndef __TX_H__
 #define __TX_H__
 
+
 #include "LEDs.h"
 
 #include "Utils.h"
@@ -12,10 +13,19 @@
 //#include "TinyGPSWrapper.h"
 #include "TinyGPS.h"
 
+//#include "LinkedList.h"
+
+//#include "PositionBuffer.h"
+#include "PositionBuffer2.h"
+
 static TinyGPS tinyGPS;
 TinyGPS * giveTinyGPS() {
 	return &tinyGPS;
 }
+
+//static PositionBuffer positionBuffer;
+ //static Position2 position;
+
 
 static long ledGpsActivityTimer = 0.0;
 static long ledMavlinkActivityTimer = 0.0;
@@ -54,7 +64,10 @@ static LED_STATE ledMavlinkMode = OFF; // RED in Tx100mW
 
 static long detectionTimer = 0.0;
 
+//Poss poss;
+
 //static PositionBuffer positionBuffer;
+//static Position position;
 
 static bool led1State = false;
 static bool led2State = false;
@@ -940,6 +953,8 @@ bool readAndParse() {
 }
 
 void loop(void) {
+
+	//poss.resetPosition();
 
 #if 1
 	serviceLEDs();

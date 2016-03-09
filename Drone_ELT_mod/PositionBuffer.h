@@ -10,6 +10,7 @@
 
 #include "LinkedList.h"
 
+#if 1
 class Position {
 public:
 	Position() {
@@ -63,6 +64,7 @@ public:
 	double hdop;
 	float triggerTime;
 };
+#endif
 /*
  static Position positionValidWodynska[1] = { Position(52.207850, 21.185813) };
 
@@ -79,10 +81,12 @@ public:
  Position()};
  */
 
+#if 1
 static Position positionValidPKPWawer[6] = { Position(52.223407, 21.149524, 4),
 		Position(52.223397, 21.149543, 3), Position(52.223406, 21.149556, 10),
 		Position(52.223390, 21.149541, 4), Position(52.223421, 21.149552, 5),
 		Position(52.223413, 21.149540, 4) };
+#endif
 /*
  static Position positionValidOstrobramska[7] = { Position(52.234116, 21.126134),
  Position(52.234104, 21.126128), Position(52.234110, 21.126135),
@@ -114,6 +118,7 @@ static Position positionValidPKPWawer[6] = { Position(52.223407, 21.149524, 4),
  *
  */
 
+#if 1
 class PositionBuffer {
 public:
 	PositionBuffer();
@@ -170,5 +175,6 @@ private:
 	long fifthSecondTimer;
 
 };
+#endif
 
 #endif /* DRONE_ELT_MOD_POSITIONBUFFER_H_ */

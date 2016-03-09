@@ -5,19 +5,23 @@
  *      Author: maciek
  */
 
-#include "PositionBuffer.h"
+/*i don't know why but there are problems with these files, sometimes the serial port doesn't work is some PositionBuffer's are missing.
+ * Moved to PositionBuffer2, but PositionBuffer must remain
+ */
+
+#include "PositionBuffer2.h"
 
 
 #include <FastSerial.h>
 #include <Arduino.h>
 //#include "TinyGPS2.h"
 //#include "Utils.h"
-#include "MemoryFree.h"
+//#include "MemoryFree.h"
 
 
 /*
 
-void Position::update(Position position) {
+void Position2::update(Position2 position) {
 	if(true){
 	//if (position.numOfSats >= 3) {
 		latitude += position.latitude;
@@ -28,7 +32,7 @@ void Position::update(Position position) {
 	}
 }
 
-void Position::writeStatToSerial() {
+void Position2::writeStatToSerial() {
 	//printDouble( 1.2925254, 5);
 	Serial.print("lat=");
 	//printDouble(latitude, 5);
@@ -47,12 +51,12 @@ void Position::writeStatToSerial() {
 	//Serial.flush();
 }
 
-void Position::computeAverage() {
+void Position2::computeAverage() {
 	latitude = latitude / numOfSamples;
 	longitude = longitude / numOfSamples;
 }
 
-void Position::addPositionToAverage(Position &pos) {
+void Position2::addPositionToAverage(Position2 &pos) {
 
 }
 
@@ -87,7 +91,7 @@ int PositionBuffer::nextBackward(int arg, int offset) {
 	return o;
 }
 
-void PositionBuffer::addGPSPositionToOneSecondBuffers(Position position) {
+void PositionBuffer::addGPSPositionToOneSecondBuffers(Position2 position) {
 
 	if (positionsOneSecondIntervals.size() > NUM_OF_SAMPLES_IN_BUFFER)
 		positionsOneSecondIntervals.pop();
@@ -96,11 +100,11 @@ void PositionBuffer::addGPSPositionToOneSecondBuffers(Position position) {
 	//writePos = nextForward(writePos);
 }
 
-void PositionBuffer::updateCurrentSecondPosition(Position position) {
+void PositionBuffer::updateCurrentSecondPosition(Position2 position) {
 	currentSecondPosition.update(position);
 }
 
-Position PositionBuffer::averageFromRange(int previousBegin, int previousEnd) {
+Position2 PositionBuffer::averageFromRange(int previousBegin, int previousEnd) {
 	double latitudeAvg = 0.0;
 	double longitudeAvg = 0.0;
 
@@ -113,12 +117,13 @@ Position PositionBuffer::averageFromRange(int previousBegin, int previousEnd) {
 
 	latitudeAvg = latitudeAvg / (double) (previousBegin - previousEnd + 1);
 	longitudeAvg = longitudeAvg / (double) (previousBegin - previousEnd + 1);
-	Position result(latitudeAvg, longitudeAvg);
+	Position2 result(latitudeAvg, longitudeAvg);
 	return result;
 
 }
 
-Position PositionBuffer::testWawer5() {
+#if 0
+Position2 PositionBuffer::testWawer5() {
 	addPositionToBeTriggered(positionValidPKPWawer, 0, 1);
 	addPositionToBeTriggered(positionValidPKPWawer, 1, 1);
 	addPositionToBeTriggered(positionValidPKPWawer, 2, 1);
@@ -134,11 +139,12 @@ void PositionBuffer::testWawer4() {
 	addPositionToBeTriggered(positionValidPKPWawer, 1, 6);
 
 }
+#endif
 
 #if 0
 double PositionBuffer::testDistanceWawerWodynska1() {
-	Position wawer = positionValidPKPWawer[0];
-	Position wodynska = positionValidWodynska[0];
+	Position2 wawer = positionValidPKPWawer[0];
+	Position2 wodynska = positionValidWodynska[0];
 	return TinyGPS::distance_between(wawer.getLatitude(), wawer.getLongitude(), wodynska.getLatitude(), wodynska.getLongitude());
 }
 #endif
@@ -162,7 +168,7 @@ void PositionBuffer::fifthSecondTick() {
 
 	int i = 0;
 	while (true) {
-		Position p = positionsForTesting.get(i);
+		Position2 p = positionsForTesting.get(i);
 		if (!p.fired && p.triggerTime * 1000.0 > millis()) {
 			p.fired = true;
 			Serial.println("adding test position");
@@ -207,12 +213,12 @@ void PositionBuffer::printStatsToSerial() {
 	}
 }
 
-void PositionBuffer::addPositionToBeTriggered(Position *array, int index,
+void PositionBuffer::addPositionToBeTriggered(Position2 *array, int index,
 		float time) {
 
 	//Position p(21.1, 21.2);
 
-	Position &p = array[index];
+	Position2 &p = array[index];
 	//printDouble(p.latitude, 5);
 	p.triggerTime = time;
 	positionsForTesting.add(p);
@@ -221,5 +227,6 @@ void PositionBuffer::addPositionToBeTriggered(Position *array, int index,
 void addTestSamplesIfTriggeredByTime() {
 
 }
+
 
 */
