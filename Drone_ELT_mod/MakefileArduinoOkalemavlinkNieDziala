@@ -1,0 +1,11 @@
+BOARD_TAG    = pro5v328
+ARDUINO_LIBS =
+ARDUINO_HEADER = empty.h
+#-I/opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/FastSerial
+USER_INCLUDES_MS = -I/opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/variants/eightanaloginputs \
+ -I/opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/FastSerial\
+-I/opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/GCS_MAVLink/utility\
+ -I/opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/GCS_MAVLink  -I..
+
+
+include ./Arduino.mk

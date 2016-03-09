@@ -11,7 +11,7 @@
 // Packet sequence		2				Each component counts up his send sequence. Allows to detect packet loss
 // System ID			3				Identification of the SENDING system. Allows to differentiate different systems on the same network.
 // Component ID			4				Identification of the SENDING component. Allows to differentiate different components of the same system, e.g. the IMU and the autopilot.
-// Message ID			5				Identification of the message - the id defines what the payload �means� and how it should be correctly decoded.
+// Message ID			5				Identification of the message - the id defines what the payload means and how it should be correctly decoded.
 // Payload				6 to (n+6)		The data into the message, depends on the message id.
 // CRC					(n+7) to (n+8)	Check-sum of the entire packet, excluding the packet start sign (LSB to MSB)
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

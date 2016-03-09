@@ -1,6 +1,6 @@
 // **********************************************************
 // ************************ openLRSng ***********************https://www.google.com/search?q=text%2Fhtml&ie=UTF-8
-// **********************************************************
+// ******glownyDroneELT (mod) na tym dzialam****************************************************
 // ** by Kari Hautio - kha @ AeroQuad/RCGroups/IRC(Freenode)
 // ** other commits by cTn-dev, rlboyd, DTFUHF, pwarren
 //
@@ -64,7 +64,7 @@
 //#define RFMTYPE 915
 
 //### Enabled Features (some features can be enabled / disabled with compile flag)
-#define CLI // Command-line interface
+//#define CLI // Command-line interface
 //#define CONFIGURATOR // Phoenix Serial Protocol (required for Configurator to work)
 
 //### DEBUG flags, may be dangerous
@@ -76,7 +76,7 @@
 
 
 //####### Transparant serial #######
-#define COM_BUF_MAXSIZE 32 // maximum downlink packet size. Max value is 64 , No use having higher than SERIAL_BUFSIZE, (also 1 byte per rf packet is dedicated for datalength and flags). Mavlink telemetry mode allows for serial downlink != 9
+#define COM_BUF_MAXSIZE 1 // maximum downlink packet size. Max value is 64 , No use having higher than SERIAL_BUFSIZE, (also 1 byte per rf packet is dedicated for datalength and flags). Mavlink telemetry mode allows for serial downlink != 9
 
 //####### MAVLink #######
 #define MAVLINK_INJECT_INTERVAL 1000000
@@ -91,23 +91,24 @@
 
 #include  "MAVLinkOSD.h"
 
-#include <GCS_MAVLink.h>
+//#include <GCS_MAVLink.h>
 
 
 //#include "serialport.h"
 #define DefineSerialPort(_name, _num) FastSerialPort(_name, _num)
 
 #include <Arduino.h>
-
+#include "Utils.h"
 #include "version.h"
 #include "hardware.h"
 #include "wd.h"
 #include "binding.h"
 #include "common.h"
 
+
 #if (COMPILE_TX == 1)
 #include "binary_com.h"
-#include "rxc.h"
+//#include "rxc.h"
 #ifdef CLI_ENABLED
 #include "dialog.h"
 #endif

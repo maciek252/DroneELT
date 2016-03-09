@@ -10,7 +10,6 @@ build-pro5v328/core/HID.cpp.o:  \
   /home/maciek/k/arduino-1.0.3/hardware/arduino//cores/arduino/Print.h \
   /home/maciek/k/arduino-1.0.3/hardware/arduino//cores/arduino/Printable.h \
   /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino/new.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/variants/eightanaloginputs/pins_arduino.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/variants/eightanaloginputs/../standard/pins_arduino.h \
+  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/variants/standard/pins_arduino.h \
   /home/maciek/k/arduino-1.0.3/hardware/arduino//cores/arduino/USBAPI.h \
   /home/maciek/k/arduino-1.0.3/hardware/arduino//cores/arduino/USBDesc.h

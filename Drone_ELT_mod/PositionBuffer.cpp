@@ -9,7 +9,7 @@
 #include <FastSerial.h>
 #include <Arduino.h>
 //#include "TinyGPS2.h"
-#include "Utils.h"
+//#include "Utils.h"
 #include "MemoryFree.h"
 
 void Position::update(Position position) {
@@ -26,9 +26,9 @@ void Position::update(Position position) {
 void Position::writeStatToSerial() {
 	//printDouble( 1.2925254, 5);
 	Serial.print("lat=");
-	printDouble(latitude, 5);
+	//printDouble(latitude, 5);
 	Serial.print("long=");
-	printDouble(longitude, 5);
+	//printDouble(longitude, 5);
 	Serial.print("ns=");
 	Serial.print(numOfSats, DEC);
 	//Serial.write(numOfSats);
@@ -161,7 +161,7 @@ void PositionBuffer::fifthSecondTick() {
 		if (!p.fired && p.triggerTime * 1000.0 > millis()) {
 			p.fired = true;
 			Serial.println("adding test position");
-			printDouble(p.latitude, 5);
+			//printDouble(p.latitude, 5);
 			//addGPSPositionToOneSecondBuffers(p);
 			updateCurrentSecondPosition(p);
 			positionsForTesting.remove(i);
@@ -208,7 +208,7 @@ void PositionBuffer::addPositionToBeTriggered(Position *array, int index,
 	//Position p(21.1, 21.2);
 
 	Position &p = array[index];
-	printDouble(p.latitude, 5);
+	//printDouble(p.latitude, 5);
 	p.triggerTime = time;
 	positionsForTesting.add(p);
 }

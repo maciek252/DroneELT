@@ -1,0 +1,22 @@
+kompilacja bootloadera:
+
+/home/maciek/k/ArduinoLibs/optiboot/optiboot/bootloaders/optiboot
+make atmega328
+
+
+wgranie bootloadera:
+./flashUsingUSBASPBootloaderByName.sh optiboot_atmega328.hex 
+
+TX-2-bl.hex - dobry bootloader dla OpenLRS, ale w DroneELT resetuje ciagle urzadzenie.
+
+KOMPILOWAC w IDE arduino 1.0.3
+wgrac przez serial
+dziala, nie wiem jak LEDy
+RX nadaje na ch5 446,05625
+TX na 6 446,06875
+wyczyścić bufor przed piszczeniem i po tez!
+niekiedy sie wiesza?
+
+CTS ma sie swiecic w gtktermie - wtedy kontaktuje
+po odegraniu zapycha sie, albo gra stare odczyty
+gps - niekiedy wyrzuca NMEA mimo braku polecenia, zresetowac CH341, wtedy OK

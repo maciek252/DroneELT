@@ -6,17 +6,13 @@ build-pro5v328/Drone_ELT_mod.ino.o: Drone_ELT_mod.ino empty.h \
   /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino/WString.h \
   /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino/Printable.h \
   /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino/new.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/FastSerial/../AP_Common/AP_Common.h \
+  OSD_Vars.h \
   /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino/Arduino.h \
   /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino/binary.h \
   /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino/WCharacter.h \
   /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino/HardwareSerial.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/variants/eightanaloginputs/pins_arduino.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/variants/eightanaloginputs/../standard/pins_arduino.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/FastSerial/../AP_Common/include/menu.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/FastSerial/../AP_Common/c++.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/FastSerial/../AP_Common/AP_Param.h \
-  OSD_Vars.h MAVLinkOSD.h \
+  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/variants/standard/pins_arduino.h \
+  MAVLinkOSD.h \
   /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/FastSerial/../GCS_MAVLink/include/mavlink/v1.0/mavlink_types.h \
   /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/FastSerial/../GCS_MAVLink/include/mavlink/v1.0/ardupilotmega/mavlink.h \
   /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/FastSerial/../GCS_MAVLink/include/mavlink/v1.0/ardupilotmega/version.h \
@@ -120,10 +116,5 @@ build-pro5v328/Drone_ELT_mod.ino.o: Drone_ELT_mod.ino empty.h \
   /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/FastSerial/../GCS_MAVLink/include/mavlink/v1.0/ardupilotmega/./mavlink_msg_radio.h \
   /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/FastSerial/../GCS_MAVLink/include/mavlink/v1.0/ardupilotmega/./mavlink_msg_limits_status.h \
   /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/FastSerial/../GCS_MAVLink/include/mavlink/v1.0/ardupilotmega/./mavlink_msg_wind.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/GCS_MAVLink/GCS_MAVLink.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/FastSerial/BetterStream.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/GCS_MAVLink/include/mavlink/v1.0/ardupilotmega/version.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/GCS_MAVLink/include/mavlink/v1.0/mavlink_types.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/GCS_MAVLink/include/mavlink/v1.0/ardupilotmega/mavlink.h \
-  version.h hardware.h wd.h binding.h common.h binary_com.h rxc.h \
-  dialog.h frskytx.h TX.h TinyGPS.h storeData.h
+  version.h hardware.h wd.h binding.h common.h binary_com.h dialog.h \
+  frskytx.h TX.h LEDs.h MemoryFree.h TinyGPS.h

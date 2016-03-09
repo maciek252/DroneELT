@@ -1012,9 +1012,12 @@ endif
 #-I$(ARDUINO_CORE_PATH) -I$(ARDUINO_VAR_PATH)/$(VARIANT) \
 #        $(SYS_INCLUDES) $(PLATFORM_INCLUDES) $(USER_INCLUDES)
 CPPFLAGS      += -$(MCU_FLAG_NAME)=$(MCU) -DF_CPU=$(F_CPU) -DARDUINO=$(ARDUINO_VERSION) $(ARDUINO_ARCH_FLAG) -D__PROG_TYPES_COMPAT__ \
-        -I/opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino -I/opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/variants/eightanaloginputs  -I/opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/FastSerial  -I/opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/GCS_MAVLink \
+ -I/opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino \
+-I/opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/variants/standard\
+ -I/opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/FastSerial \
+-I/opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/libraries/GCS_MAVLink \
          -Wall -ffunction-sections \
-        -fdata-sections
+        -fdata-sections -fno-exceptions  -DUSB_VID=null -DUSB_PID=null
 
 ifdef DEBUG
 OPTIMIZATION_FLAGS= $(DEBUG_FLAGS)

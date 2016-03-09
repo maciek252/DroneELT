@@ -6,17 +6,6 @@ build-pro5v328/libs/FastSerial/vprintf.cpp.o:  \
   /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino/WString.h \
   /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino/Printable.h \
   /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino/new.h \
-  /home/maciek/k/arduino-1.0.3/libraries/FastSerial/../AP_Common/AP_Common.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino/Arduino.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino/binary.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino/WCharacter.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino/HardwareSerial.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/cores/arduino/Stream.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/variants/eightanaloginputs/pins_arduino.h \
-  /opt-hdd/opt/Downloads/kk-multicopter-multiwii/arduino-1.0.3/hardware/arduino/variants/eightanaloginputs/../standard/pins_arduino.h \
-  /home/maciek/k/arduino-1.0.3/libraries/FastSerial/../AP_Common/include/menu.h \
-  /home/maciek/k/arduino-1.0.3/libraries/FastSerial/../AP_Common/c++.h \
-  /home/maciek/k/arduino-1.0.3/libraries/FastSerial/../AP_Common/AP_Param.h \
   /home/maciek/k/arduino-1.0.3/libraries/FastSerial/ftoa_engine.h \
   /home/maciek/k/arduino-1.0.3/libraries/FastSerial/ntz.h \
   /home/maciek/k/arduino-1.0.3/libraries/FastSerial/xtoa_fast.h

@@ -6,7 +6,7 @@
 
 #include "LEDs.h"
 
-//#include "Utils.h"
+#include "Utils.h"
 #include "MemoryFree.h"
 //#include "PositionBuffer.h"
 //#include "TinyGPSWrapper.h"
@@ -762,14 +762,16 @@ void serviceMavlink() {
 		 watchdogReset();
 		 beacon_finish_audio();
 		 */
-		Serial.write("okoeee");
+		//Serial.write("okoeee");
 		Serial.write('Q');
 		//return;
-		char buf[6];
+
 
 		//http://forum.arduino.cc/index.php?topic=44262.0
 		//http://stackoverflow.com/questions/27651012/arduino-sprintf-float-not-formatting
 		//    osd_roll = 2.35;
+#if 0
+		char buf[6];
 		dtostrf(osd_roll, 5, 1, buf);
 		Serial.write(buf[0]);
 		Serial.write(buf[1]);
@@ -777,6 +779,18 @@ void serviceMavlink() {
 		Serial.write(buf[3]);
 		Serial.write(buf[4]);
 		Serial.write(buf[5]);
+#endif
+
+#if 1
+		Serial.write('R');
+		printDouble( osd_roll, 3);
+		Serial.write('\n');
+		Serial.write('L');
+		printDouble( osd_lon, 6);
+		Serial.write('\n');
+#endif
+
+
 #if 0
 		if(osd_roll > 45.0 && osd_roll < 53.0) {
 			Serial.write('!');
