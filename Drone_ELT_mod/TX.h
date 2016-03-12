@@ -4,28 +4,105 @@
 #ifndef __TX_H__
 #define __TX_H__
 
-
 #include "LEDs.h"
 
 #include "Utils.h"
-#include "MemoryFree.h"
+//#include "MemoryFree.h"
 //#include "PositionBuffer.h"
 //#include "TinyGPSWrapper.h"
-#include "TinyGPS.h"
+//#include "TinyGPS.h"
 
 //#include "LinkedList.h"
 
 //#include "PositionBuffer.h"
 #include "PositionBuffer2.h"
 
+#include "TinyGPSplusplus.h"
+
+//#define TEST_GPS
+
+#ifdef TEST_GPS
+#if 0
+const char *gpsStream =
+"$GPRMC,045103.000,A,3014.1984,N,09749.2872,W,0.67,161.46,030913,,,A*7C\r\n"
+"$GPGGA,045104.000,3014.1985,N,09749.2873,W,1,09,1.2,211.6,M,-22.5,M,,0000*62\r\n"
+"$GPRMC,045200.000,A,3014.3820,N,09748.9514,W,36.88,65.02,030913,,,A*77\r\n"
+"$GPGGA,045201.000,3014.3864,N,09748.9411,W,1,10,1.2,200.8,M,-22.5,M,,0000*6C\r\n"
+"$GPRMC,045251.000,A,3014.4275,N,09749.0626,W,0.51,217.94,030913,,,A*7D\r\n"
+"$GPGGA,045252.000,3014.4273,N,09749.0628,W,1,09,1.3,206.9,M,-22.5,M,,0000*6F\r\n";
+#endif
+
+#if 0
+const char *gpsStream =
+"$GNGSA,A,3,79,78,68,85,70,86,,,,,,,1.39,0.76,1.16*1B\r\n"
+"$GPGSV,3,1,12,02,33,294,22,03,16,134,33,04,13,029,25,05,07,307,22*7B\r\n"
+"$GPGSV,3,2,12,06,38,238,31,07,44,192,38,09,87,011,32,16,25,070,26*7F\r\n"
+"$GPGSV,3,3,12,23,53,079,30,26,18,041,27,29,05,350,26,30,16,204,21*70\r\n"
+"$GLGSV,3,1,10,68,48,104,40,69,71,328,17,70,16,302,21,77,15,027,26*64\r\n"
+"$GLGSV,3,2,10,78,60,072,26,79,49,160,42,80,01,190,,84,10,254,15*64\r\n"
+"$GLGSV,3,3,10,85,22,302,36,86,13,354,30*60\r\n"
+"$GNGLL,5212.86777,N,02110.62510,E,083531.40,A,A*70\r\n"
+"$GNRMC,083531.60,A,5212.86778,N,02110.62511,E,0.047,,110316,,,A*62\r\n";
+#endif
+
+const char *gpsStream =
+"$GNGGA,233804.20,5212.86861,N,02110.62773,E,1,12,0.76,102.0,M,34.1,M,,*49\r\n"
+"$GNRMC,232617.80,A,5212.86936,N,02110.62812,E,0.039,,110316,,,A*60\r\n"
+"$GNVTG,,T,,M,0.039,N,0.071,K,A*31\r\n"
+"$GNGGA,232617.80,5212.86936,N,02110.62812,E,1,12,0.66,103.0,M,34.1,M,,*45\r\n";
+
+#endif
+
+class Poss {
+
+	int e;
+public:
+
+	void resetPosition() {
+		latitude = 0.0;
+		longitude = 0.0;
+		hdop = 0.0;
+		numOfSats = 0;
+		triggerTime = 0.0;
+		fired = false;
+		numOfSamples = 0;
+	}
+
+	/*
+	 void update(Poss position) {
+	 if(true){
+	 //if (position.numOfSats >= 3) {
+	 latitude += position.latitude;
+	 longitude += position.longitude;
+	 numOfSats += position.numOfSats;
+	 hdop += position.hdop;
+	 numOfSamples++;
+	 }
+	 }
+	 */
+
+	double latitude, longitude;
+	int numOfSats, numOfSamples;
+	double hdop;
+	double triggerTime;
+	bool fired;
+};
+
+//static Poss poss;
+static Position2 poss;
+
+#if 0
 static TinyGPS tinyGPS;
-TinyGPS * giveTinyGPS() {
-	return &tinyGPS;
-}
+//TinyGPS * giveTinyGPS() {
+//	return &tinyGPS;
+//}
+#endif
+
+static TinyGPSPlus gpsPlus;
+static TinyGPSCustom magneticVariation(gpsPlus, "GNRMC", 10);
 
 //static PositionBuffer positionBuffer;
- //static Position2 position;
-
+//static Position2 position;
 
 static long ledGpsActivityTimer = 0.0;
 static long ledMavlinkActivityTimer = 0.0;
@@ -64,8 +141,6 @@ static LED_STATE ledMavlinkMode = OFF; // RED in Tx100mW
 
 static long detectionTimer = 0.0;
 
-//Poss poss;
-
 //static PositionBuffer positionBuffer;
 //static Position position;
 
@@ -79,324 +154,7 @@ float last_osd_lat = 0;                    // latidude
 float last_osd_lon = 0;                    // longitude
 int last_osd_satellites_visible = 0;
 
-uint32_t mavlink_last_inject_time = 0;
-uint16_t rxerrors = 0;
-
 uint8_t RF_channel = 0;
-
-uint8_t altPwrIndex = 0; // every nth packet at lower power
-uint8_t altPwrCount = 0;
-
-uint8_t FSstate = 0; // 1 = waiting timer, 2 = send FS, 3 sent waiting btn release
-uint32_t FStime = 0;  // time when button went down...
-
-uint32_t lastSent = 0;
-
-uint32_t lastTelemetry = 0;
-
-uint8_t RSSI_rx = 0;
-uint8_t RSSI_tx = 0;
-uint8_t RX_ain0 = 0;
-uint8_t RX_ain1 = 0;
-uint32_t sampleRSSI = 0;
-
-uint16_t linkQuality = 0;
-uint16_t linkQualityRX = 0;
-
-volatile uint8_t ppmAge = 0; // age of PPM data
-
-volatile uint8_t ppmCounter = 255; // ignore data until first sync pulse
-
-uint8_t serialMode = 0; // 0 normal, 1 spektrum 1024 , 2 spektrum 2048, 3 SBUS, 4 SUMD
-
-struct sbus_help {
-	uint16_t ch0 :11;
-	uint16_t ch1 :11;
-	uint16_t ch2 :11;
-	uint16_t ch3 :11;
-	uint16_t ch4 :11;
-	uint16_t ch5 :11;
-	uint16_t ch6 :11;
-	uint16_t ch7 :11;
-}__attribute__ ((__packed__));
-
-struct sbus {
-	struct sbus_help ch[2];
-	uint8_t status;
-}__attribute__ ((__packed__));
-
-// This is common temporary buffer used by all PPM input methods
-union ppm_msg {
-	uint8_t bytes[32];
-	uint16_t words[16];
-	struct sbus sbus;
-} ppmWork;
-
-#ifndef BZ_FREQ
-#define BZ_FREQ 2000
-#endif
-
-#ifdef DEBUG_DUMP_PPM
-uint8_t ppmDump = 0;
-uint32_t lastDump = 0;
-#endif
-
-/****************************************************
- * Interrupt Vector
- ****************************************************/
-
-static inline void processPulse(uint16_t pulse) {
-	if (serialMode) {
-		return;
-	}
-
-#if (F_CPU == 16000000)
-	if (!(tx_config.flags & MICROPPM)) {
-		pulse >>= 1; // divide by 2 to get servo value on normal PPM
-	}
-#elif (F_CPU == 8000000)
-	if (tx_config.flags & MICROPPM) {
-		pulse<<= 1; //  multiply microppm value by 2
-	}
-#else
-#error F_CPU invalid
-#endif
-
-	if (pulse > 2500) {      // Verify if this is the sync pulse (2.5ms)
-		if ((ppmCounter > (TX_CONFIG_GETMINCH() ? TX_CONFIG_GETMINCH() : 1))
-				&& (ppmCounter != 255)) {
-			uint8_t i;
-			for (i = 0; i < ppmCounter; i++) {
-				PPM[i] = ppmWork.words[i];
-			}
-			ppmAge = 0;                 // brand new PPM data received
-#ifdef DEBUG_DUMP_PPM
-					ppmDump = 1;
-#endif
-		}
-		ppmCounter = 0;             // -> restart the channel counter
-	} else if ((pulse > 700) && (ppmCounter < PPM_CHANNELS)) { // extra channels will get ignored here
-		ppmWork.words[ppmCounter++] = servoUs2Bits(pulse); // Store measured pulse length (converted)
-	} else {
-		ppmCounter = 255; // glitch ignore rest of data
-	}
-}
-
-#ifdef USE_ICP1 // Use ICP1 in input capture mode
-volatile uint16_t startPulse = 0;
-ISR(TIMER1_CAPT_vect)
-{
-	uint16_t stopPulse = ICR1;
-	processPulse(stopPulse - startPulse); // as top is 65535 uint16 math will take care of rollover
-	startPulse = stopPulse;// Save time at pulse start
-}
-
-void setupPPMinput()
-{
-	// Setup timer1 for input capture (PSC=8 -> 0.5ms precision)
-	TCCR1A = ((1 << WGM10) | (1 << WGM11));
-	TCCR1B = ((1 << WGM12) | (1 << WGM13) | (1 << CS11) | (1 <<ICNC1));
-	// normally capture on rising edge, allow invertting via SW flag
-	if (!(tx_config.flags & INVERTED_PPMIN)) {
-		TCCR1B |= (1 << ICES1);
-	}
-	OCR1A = 65535;
-	TIMSK1 |= (1 << ICIE1);   // Enable timer1 input capture interrupt
-}
-
-#else // sample PPM using pinchange interrupt
-ISR(PPM_Signal_Interrupt)
-{
-	uint16_t pulseWidth;
-	if ( (tx_config.flags & INVERTED_PPMIN) ^ PPM_Signal_Edge_Check) {
-		pulseWidth = TCNT1; // read the timer1 value
-		TCNT1 = 0;// reset the timer1 value for next
-		processPulse(pulseWidth);
-	}
-}
-
-void setupPPMinput(void) {
-	// Setup timer1 for input capture (PSC=8 -> 0.5ms precision)
-	TCCR1A = ((1 << WGM10) | (1 << WGM11));
-	TCCR1B = ((1 << WGM12) | (1 << WGM13) | (1 << CS11));
-	OCR1A = 65535;
-	TIMSK1 = 0;
-	PPM_Pin_Interrupt_Setup
-}
-#endif
-
-void bindMode(void) {
-	uint32_t prevsend = millis();
-	uint8_t tx_buf[sizeof(bind_data) + 1];
-	bool sendBinds = 1;
-
-	init_rfm(1);
-
-	Serial.flush();
-
-	Red_LED_OFF;
-
-	while (1) {
-		if (sendBinds & (millis() - prevsend > 200)) {
-			prevsend = millis();
-			Green_LED_ON;
-			buzzerOn(BZ_FREQ);
-			tx_buf[0] = 'b';
-			memcpy(tx_buf + 1, &bind_data, sizeof(bind_data));
-			tx_packet(tx_buf, sizeof(bind_data) + 1);
-			Green_LED_OFF;
-			buzzerOff();
-			RF_Mode = Receive;
-			rx_reset();
-			delay(50);
-			if (RF_Mode == Received) {
-				RF_Mode = Receive;
-				spiSendAddress(0x7f);   // Send the package read command
-				if ('B' == spiReadData()) {
-					sendBinds = 0;
-				}
-			}
-		}
-
-		if (!digitalRead(BTN)) {
-			sendBinds = 1;
-		}
-
-		while (Serial.available()) {
-			Red_LED_ON;
-			Green_LED_ON;
-			switch (Serial.read()) {
-#ifdef CLI
-			case '\n':
-			case '\r':
-#ifdef CLI_ENABLED
-			Serial.println(F("Enter menu..."));
-			handleCLI();
-#else
-			Serial.println(F("CLI not available, use configurator!"));
-#endif
-			break;
-#endif
-			case '#':
-				scannerMode();
-				break;
-#ifdef CONFIGURATOR
-				case 'B':
-				binaryMode();
-				break;
-#endif
-			default:
-				break;
-			}
-			Red_LED_OFF;
-			Green_LED_OFF;
-		}
-	}
-}
-
-void checkButton(void) {
-	uint32_t time, loop_time;
-
-	if (digitalRead(BTN) == 0) {     // Check the button
-		delay(200);   // wait for 200mS with buzzer ON
-		buzzerOff();
-
-		time = millis();  //set the current time
-		loop_time = time;
-
-		while (millis() < time + 4800) {
-			if (digitalRead (BTN)) {
-				goto just_bind;
-			}
-		}
-
-		// Check the button again, If it is still down reinitialize
-		if (0 == digitalRead(BTN)) {
-			int8_t bzstate = HIGH;
-			uint8_t swapProfile = 0;
-
-			buzzerOn(bzstate ? BZ_FREQ : 0);
-			loop_time = millis();
-
-			while (0 == digitalRead(BTN)) {     // wait for button to release
-				if (loop_time > time + 9800) {
-					buzzerOn(BZ_FREQ);
-					swapProfile = 1;
-				} else {
-					if ((millis() - loop_time) > 200) {
-						loop_time = millis();
-						bzstate = !bzstate;
-						buzzerOn(bzstate ? BZ_FREQ : 0);
-					}
-				}
-			}
-
-			buzzerOff();
-			if (swapProfile) {
-				profileSwap((activeProfile + 1) % TX_PROFILE_COUNT);
-				txReadEeprom();
-				return;
-			}
-			bindRandomize();
-			txWriteEeprom();
-		}
-		just_bind:
-		// Enter binding mode, automatically after recoding or when pressed for shorter time.
-		bindMode();
-	}
-}
-
-static inline void checkBND(void) {
-	if ((Serial.available() > 3) && (Serial.read() == 'B')
-			&& (Serial.read() == 'N') && (Serial.read() == 'D')
-			&& (Serial.read() == '!')) {
-		buzzerOff();
-		bindMode();
-	}
-}
-
-static inline void checkFS(void) {
-
-	switch (FSstate) {
-	case 0:
-		if (!digitalRead(BTN)) {
-			FSstate = 1;
-			FStime = millis();
-		}
-
-		break;
-
-	case 1:
-		if (!digitalRead(BTN)) {
-			if ((millis() - FStime) > 1000) {
-				FSstate = 2;
-				buzzerOn(BZ_FREQ);
-			}
-		} else {
-			FSstate = 0;
-		}
-
-		break;
-
-	case 2:
-		if (digitalRead (BTN)) {
-			buzzerOff();
-			FSstate = 0;
-		}
-
-		break;
-	}
-}
-
-uint8_t tx_buf[21];
-uint8_t rx_buf[COM_BUF_MAXSIZE];
-
-#define SERIAL_BUF_RX_SIZE 64
-#define SERIAL_BUF_TX_SIZE 128
-uint8_t serial_rxbuffer[SERIAL_BUF_RX_SIZE];
-uint8_t serial_txbuffer[SERIAL_BUF_TX_SIZE];
-uint8_t serial_resend[COM_BUF_MAXSIZE];
-uint8_t serial_okToSend; // 2 if it is ok to send serial instead of servo
 
 void setup(void) {
 	uint32_t start;
@@ -444,15 +202,13 @@ void setup(void) {
 
 	start = millis();
 
-	buzzerOn(BZ_FREQ);
 	digitalWrite(BTN, HIGH);
 	Red_LED_ON;
 
-	Serial.print("OpenLRSng TX starting ");
 	printVersion(version);
-	Serial.print(" on HW ");
-	Serial.println(BOARD_TYPE);
-	Serial.flush();
+	//Serial.print(" on HW ");
+	//Serial.println(BOARD_TYPE);
+	//Serial.flush();
 
 //  beacon_send_number(7, 2, 2, 2);
 	// przeniesione tu:
@@ -467,223 +223,51 @@ void setup(void) {
 /////////////////////////////////////////////////
 	delay(50);
 
-	checkBND();
-
-	if (bind_data.serial_baudrate && (bind_data.serial_baudrate < 5)) {
-		serialMode = bind_data.serial_baudrate;
-		TelemetrySerial.begin((serialMode == 3) ? 100000 : 115200); // SBUS is 100000 rest 115200
-	} else {
-		// switch to userdefined baudrate here
-		TelemetrySerial.begin(bind_data.serial_baudrate);
-	}
-
-	checkButton();
-
-	Red_LED_OFF;
-	buzzerOff();
-
-	setupPPMinput(); // need to do this to make sure ppm polarity is correct if profile was changed
-
-	altPwrIndex = 0;
-	if (tx_config.flags & ALT_POWER) {
-		if (bind_data.hopchannel[6] && bind_data.hopchannel[13]
-				&& bind_data.hopchannel[20]) {
-			altPwrIndex = 7;
-		} else {
-			altPwrIndex = 5;
-		}
-	}
-
-	init_rfm(0);
-	rfmSetChannel(RF_channel);
-	rx_reset();
-
-	serial_okToSend = 0;
-
-	for (uint8_t i = 0; i <= activeProfile; i++) {
-		delay(50);
-		buzzerOn(BZ_FREQ);
-		delay(50);
-		buzzerOff();
-	}
-
-	if (bind_data.flags & TELEMETRY_FRSKY) {
-		frskyInit((bind_data.flags & TELEMETRY_MASK) == TELEMETRY_SMARTPORT);
-	} else if (bind_data.flags & TELEMETRY_MASK) {
-		// ?
-	}
-	watchdogConfig(WATCHDOG_2S);
 }
 
-uint8_t compositeRSSI(uint8_t rssi, uint8_t linkq) {
-	if (linkq >= 15) {
-		// RSSI 0 - 255 mapped to 128 - ((255>>2)+192) == 128-255
-		return (rssi >> 1) + 128;
+void displayInfo() {
+	Serial.print(F("Location: "));
+	if (gpsPlus.location.isValid()) {
+		Serial.print(gpsPlus.location.lat(), 6);
+		Serial.print(F(","));
+		Serial.print(gpsPlus.location.lng(), 6);
 	} else {
-		// linkquality gives 0 to 14*0 == 126
-		return linkq * 9;
+		Serial.print(F("INVALID"));
 	}
-}
 
-#define SBUS_SYNC 0x0f
-#define SBUS_TAIL 0x00
-#define SPKTRM_SYNC1 0x03
-#define SPKTRM_SYNC2 0x01
-#define SUMD_HEAD 0xa8
-
-uint8_t frameIndex = 0;
-uint32_t srxLast = 0;
-uint8_t srxFlags = 0;
-uint8_t srxChannels = 0;
-
-static inline void processSpektrum(uint8_t c) {
-	if (frameIndex == 0) {
-		frameIndex++;
-	} else if (frameIndex == 1) {
-		frameIndex++;
-	} else if (frameIndex < 16) {
-		ppmWork.bytes[frameIndex++] = c;
-		if (frameIndex == 16) { // frameComplete
-			for (uint8_t i = 1; i < 8; i++) {
-				uint8_t ch, v;
-				if (serialMode == 1) {
-					ch = ppmWork.words[i] >> 10;
-					v = ppmWork.words[i] & 0x3ff;
-				} else {
-					ch = ppmWork.words[i] >> 11;
-					v = (ppmWork.words[i] & 0x7ff) >> 1;
-				}
-				if (ch < 16) {
-					PPM[ch] = v;
-				}
-#ifdef DEBUG_DUMP_PPM
-				ppmDump = 1;
-#endif
-				ppmAge = 0;
-			}
-		}
+	Serial.print(F("  Date/Time: "));
+	if (gpsPlus.date.isValid()) {
+		Serial.print(gpsPlus.date.month());
+		Serial.print(F("/"));
+		Serial.print(gpsPlus.date.day());
+		Serial.print(F("/"));
+		Serial.print(gpsPlus.date.year());
 	} else {
-		frameIndex = 0;
+		Serial.print(F("INVALID"));
 	}
-}
 
-static inline void processSBUS(uint8_t c) {
-	if (frameIndex == 0) {
-		if (c == SBUS_SYNC) {
-			frameIndex++;
-		}
-	} else if (frameIndex < 24) {
-		ppmWork.bytes[(frameIndex++) - 1] = c;
+	Serial.print(F(" "));
+	if (gpsPlus.time.isValid()) {
+		if (gpsPlus.time.hour() < 10)
+			Serial.print(F("0"));
+		Serial.print(gpsPlus.time.hour());
+		Serial.print(F(":"));
+		if (gpsPlus.time.minute() < 10)
+			Serial.print(F("0"));
+		Serial.print(gpsPlus.time.minute());
+		Serial.print(F(":"));
+		if (gpsPlus.time.second() < 10)
+			Serial.print(F("0"));
+		Serial.print(gpsPlus.time.second());
+		Serial.print(F("."));
+		if (gpsPlus.time.centisecond() < 10)
+			Serial.print(F("0"));
+		Serial.print(gpsPlus.time.centisecond());
 	} else {
-		if ((frameIndex == 24) && (c == SBUS_TAIL)) {
-			uint8_t set;
-			for (set = 0; set < 2; set++) {
-				PPM[(set << 3)] = ppmWork.sbus.ch[set].ch0 >> 1;
-				PPM[(set << 3) + 1] = ppmWork.sbus.ch[set].ch1 >> 1;
-				PPM[(set << 3) + 2] = ppmWork.sbus.ch[set].ch2 >> 1;
-				PPM[(set << 3) + 3] = ppmWork.sbus.ch[set].ch3 >> 1;
-				PPM[(set << 3) + 4] = ppmWork.sbus.ch[set].ch4 >> 1;
-				PPM[(set << 3) + 5] = ppmWork.sbus.ch[set].ch5 >> 1;
-				PPM[(set << 3) + 6] = ppmWork.sbus.ch[set].ch6 >> 1;
-				PPM[(set << 3) + 7] = ppmWork.sbus.ch[set].ch7 >> 1;
-			}
-			if ((ppmWork.sbus.status & 0x08) == 0) {
-#ifdef DEBUG_DUMP_PPM
-				ppmDump = 1;
-#endif
-				ppmAge = 0;
-			}
-		}
-		frameIndex = 0;
+		Serial.print(F("INVALID"));
 	}
-}
 
-static inline void processSUMD(uint8_t c) {
-	if ((frameIndex == 0) && (c == SUMD_HEAD)) {
-		CRC16_reset();
-		CRC16_add(c);
-		frameIndex = 1;
-	} else {
-		if (frameIndex == 1) {
-			srxFlags = c;
-			CRC16_add(c);
-		} else if (frameIndex == 2) {
-			srxChannels = c;
-			CRC16_add(c);
-		} else if (frameIndex < (3 + (srxChannels << 1))) {
-			if (frameIndex < 35) {
-				ppmWork.bytes[frameIndex - 3] = c;
-			}
-			CRC16_add(c);
-		} else if (frameIndex == (3 + (srxChannels << 1))) {
-			CRC16_value ^= (uint16_t) c << 8;
-		} else {
-			if ((CRC16_value == c) && (srxFlags == 0x01)) {
-				uint8_t ch;
-				if (srxChannels > 16) {
-					srxChannels = 16;
-				}
-				for (ch = 0; ch < srxChannels; ch++) {
-					uint16_t val = (uint16_t) ppmWork.bytes[ch * 2] << 8
-							| (uint16_t) ppmWork.bytes[ch * 2 + 1];
-					PPM[ch] = servoUs2Bits(val >> 3);
-				}
-#ifdef DEBUG_DUMP_PPM
-				ppmDump = 1;
-#endif
-				ppmAge = 0;
-			}
-			frameIndex = 0;
-		}
-		if (frameIndex > 0) {
-			frameIndex++;
-		}
-	}
-}
-
-void processChannelsFromSerial(uint8_t c) {
-	uint32_t now = micros();
-	if ((now - srxLast) > 5000) {
-		frameIndex = 0;
-	}
-	srxLast = now;
-
-	if ((serialMode == 1) || (serialMode == 2)) { // SPEKTRUM
-		processSpektrum(c);
-	} else if (serialMode == 3) { // SBUS
-		processSBUS(c);
-	} else if (serialMode == 4) { // SUMD
-		processSUMD(c);
-	}
-}
-
-uint16_t getChannel(uint8_t ch) {
-	ch = tx_config.chmap[ch];
-	if (ch < 16) {
-		uint16_t v;
-		cli(); // disable interrupts when copying servo positions, to avoid race on 2 byte variable written by ISR
-		v = PPM[ch];
-		sei();
-		return v;
-	} else {
-		switch (ch) {
-#ifdef TX_AIN0
-#ifdef TX_AIN_IS_DIGITAL
-		case 16:
-		return digitalRead(TX_AIN0) ? 1012 : 12;
-		case 17:
-		return digitalRead(TX_AIN1) ? 1012 : 12;
-#else
-		case 16:
-		return analogRead(TX_AIN0);
-		case 17:
-		return analogRead(TX_AIN1);
-#endif
-#endif
-		default:
-			return 512;
-		}
-	}
+	Serial.println();
 }
 
 /////////////////////////////////////// LOOP ///////////////////////////////////////////////////
@@ -779,7 +363,6 @@ void serviceMavlink() {
 		Serial.write('Q');
 		//return;
 
-
 		//http://forum.arduino.cc/index.php?topic=44262.0
 		//http://stackoverflow.com/questions/27651012/arduino-sprintf-float-not-formatting
 		//    osd_roll = 2.35;
@@ -796,13 +379,12 @@ void serviceMavlink() {
 
 #if 1
 		Serial.write('R');
-		printDouble( osd_roll, 3);
+		printDouble(osd_roll, 3);
 		Serial.write('\n');
 		Serial.write('L');
-		printDouble( osd_lon, 6);
+		printDouble(osd_lon, 6);
 		Serial.write('\n');
 #endif
-
 
 #if 0
 		if(osd_roll > 45.0 && osd_roll < 53.0) {
@@ -888,7 +470,7 @@ void serviceMavlink() {
 //////////////////////////////////////////////////////////////////////////////////////
 
 bool testIfNMEA5() {
-	Serial.setTimeout(15000UL);
+	//Serial.setTimeout(15000UL);
 
 	char inData[250]; // Allocate some space for the string
 	uint8_t inChar; // Where to store the character read
@@ -933,26 +515,89 @@ bool testIfNMEA5() {
 	return false;
 }
 
-bool readAndParse() {
-//  readAndParseTest();
+#if 1
+bool readAndParse(uint8_t c) {
+
+	//while (Serial.available() > 0)
+
+	//Serial.write(c);
+#if 1
+	//bool result = tinyGPS.encode(c);
+	bool result = gpsPlus.encode((char) c);
+	//bool result = gpsPlus.test(c);
+	//bool result = encode(c);
+#endif
+
+	return result;
+}
+#endif
+
+void runGPSMAVLINK() {
+	// to psuje parsowanie NMEA!!!
 	while (Serial.available() > 0) {
 
-		//    mavlink_active = 1;//test
-		//    lastMAVBeat = millis();
-		//uint8_t c = Serial.read();
-		char c = Serial.read();
-		Serial.write(c);
-#if 1
-		bool result = tinyGPS.encode(c);
-		if (result)
-			return true;
-#endif
-		//        Serial.write(c);
+		uint8_t c = Serial.read();
+
+		if (NO_GPS_TRY_MAVLINK == device_mode
+				|| MAVLINK_SERIAL == device_mode) {
+
+			uint32_t timeUs, timeMs;
+			float mavLinkTimer = 0;
+
+			//        updateLBeep(false);
+			//        buzzerOff();
+
+			read_mavlink(c);
+			serviceMavlink();
+		}
 	}
-	return false;
+}
+
+void runGPSNMEA() {
+
+	while (Serial.available() > 0) {
+
+		uint8_t c = Serial.read();
+
+		if (NO_GPS == device_mode) {
+			if (testIfNMEA6(c)) {
+
+				//ledGpsActivityTimer = millis();
+				device_mode = GPS_SERIAL;
+				ledGpsMode = SINGLE_FLASH;
+			}
+		}
+
+		//delay(1000);
+		if (gpsPlus.encode(c))
+			displayInfo();
+	}
 }
 
 void loop(void) {
+
+#ifdef TEST_GPS
+	while (*gpsStream) {
+		//delay(1000);
+		if (gpsPlus.encode(*gpsStream++))
+		displayInfo();
+	}
+	return;
+#endif
+
+#if 0
+	while (Serial.available() > 0) {
+
+		uint8_t c = Serial.read();
+
+		//delay(1000);
+		if (gpsPlus.encode(c))
+		displayInfo();
+	}
+	return;
+#endif
+	//beacon_initialize_audio();
+	//beacon_send_number(2.4553, 2, 5, 3);
 
 	//poss.resetPosition();
 
@@ -1006,7 +651,7 @@ void loop(void) {
 		//Serial.begin(57600);
 		//Serial.flush();
 		Serial.write('m');
-		Serial.print(freeMemory2());
+		//Serial.print(freeMemory2());
 		//Serial.write('b');
 		//Serial.print("f");
 		if (OFF == ledMavlinkMode)
@@ -1023,116 +668,181 @@ void loop(void) {
 
 	/////////////////////////////////////////////////// GPS SERIAL ////////////////////////////////////////
 
+	if (device_mode == NO_GPS || device_mode == GPS_SERIAL) {
+		runGPSNMEA();
+		return;
+	}
+
+	runGPSMAVLINK();
+	return;
+
 	/////////////////////////////////////////////////// GPS SERIAL ////////////////////////////////////////
 
 	while (Serial.available() > 0) {
 
 		uint8_t c = Serial.read();
+		//Serial.write(c);
+
+#if 0
+		//delay(1000);
+		if (gpsPlus.encode(c))
+		displayInfo();
+		//continue; // z tym OK
+#endif
 
 #if 1
 		if (NO_GPS == device_mode) {
-			//ledGpsMode = OFF;
 			if (testIfNMEA6(c)) {
-				//if (readAndParse()) {
+
 				//ledGpsActivityTimer = millis();
 				device_mode = GPS_SERIAL;
-				//ledGpsMode = SINGLE_FLASH;
-				// PROBLEM Z SINGLE_FLASH!! wiesza sie
+				ledGpsMode = SINGLE_FLASH;
+			}
+		}
+#endif
+//		continue;
+#if 1 // TU OK TU OK
+		//delay(1000);
+		if (gpsPlus.encode(c)) {
+			displayInfo();
+
+		}
+		//continue;
+#endif
+
+		//continue;
+
+#if 0 // to tez szkodzi NMEA
+		if (GPS_SERIAL == device_mode) {
+#if 0
+			//delay(1000); // A TU NIE!!!!!!
+			if (gpsPlus.encode(c))
+			displayInfo();
+			continue;
+#endif
+
+#if 0
+			if (millis() - ledGpsActivityTimer > 6000) {
+				ledGpsActivityTimer = millis();
+				ledGpsMode = OFF;
+				device_mode = NO_GPS;
+				return;
+			}
+#endif
+			//	ledGpsMode = SINGLE_FLASH;
+			//Serial.write('S');
+			//return;
+#if 0
+			if ((millis() - last_beep_time) > 3000) {
+				last_beep_time = millis();
+				/*
+				 if (live_tick_sound) {
+				 live_tick_sound = false;
+				 beacon_send_number(0, 1, 0, 0);
+				 } else {
+				 live_tick_sound = true;
+				 beacon_send_number(1, 1, 0, 0);
+				 }
+				 */
+			}
+#endif
+			//led2mode = OFF;
+
+			//if (readAndParse(c)) {
+			if (gpsPlus.encode(c)) {
+				displayInfo();
+				ledGpsActivityTimer = millis();
+
 				ledGpsMode = DOUBLE_FLASH;
-			}
-		}
+
+#if 0
+				Serial.print(F("Location: "));
+				if (gpsPlus.location.isValid())
+				{
+					Serial.print(gpsPlus.location.lat(), 6);
+					Serial.print(F(","));
+					Serial.print(gpsPlus.location.lng(), 6);
+				}
+				else
+				{
+					Serial.print(F("INVALID"));
+				}
 #endif
+				//Serial.write('P');
+				// TinyGPS
+				//      giveTinyGPS()->hdop();
+#if 0
+				if (TinyGPS::GPS_INVALID_SATELLITES == tinyGPS.satellites()) {
+					//Serial.write("parseOK   NOFIX");
+					Serial.write('P');
+				} else {
+					//Serial.write("parseOK  SATS: " + giveTinyGPS()->satellites());
+					Serial.write('p');
+					//beacon_initialize_audio();
+					//beacon_send_number(2.4553, 2, 5, 3);
+				}
+#endif
+
+				//int sats = gpsPlus.satellites.value();
+				//Serial.print(sats);
+#if 0
+				int charProcessed = gpsPlus.charsProcessed();
+				Serial.print(charProcessed);
+				Serial.write(' ');
+#endif
+
 #if 1
-		if ((NO_GPS_TRY_MAVLINK == device_mode || MAVLINK_SERIAL == device_mode)) {
+				int sententesWithFix = gpsPlus.sentencesWithFix();
+				Serial.print(sententesWithFix);
+				Serial.write(' ');
+				//double lat = gpsPlus.location.lat();
+#endif
 
-			uint32_t timeUs, timeMs;
-			float mavLinkTimer = 0;
+				if (magneticVariation.isUpdated()) {
+					//Serial.print("Magnetic variation is ");
+					//Serial.println(magneticVariation.value());
+					Serial.write('M');
+				}
 
-			//        updateLBeep(false);
-			//        buzzerOff();
+				//double lat = tinyGPS._latitude / 1000000.0;
+				//printDouble((double)lat, 5);
+				//printDouble(123.456789, 5);
+				//beacon_initialize_audio();
+				//beacon_send_number(2.45	53, 2, 5, 3);
+#if 0
+				if (flat != 0.0 && flon != 0.0) {
+					ledGpsMode = ON;
+					beacon_initialize_audio();
+					beacon_send_number(2.4553, 2, 5, 3);
+					beacon_send_number(flat, 2, 5, 3);
+					beacon_send_number(flon, 2, 5, 3);
+				}
+#endif
 
-			read_mavlink(c);
-			serviceMavlink();
+				return;
+
+#if 0
+				Serial.print(flat);
+				Serial.print(" LON=");
+				Serial.print(flon);
+				Serial.print(" SAT=");
+
+				Serial.print(
+						giveTinyGPS()->satellites()
+						== TinyGPS::GPS_INVALID_SATELLITES ?
+						0 : giveTinyGPS()->satellites());
+				Serial.print(" PREC=");
+				Serial.print(
+						giveTinyGPS()->hdop() == TinyGPS::GPS_INVALID_HDOP ?
+						0 : giveTinyGPS()->hdop());
+#endif
+			}
 		}
-
+		////////////////////////////////////////////////////END GPS SERIAL ////////////////////////////////////
 #endif
 
 	}
-
-#if 0
-	if (GPS_SERIAL == device_mode) {
-
-		if (millis() - ledGpsActivityTimer > 6000) {
-			ledGpsActivityTimer = millis();
-			ledGpsMode = OFF;
-			device_mode = NO_GPS;
-			return;
-		}
-		ledGpsMode = SINGLE_FLASH;
-		//Serial.write('S');
-		//return;
-#if 0
-		if ((millis() - last_beep_time) > 3000) {
-			last_beep_time = millis();
-			/*
-			 if (live_tick_sound) {
-			 live_tick_sound = false;
-			 beacon_send_number(0, 1, 0, 0);
-			 } else {
-			 live_tick_sound = true;
-			 beacon_send_number(1, 1, 0, 0);
-			 }
-			 */
-		}
-#endif
-		//led2mode = OFF;
-
-		if (readAndParse()) {
-			ledGpsActivityTimer = millis();
-
-			//      giveTinyGPS()->hdop();
-			if (TinyGPS::GPS_INVALID_SATELLITES
-					== tinyGPS.satellites()) {
-				//Serial.write("parseOK   NOFIX");
-				Serial.write('P');
-			} else {
-				//Serial.write("parseOK  SATS: " + giveTinyGPS()->satellites());
-				Serial.write('p');
-			}
-			return;
-			unsigned long age;
-			float flat = 0.0, flon = 0.0;
-			giveTinyGPS()->f_get_position(&flat, &flon, &age);
-			Serial.print("LAT=");
-			if (TinyGPS::GPS_INVALID_F_ANGLE == flat)
-			flat = 0.0;
-			if (TinyGPS::GPS_INVALID_F_ANGLE == flon)
-			flon = 0.0;
-			Serial.print(flat);
-			Serial.print(" LON=");
-			Serial.print(flon);
-			Serial.print(" SAT=");
-			if (flat != 0.0 && flon != 0.0) {
-				ledGpsMode = ON;
-				beacon_initialize_audio();
-				beacon_send_number(flat, 2, 5, 3);
-				beacon_send_number(flon, 2, 5, 3);
-			}
-			Serial.print(
-					giveTinyGPS()->satellites()
-					== TinyGPS::GPS_INVALID_SATELLITES ?
-					0 : giveTinyGPS()->satellites());
-			Serial.print(" PREC=");
-			Serial.print(
-					giveTinyGPS()->hdop() == TinyGPS::GPS_INVALID_HDOP ?
-					0 : giveTinyGPS()->hdop());
-
-		}
-	}
-#endif
-	////////////////////////////////////////////////////END GPS SERIAL ////////////////////////////////////
 
 }
-
 
 #endif

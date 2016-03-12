@@ -8,45 +8,10 @@
 #ifndef DRONE_ELT_MOD_POSITIONBUFFER_2_H_
 #define DRONE_ELT_MOD_POSITIONBUFFER_2_H_
 
-#include "LinkedList.h"
-
-class Poss{
-
-	int e;
-public:
-
-	void resetPosition() {
-			latitude = 0.0;
-			longitude = 0.0;
-			hdop = 0.0;
-			numOfSats = 0;
-			triggerTime = 0.0;
-			fired = false;
-			numOfSamples = 0;
-		}
+//#include "LinkedList.h"
 
 
-	/*
-	void update(Poss position) {
-			if(true){
-			//if (position.numOfSats >= 3) {
-				latitude += position.latitude;
-				longitude += position.longitude;
-				numOfSats += position.numOfSats;
-				hdop += position.hdop;
-				numOfSamples++;
-			}
-		}
-*/
-
-	double latitude, longitude;
-	int numOfSats, numOfSamples;
-	double hdop;
-	double triggerTime;
-	bool fired;
-};
-
-#if 0
+#if 1
 class Position2 {
 public:
 	Position2() {

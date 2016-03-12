@@ -15,7 +15,7 @@ void printDouble2( double val, unsigned int precision){
 // example: printDouble( 3.1415, 100); // prints 3.14 (two decimal places)
 
    Serial.print (int(val));  //prints the int part
-   Serial.print("."); // print the decimal point
+   Serial.print('.'); // print the decimal point
    unsigned int frac;
    if(val >= 0)
      frac = (val - int(val)) * precision;
@@ -38,7 +38,7 @@ void printDouble( double val, byte precision){
 
  Serial.print (int(val));  //prints the int part
  if( precision > 0) {
-   Serial.print("."); // print the decimal point
+   Serial.print('.'); // print the decimal point
    unsigned long frac;
    unsigned long mult = 1;
    byte padding = precision -1;

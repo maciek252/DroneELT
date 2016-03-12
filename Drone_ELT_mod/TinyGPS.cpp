@@ -25,8 +25,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define _GPRMC_TERM   "GPRMC"
 #define _GPGGA_TERM   "GPGGA"
-#define _GPGSA_TERM   "GPGSA"
 #define _GNRMC_TERM   "GNRMC"
+#define _GNGGA_TERM   "GNGGA"
+
+
+
+#define _GPGSA_TERM   "GPGSA"
 #define _GNGNS_TERM   "GNGNS"
 #define _GNGSA_TERM   "GNGSA"
 #define _GPGSV_TERM   "GPGSV"
@@ -225,7 +229,7 @@ bool TinyGPS::term_complete()
   {
     if (!gpsstrcmp(_term, _GPRMC_TERM) || !gpsstrcmp(_term, _GNRMC_TERM))
       _sentence_type = _GPS_SENTENCE_GPRMC;
-    else if (!gpsstrcmp(_term, _GPGGA_TERM))
+    else if (!gpsstrcmp(_term, _GPGGA_TERM) || !gpsstrcmp(_term, _GNGGA_TERM))
       _sentence_type = _GPS_SENTENCE_GPGGA;
     else if (!gpsstrcmp(_term, _GNGNS_TERM))
       _sentence_type = _GPS_SENTENCE_GNGNS;

@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "WProgram.h"
 #endif
 */
+#include <FastSerial.h> // to pomoglo na wieszanie sie glownej petli?
 #include <Arduino.h>
 //#include <stdlib.h>
 
@@ -104,7 +105,8 @@ public:
   void stats(unsigned long *chars, unsigned short *good_sentences, unsigned short *failed_cs);
 #endif
 
-private:
+//private:
+public:
   enum {_GPS_SENTENCE_GPGGA, _GPS_SENTENCE_GPRMC, _GPS_SENTENCE_GNGNS, _GPS_SENTENCE_GNGSA,
       _GPS_SENTENCE_GPGSV, _GPS_SENTENCE_GLGSV,  _GPS_SENTENCE_OTHER};
 
@@ -165,16 +167,4 @@ private:
   int gpsstrcmp(const char *str1, const char *str2);
 };
 
-/*
-#if !defined(ARDUINO)
-// Arduino 0012 workaround
-#undef int
-#undef char
-#undef long
-#undef byte
-#undef float
-#undef abs
-#undef round
-#endif
-*/
 #endif
