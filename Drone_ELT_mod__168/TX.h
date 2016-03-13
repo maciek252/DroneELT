@@ -4,6 +4,12 @@
 #ifndef __TX_H__
 #define __TX_H__
 
+#include <fifo.h>
+#include <aircraft.h>
+#include <mavlink2.h>
+#include <asynch_tx.h>
+#include <frsky.h>
+
 #include "LEDs.h"
 
 #include "Utils.h"
@@ -15,7 +21,7 @@
 //#include "LinkedList.h"
 
 //#include "PositionBuffer.h"
-#include "PositionBuffer2.h"
+//#include "PositionBuffer2.h"
 
 #include "TinyGPSplusplus.h"
 
@@ -55,6 +61,7 @@ const char *gpsStream =
 
 #endif
 
+#if 0
 class Poss {
 
 	int e;
@@ -89,9 +96,10 @@ public:
 	double triggerTime;
 	bool fired;
 };
+#endif
 
 //static Poss poss;
-static Position2 poss;
+//static Position2 poss;
 
 #if 0
 static TinyGPS tinyGPS;
@@ -379,12 +387,18 @@ void serviceMavlink() {
 		Serial.write(buf[5]);
 #endif
 
-#if 0
+#if 1
 		Serial.write('R');
 		printDouble(the_aircraft.attitude.roll, 3);
 		Serial.write('\n');
-		//Serial.write('L');
-		//printDouble(osd_lon, 6);
+		Serial.write('L');
+		printDouble(the_aircraft.location.gps_lat/1000000.0, 7);
+		Serial.write('O');
+		printDouble(the_aircraft.location.gps_lon/1000000.0, 7);
+		Serial.write('S');
+		Serial.print(the_aircraft.gps.num_sats);
+		Serial.write('H');
+		Serial.print(the_aircraft.location.gps_hdop);
 		Serial.write('\n');
 #endif
 
@@ -598,6 +612,17 @@ void runGPSNMEA() {
 
 void loop(void) {
 
+	while (Serial.available() > 0) {
+
+
+
+			uint8_t c = Serial.read();
+
+			if (gpsPlus.encode(c))
+							displayInfo();
+			read_mavlink(c);
+	}
+
 
 
 #ifdef TEST_GPS
@@ -697,7 +722,8 @@ void loop(void) {
 		return;
 	}
 */
-	runGPSMAVLINK();
+	//runGPSMAVLINK();
+	serviceMavlink();
 	return;
 
 	/////////////////////////////////////////////////// GPS SERIAL ////////////////////////////////////////
