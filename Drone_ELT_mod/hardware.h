@@ -255,8 +255,8 @@ void setupRfmInterrupt()
 #define PPM_Signal_Interrupt PCINT2_vect
 #define PPM_Signal_Edge_Check ((PIND & 0x08)==0x08)
 
-DefineSerialPort(Serial, 0);
-#define TelemetrySerial Serial
+//DefineSerialPort(Serial, 0);
+//#define TelemetrySerial Serial
 
 /*
 void buzzerInit()

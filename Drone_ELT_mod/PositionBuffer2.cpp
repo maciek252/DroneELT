@@ -12,7 +12,7 @@
 #include "PositionBuffer2.h"
 
 
-#include <FastSerial.h>
+//#include <FastSerial.h>
 #include <Arduino.h>
 //#include "TinyGPS2.h"
 //#include "Utils.h"

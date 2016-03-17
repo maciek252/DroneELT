@@ -1,3 +1,8 @@
+
+
+
+#include <EEPROM.h>
+
 // **********************************************************
 // ************************ openLRSng ***********************https://www.google.com/search?q=text%2Fhtml&ie=UTF-8
 // ******glownyDroneELT (mod) na tym dzialam****************************************************
@@ -85,17 +90,29 @@
 //### CODE SECTION ###
 //####################
 
-#include <FastSerial.h>
-#include "OSD_Vars.h"
-
-
-#include  "MAVLinkOSD.h"
+//#include <FastSerial.h>
 
 //#include <GCS_MAVLink.h>
 
 
 //#include "serialport.h"
-#define DefineSerialPort(_name, _num) FastSerialPort(_name, _num)
+//#define DefineSerialPort(_name, _num) FastSerialPort(_name, _num)
+
+//#include "v1.0/mavlink_types.h"
+//#include "v1.0/ardupilotmega/mavlink.h"
+
+
+//#include "../mavlink/include/mavlink_types.h"
+#include "../mavlink/include/mavlink/v1.0/ardupilotmega/mavlink.h"
+#include "../mavlink/include/mavlink/v1.0/mavlink_types.h"
+
+extern mavlink_system_t mavlink_system;
+
+//#include "include/mavlink/v1.0/ardupilotmega/mavlink.h"
+
+
+//#include "GCS_MAVLink/include/mavlink/v1.0/ardupilotmega/mavlink.h"
+//mavlink_message_t msg;
 
 #include <Arduino.h>
 #include "Utils.h"
@@ -112,7 +129,6 @@
 #ifdef CLI_ENABLED
 #include "dialog.h"
 #endif
-#include "frskytx.h"
 #include "TX.h"
 #else
 #include "mavlink.h"

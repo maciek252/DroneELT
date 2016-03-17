@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "WProgram.h"
 #endif
 */
-#include <FastSerial.h> // to pomoglo na wieszanie sie glownej petli?
+
 #include <Arduino.h>
 //#include <stdlib.h>
 

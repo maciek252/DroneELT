@@ -19,6 +19,8 @@
 
 #include "TinyGPSplusplus.h"
 
+#include "mavlinkMS.h"
+#include "aircraft.h"
 //#define TEST_GPS
 
 #ifdef TEST_GPS
@@ -379,6 +381,16 @@ void serviceMavlink() {
 
 #if 1
 		Serial.write('R');
+		printDouble(the_aircraft.attitude.roll, 3);
+		Serial.write('\n');
+		//Serial.write('L');
+		//printDouble(osd_lon, 6);
+		Serial.write('\n');
+#endif
+
+
+#if 0
+		Serial.write('R');
 		printDouble(osd_roll, 3);
 		Serial.write('\n');
 		Serial.write('L');
@@ -403,6 +415,7 @@ void serviceMavlink() {
 		//	 Serial.print("ee");
 		//        Serial.println(osd_roll);
 
+#if 0
 		if (mavlink_active == 1) {
 
 			device_mode = MAVLINK_SERIAL;
@@ -465,6 +478,7 @@ void serviceMavlink() {
 			 Red_LED_OFF;*/
 
 		}
+#endif
 	}
 }
 //////////////////////////////////////////////////////////////////////////////////////
@@ -537,9 +551,17 @@ void runGPSMAVLINK() {
 	while (Serial.available() > 0) {
 
 		uint8_t c = Serial.read();
+		//Serial.write(c)
+		//if (gpsPlus.encode((byte)c))
+			//displayInfo();
+		//if(testIfNMEA6(c))
+			//Serial.write('G');
 
-		if (NO_GPS_TRY_MAVLINK == device_mode
-				|| MAVLINK_SERIAL == device_mode) {
+		read_mavlink(c);
+
+		//continue;
+		//if (NO_GPS_TRY_MAVLINK == device_mode
+			//	|| MAVLINK_SERIAL == device_mode) {
 
 			uint32_t timeUs, timeMs;
 			float mavLinkTimer = 0;
@@ -547,9 +569,9 @@ void runGPSMAVLINK() {
 			//        updateLBeep(false);
 			//        buzzerOff();
 
-			read_mavlink(c);
+			//read_mavlink(c);
 			serviceMavlink();
-		}
+		//}
 	}
 }
 
@@ -575,6 +597,8 @@ void runGPSNMEA() {
 }
 
 void loop(void) {
+
+
 
 #ifdef TEST_GPS
 	while (*gpsStream) {
@@ -667,12 +691,12 @@ void loop(void) {
 	//Serial.write('r');
 
 	/////////////////////////////////////////////////// GPS SERIAL ////////////////////////////////////////
-
+/*
 	if (device_mode == NO_GPS || device_mode == GPS_SERIAL) {
 		runGPSNMEA();
 		return;
 	}
-
+*/
 	runGPSMAVLINK();
 	return;
 
