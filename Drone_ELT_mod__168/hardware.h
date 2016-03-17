@@ -420,8 +420,8 @@ void buzzerOn(uint16_t freq)
 #endif
 //---------------------------------------------------------------- Tx -------------------------------------------------------------------------
 #if (COMPILE_TX == 1)
-DefineSerialPort(Serial, 0);
-#define TelemetrySerial Serial
+//DefineSerialPort(Serial, 0);
+//#define TelemetrySerial Serial
 
 #define USE_ICP1 // use ICP1 for PPM input for less jitter
 

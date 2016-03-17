@@ -12,14 +12,12 @@
 #include "PositionBuffer2.h"
 
 
-//#include <FastSerial.h>
+
 #include <Arduino.h>
 //#include "TinyGPS2.h"
 //#include "Utils.h"
 //#include "MemoryFree.h"
 
-
-/*
 
 void Position2::update(Position2 position) {
 	if(true){
@@ -156,14 +154,17 @@ void PositionBuffer::tick() {
 		//Serial.write('t');
 		oneSecondTick();
 	}
+#if 0
 	if (millis() - fifthSecondTimer > 1000) {
 		fifthSecondTimer = millis();
 		//Serial.write('t');
 		fifthSecondTick();
 	}
+#endif
 
 }
 
+#if 0
 void PositionBuffer::fifthSecondTick() {
 
 	int i = 0;
@@ -186,6 +187,7 @@ void PositionBuffer::fifthSecondTick() {
 
 	fifthSecondTimer = 0;
 }
+#endif
 
 void PositionBuffer::oneSecondTick() {
 
@@ -208,11 +210,16 @@ void PositionBuffer::printStatsToSerial() {
 	//Serial.write("----free memory =" + freeMemory2());
 	Serial.println("1 second tick");
 	//Serial.write('1');
+	Serial.print("num of 1-sec avg pos:");
+	Serial.println(positionsOneSecondIntervals.size());
 	for (int i = 0; i < positionsOneSecondIntervals.size(); i++) {
 		positionsOneSecondIntervals.get(i).writeStatToSerial();
 	}
+
+
 }
 
+#if 0
 void PositionBuffer::addPositionToBeTriggered(Position2 *array, int index,
 		float time) {
 
@@ -223,10 +230,11 @@ void PositionBuffer::addPositionToBeTriggered(Position2 *array, int index,
 	p.triggerTime = time;
 	positionsForTesting.add(p);
 }
+#endif
 
 void addTestSamplesIfTriggeredByTime() {
 
 }
 
 
-*/
+

@@ -4,11 +4,11 @@
 #ifndef __TX_H__
 #define __TX_H__
 
-#include <fifo.h>
+//#include <fifo.h>
 #include <aircraft.h>
 #include <mavlink2.h>
-#include <asynch_tx.h>
-#include <frsky.h>
+//#include <asynch_tx.h>
+//#include <frsky.h>
 
 #include "LEDs.h"
 
@@ -21,7 +21,7 @@
 //#include "LinkedList.h"
 
 //#include "PositionBuffer.h"
-//#include "PositionBuffer2.h"
+#include "PositionBuffer2.h"
 
 #include "TinyGPSplusplus.h"
 
@@ -151,7 +151,7 @@ static LED_STATE ledMavlinkMode = OFF; // RED in Tx100mW
 
 static long detectionTimer = 0.0;
 
-//static PositionBuffer positionBuffer;
+static PositionBuffer positionBuffer;
 //static Position position;
 
 static bool led1State = false;
@@ -192,15 +192,10 @@ void setup(void) {
 #endif
 	buzzerInit();
 
-#ifdef __AVR_ATmega32U4__
-	Serial.begin(0); // Suppress warning on overflow on Leonardo
-	TelemetrySerial.setBuffers(serial_rxbuffer, SERIAL_BUF_RX_SIZE, serial_txbuffer, SERIAL_BUF_TX_SIZE);
-#else
 //  Serial.setBuffers(serial_rxbuffer, SERIAL_BUF_RX_SIZE, serial_txbuffer, SERIAL_BUF_TX_SIZE);
 //  Serial.begin(115200);
 	Serial.begin(57600);
 	//Serial.setTimeout(15000UL);
-#endif
 	profileInit();
 	txReadEeprom();
 
@@ -224,10 +219,10 @@ void setup(void) {
 	// przeniesione tu:
 	init_rfm(0);
 	rfmSetChannel(RF_channel);
-	rx_reset();
+//	rx_reset();
 	watchdogConfig (WATCHDOG_2S);
 
-	beacon_initialize_audio();
+//	beacon_initialize_audio();
 
 	return;
 /////////////////////////////////////////////////
@@ -390,11 +385,14 @@ void serviceMavlink() {
 #if 1
 		Serial.write('R');
 		printDouble(the_aircraft.attitude.roll, 3);
+		if(the_aircraft.attitude.roll > 45 && the_aircraft.attitude.roll < 50)
+			beacon_send_number(92.453, 2, 3, 2);
+
 		Serial.write('\n');
 		Serial.write('L');
-		printDouble(the_aircraft.location.gps_lat/1000000.0, 7);
+		printDouble(the_aircraft.location.gps_lat/10000000.0, 7);
 		Serial.write('O');
-		printDouble(the_aircraft.location.gps_lon/1000000.0, 7);
+		printDouble(the_aircraft.location.gps_lon/10000000.0, 7);
 		Serial.write('S');
 		Serial.print(the_aircraft.gps.num_sats);
 		Serial.write('H');
@@ -497,51 +495,6 @@ void serviceMavlink() {
 }
 //////////////////////////////////////////////////////////////////////////////////////
 
-bool testIfNMEA5() {
-	//Serial.setTimeout(15000UL);
-
-	char inData[250]; // Allocate some space for the string
-	uint8_t inChar; // Where to store the character read
-	//Serial.write("ddd");
-	int index33 = 0;
-	inData[0] = 0;
-
-	while (Serial.available() > 0) {
-		//String str = Serial.readString();
-		//str = Serial.readStringUntil('');
-		//return true;
-		inChar = Serial.read(); // Read a character
-		//continue;
-
-		if (!((inChar >= 'a' && inChar <= 'z')
-				|| (inChar >= 'A' && inChar <= 'Z')
-				|| (inChar >= '0' && inChar <= '9')))
-			continue;
-
-#if 1
-		Serial.write('v');
-		Serial.write(inChar);
-#endif
-
-		if (index33 < 203) { // One less than the size of the array
-
-			inData[index33] = inChar; // Store it
-			index33++; // Increment where to write next
-			inData[index33] = 0; //'\0'; // Null terminate the string
-		}
-	}
-	// GPRMC - rzadko
-	if (index33 >= 5) {
-		if (strstr(inData, "GNGSA") != NULL) {
-			//Serial.print("Wynik: true");
-			Serial.write('T');
-			return true;
-		}
-	}
-	//Serial.write('f');
-	//Serial.print("NMEA: false");
-	return false;
-}
 
 #if 1
 bool readAndParse(uint8_t c) {
@@ -612,6 +565,15 @@ void runGPSNMEA() {
 
 void loop(void) {
 
+#if 0
+	beacon_initialize_audio();
+	while(true){
+		beacon_send_number(92.453, 2, 3, 2);
+		delay(1000); // must be here when transmitting several numbers
+	}
+#endif
+
+
 	while (Serial.available() > 0) {
 
 
@@ -652,7 +614,7 @@ void loop(void) {
 
 #if 1
 	serviceLEDs();
-	//positionBuffer.tick();
+	positionBuffer.tick();
 #endif
 
 #if 1
@@ -754,6 +716,8 @@ void loop(void) {
 #if 1 // TU OK TU OK
 		//delay(1000);
 		if (gpsPlus.encode(c)) {
+			//Position2 pos;
+			//positionBuffer.addGPSPositionToOneSecondBuffers(pos);
 			displayInfo();
 
 		}

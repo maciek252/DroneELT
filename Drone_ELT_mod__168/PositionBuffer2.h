@@ -8,7 +8,7 @@
 #ifndef DRONE_ELT_MOD_POSITIONBUFFER_2_H_
 #define DRONE_ELT_MOD_POSITIONBUFFER_2_H_
 
-//#include "LinkedList.h"
+#include "LinkedList.h"
 
 
 #if 1
@@ -70,7 +70,7 @@ public:
 #endif
 
 
-#if 0
+#if 1
 class PositionBuffer {
 public:
 	PositionBuffer();
@@ -100,7 +100,7 @@ public:
 
 private:
 
-	LinkedList<Position2> positionsForTesting;
+	//LinkedList<Position2> positionsForTesting;
 	LinkedList<Position2> positionsOneSecondIntervals;
 
 	static const int NUM_OF_SAMPLES_IN_BUFFER = 10;
