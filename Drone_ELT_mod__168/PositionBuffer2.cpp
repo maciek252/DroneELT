@@ -240,10 +240,10 @@ void PositionBuffer::oneSecondTick() {
 
 void PositionBuffer::printStatsToSerialBefore() {
 
-	Serial.print("-fm =");
+	Serial.print(F("-fm ="));
 	Serial.println(freeMemory2());
-	Serial.print("one second tick");
-	Serial.print("pos in this second:");
+	Serial.print(F("one second tick"));
+	Serial.print(F("pos in this second:"));
 	Serial.println(positionsInCurrentSecond.size());
 
 	//Serial.write('1');
@@ -269,7 +269,7 @@ void PositionBuffer::printStatsToSerialAfter() {
 #endif
 
 #if 1
-	Serial.println("history positions:");
+	Serial.println(F("history positions:"));
 	Serial.println(historyPositions.size());
 	for (int i = 0; i < historyPositions.size(); i++) {
 		historyPositions.get(i).writeStatToSerial();
