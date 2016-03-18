@@ -69,6 +69,7 @@ public:
 };
 #endif
 
+///////////////////////////////////////////////////////////////////////////////////
 
 #if 1
 class PositionBuffer {
@@ -84,6 +85,10 @@ public:
 	// previousBegin > previousEnd, takes (previousBegin-previousEnd+1) samples
 	// example: buffer of size 20, added 24 samples, (7,3) will take samples: 17, 18, 19, 20, 21
 	Position2 averageFromRange(int previousBegin, int previousEnd);
+
+	Position2 averageFromCurrentSecPositionsAndCleanBuffer();
+
+	void addToHistory(Position2);
 
 	bool startCriterionMet();
 	bool alarmCriterionMet();
@@ -101,14 +106,18 @@ public:
 private:
 
 	//LinkedList<Position2> positionsForTesting;
-	LinkedList<Position2> positionsOneSecondIntervals;
+	LinkedList<Position2> positionsInCurrentSecond;
+	LinkedList<Position2> historyPositions;
 
-	static const int NUM_OF_SAMPLES_IN_BUFFER = 10;
-	static const int BUFFERSIZE = 10;
-	Position2 positions[BUFFERSIZE];
+	static const int NUM_OF_SAMPLES_IN_BUFFER = 5;
+	//static const int BUFFERSIZE = 10;
+	//Position2 positions[BUFFERSIZE];
+
+
 
 	void addTestSamplesIfTriggeredByTime();
-	void printStatsToSerial();
+	void printStatsToSerialBefore();
+	void printStatsToSerialAfter();
 
 	void addPositionToBeTriggered(Position2 *array, int index, float time);
 
@@ -121,6 +130,7 @@ private:
 	void oneSecondTick();
 	void fifthSecondTick();
 	int writePos;
+	int currentPosIndex;
 
 
 	long oneSecondTimer;

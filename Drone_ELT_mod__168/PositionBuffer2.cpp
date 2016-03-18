@@ -16,7 +16,7 @@
 #include <Arduino.h>
 //#include "TinyGPS2.h"
 //#include "Utils.h"
-//#include "MemoryFree.h"
+#include "MemoryFree.h"
 
 
 void Position2::update(Position2 position) {
@@ -34,14 +34,15 @@ void Position2::writeStatToSerial() {
 	//printDouble( 1.2925254, 5);
 	Serial.print("lat=");
 	//printDouble(latitude, 5);
-	Serial.print("long=");
-	//printDouble(longitude, 5);
-	Serial.print("ns=");
-	Serial.print(numOfSats, DEC);
-	//Serial.write(numOfSats);
-	Serial.print("nSmpl=");
-	Serial.println(numOfSamples, DEC);
-	//Serial.write(numOfSamples);
+	Serial.print(latitude,5);
+	Serial.print(" long=");
+	Serial.print(longitude,5);
+	Serial.print(" ns=");
+	//Serial.print(numOfSats, DEC);
+	Serial.print(numOfSats);
+	Serial.print(" hdop=");
+	Serial.println(hdop,2);
+	//Serial.print(numOfSamples);
 
 	//Serial.write('p');
 	//Serial.write(numOfSats);
@@ -54,14 +55,13 @@ void Position2::computeAverage() {
 	longitude = longitude / numOfSamples;
 }
 
-void Position2::addPositionToAverage(Position2 &pos) {
-
-}
 
 PositionBuffer::PositionBuffer() {
 	oneSecondTimer = millis();
 	writePos = 0;
 }
+
+#if 0
 
 int PositionBuffer::nextForward(int arg) {
 	if (arg == BUFFERSIZE)
@@ -88,12 +88,13 @@ int PositionBuffer::nextBackward(int arg, int offset) {
 		o = nextBackward(o);
 	return o;
 }
+#endif
 
 void PositionBuffer::addGPSPositionToOneSecondBuffers(Position2 position) {
 
-	if (positionsOneSecondIntervals.size() > NUM_OF_SAMPLES_IN_BUFFER)
-		positionsOneSecondIntervals.pop();
-	positionsOneSecondIntervals.add(0, position);
+	if (positionsInCurrentSecond.size() > NUM_OF_SAMPLES_IN_BUFFER)
+		positionsInCurrentSecond.remove(0);
+	positionsInCurrentSecond.add(0, position);
 	//positions[writePos] = position;
 	//writePos = nextForward(writePos);
 }
@@ -102,6 +103,7 @@ void PositionBuffer::updateCurrentSecondPosition(Position2 position) {
 	currentSecondPosition.update(position);
 }
 
+#if 0
 Position2 PositionBuffer::averageFromRange(int previousBegin, int previousEnd) {
 	double latitudeAvg = 0.0;
 	double longitudeAvg = 0.0;
@@ -119,6 +121,7 @@ Position2 PositionBuffer::averageFromRange(int previousBegin, int previousEnd) {
 	return result;
 
 }
+#endif
 
 #if 0
 Position2 PositionBuffer::testWawer5() {
@@ -189,35 +192,93 @@ void PositionBuffer::fifthSecondTick() {
 }
 #endif
 
+void PositionBuffer::addToHistory(Position2 p){
+
+	//positions[writePos] = p;
+	//writePos = nextForward(writePos);
+	if(historyPositions.size() == 5)
+		historyPositions.remove(4);
+
+	historyPositions.add(0,p);
+
+}
+
 void PositionBuffer::oneSecondTick() {
+
+
 
 	//addPositionToBeTriggered(positionValidPKPWawer, 0, 3);
 
-	int i = millis() % 10;
+	//int i = millis() % 10;
 
 //	Position nowa;
 //	nowa.fired = false;
 //	nowa.numOfSats = i;
 	//positionsForTesting.add(0, nowa);
-	addGPSPositionToOneSecondBuffers(currentSecondPosition);
+	// adding test samples!
+#if 0
+	for(int numOfTestSamples = 0; numOfTestSamples < random(0,3); numOfTestSamples++){
+		Position2 pos;
+		pos.latitude = random(0,100)/100.0;
+		pos.longitude = random(0,100)/100.0;
+		pos.numOfSats = random(2,7);
+		pos.hdop = (random(1,1000) / 1000.0);
+		addGPSPositionToOneSecondBuffers(pos);
+		//addGPSPositionToOneSecondBuffers(currentSecondPosition);
+	}
+#endif
+
+	printStatsToSerialBefore();
+
+	Position2 avg = averageFromCurrentSecPositionsAndCleanBuffer();
+	addToHistory(avg);
+
 	currentSecondPosition.resetPosition();
 
-	printStatsToSerial();
+	printStatsToSerialAfter();
 }
 
-void PositionBuffer::printStatsToSerial() {
+void PositionBuffer::printStatsToSerialBefore() {
 
-	//Serial.write("----free memory =" + freeMemory2());
-	Serial.println("1 second tick");
+	Serial.print("-fm =");
+	Serial.println(freeMemory2());
+	Serial.print("one second tick");
+	Serial.print("pos in this second:");
+	Serial.println(positionsInCurrentSecond.size());
+
 	//Serial.write('1');
-	Serial.print("num of 1-sec avg pos:");
-	Serial.println(positionsOneSecondIntervals.size());
-	for (int i = 0; i < positionsOneSecondIntervals.size(); i++) {
-		positionsOneSecondIntervals.get(i).writeStatToSerial();
-	}
+
+
+
 
 
 }
+
+void PositionBuffer::printStatsToSerialAfter() {
+
+
+	//Serial.write('1');
+
+
+
+#if 0
+	Serial.println(positionsInCurrentSecond.size());
+	for (int i = 0; i < positionsInCurrentSecond.size(); i++) {
+		positionsInCurrentSecond.get(i).writeStatToSerial();
+	}
+#endif
+
+#if 1
+	Serial.println("history positions:");
+	Serial.println(historyPositions.size());
+	for (int i = 0; i < historyPositions.size(); i++) {
+		historyPositions.get(i).writeStatToSerial();
+	}
+#endif
+
+
+}
+
 
 #if 0
 void PositionBuffer::addPositionToBeTriggered(Position2 *array, int index,
@@ -237,4 +298,46 @@ void addTestSamplesIfTriggeredByTime() {
 }
 
 
+Position2 PositionBuffer::averageFromCurrentSecPositionsAndCleanBuffer(){
+
+	Position2 result;
+#if 0
+	while(positionsInCurrentSecond.size() > 0){
+		Position2 p = positionsInCurrentSecond.remove(0);
+	//	result = p;
+	}
+#endif
+
+	double lat = 0.0;
+	double longitude = 0.0;
+	int nrOfSats= 0;
+	double hdop = 0.0;
+
+	int numOfValidSamples = 0;
+	for(int i = 0; i < positionsInCurrentSecond.size(); i++){
+		Position2 p = positionsInCurrentSecond.get(i);
+		if(p.numOfSats < 3)
+			continue;
+		numOfValidSamples++;
+		lat += p.latitude;
+		longitude += p.longitude;
+		nrOfSats += p.numOfSats;
+		hdop += p.hdop;
+	}
+
+
+
+	lat = lat / (double)numOfValidSamples;
+	longitude = longitude / (double)numOfValidSamples;
+	hdop = hdop / (double)numOfValidSamples;
+
+	positionsInCurrentSecond.clear();
+
+	result.latitude = lat;
+	result.longitude = longitude;
+	result.numOfSats = nrOfSats;
+	result.hdop = hdop;
+	return result;
+
+}
 

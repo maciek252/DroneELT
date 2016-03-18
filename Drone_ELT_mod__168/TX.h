@@ -385,21 +385,28 @@ void serviceMavlink() {
 #if 1
 		Serial.write('R');
 		printDouble(the_aircraft.attitude.roll, 3);
-		if(the_aircraft.attitude.roll > 45 && the_aircraft.attitude.roll < 50)
+		if (the_aircraft.attitude.roll > 45 && the_aircraft.attitude.roll < 50)
 			beacon_send_number(92.453, 2, 3, 2);
 
 		Serial.write('\n');
 		Serial.write('L');
-		printDouble(the_aircraft.location.gps_lat/10000000.0, 7);
+		printDouble(the_aircraft.location.gps_lat / 10000000.0, 7);
 		Serial.write('O');
-		printDouble(the_aircraft.location.gps_lon/10000000.0, 7);
+		printDouble(the_aircraft.location.gps_lon / 10000000.0, 7);
 		Serial.write('S');
 		Serial.print(the_aircraft.gps.num_sats);
 		Serial.write('H');
 		Serial.print(the_aircraft.location.gps_hdop);
 		Serial.write('\n');
-#endif
 
+		Position2 pos;
+		pos.latitude = the_aircraft.location.gps_lat / 10000000.0;
+		pos.longitude = the_aircraft.location.gps_lon / 10000000.0;
+		pos.numOfSats = the_aircraft.gps.num_sats;
+		pos.hdop = the_aircraft.location.gps_hdop;
+		positionBuffer.addGPSPositionToOneSecondBuffers(pos);
+
+#endif
 
 #if 0
 		Serial.write('R');
@@ -495,7 +502,6 @@ void serviceMavlink() {
 }
 //////////////////////////////////////////////////////////////////////////////////////
 
-
 #if 1
 bool readAndParse(uint8_t c) {
 
@@ -520,24 +526,24 @@ void runGPSMAVLINK() {
 		uint8_t c = Serial.read();
 		//Serial.write(c)
 		//if (gpsPlus.encode((byte)c))
-			//displayInfo();
+		//displayInfo();
 		//if(testIfNMEA6(c))
-			//Serial.write('G');
+		//Serial.write('G');
 
 		//read_mavlink(c);
 
 		//continue;
 		//if (NO_GPS_TRY_MAVLINK == device_mode
-			//	|| MAVLINK_SERIAL == device_mode) {
+		//	|| MAVLINK_SERIAL == device_mode) {
 
-			uint32_t timeUs, timeMs;
-			float mavLinkTimer = 0;
+		uint32_t timeUs, timeMs;
+		float mavLinkTimer = 0;
 
-			//        updateLBeep(false);
-			//        buzzerOff();
+		//        updateLBeep(false);
+		//        buzzerOff();
 
-			//read_mavlink(c);
-			serviceMavlink();
+		//read_mavlink(c);
+		serviceMavlink();
 		//}
 	}
 }
@@ -558,8 +564,9 @@ void runGPSNMEA() {
 		}
 
 		//delay(1000);
-		if (gpsPlus.encode(c))
-			displayInfo();
+		if (gpsPlus.encode(c)) {
+			//	displayInfo();
+		}
 	}
 }
 
@@ -567,25 +574,33 @@ void loop(void) {
 
 #if 0
 	beacon_initialize_audio();
-	while(true){
+	while(true) {
 		beacon_send_number(92.453, 2, 3, 2);
 		delay(1000); // must be here when transmitting several numbers
 	}
 #endif
 
-
 	while (Serial.available() > 0) {
 
+		uint8_t c = Serial.read();
 
-
-			uint8_t c = Serial.read();
-
-			if (gpsPlus.encode(c))
-							displayInfo();
-			read_mavlink(c);
+		if (gpsPlus.encode(c)) {
+			Position2 pos;
+			if (gpsPlus.satellites.isValid()) {
+				pos.latitude = gpsPlus.location.lat();
+				pos.longitude = gpsPlus.location.lng();
+				pos.numOfSats = gpsPlus.satellites.value();
+				pos.hdop = gpsPlus.hdop.value();
+				if (pos.numOfSats >= 3) {
+					positionBuffer.addGPSPositionToOneSecondBuffers(pos);
+				}
+			}
+			//Serial.println("gps nmea valid!");
+			//				displayInfo();
+		}
+		// bylo OK ale testujemy nmea (duzo pamieci to zjada)
+		//read_mavlink(c);
 	}
-
-
 
 #ifdef TEST_GPS
 	while (*gpsStream) {
@@ -678,12 +693,12 @@ void loop(void) {
 	//Serial.write('r');
 
 	/////////////////////////////////////////////////// GPS SERIAL ////////////////////////////////////////
-/*
-	if (device_mode == NO_GPS || device_mode == GPS_SERIAL) {
-		runGPSNMEA();
-		return;
-	}
-*/
+	/*
+	 if (device_mode == NO_GPS || device_mode == GPS_SERIAL) {
+	 runGPSNMEA();
+	 return;
+	 }
+	 */
 	//runGPSMAVLINK();
 	serviceMavlink();
 	return;
@@ -716,8 +731,6 @@ void loop(void) {
 #if 1 // TU OK TU OK
 		//delay(1000);
 		if (gpsPlus.encode(c)) {
-			//Position2 pos;
-			//positionBuffer.addGPSPositionToOneSecondBuffers(pos);
 			displayInfo();
 
 		}
