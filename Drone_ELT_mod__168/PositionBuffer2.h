@@ -51,6 +51,14 @@ public:
 
 	bool fired;
 
+	bool isValid(){
+		if(numOfSats < 3)
+			return false;
+		if(latitude == 0.0 && longitude == 0.0)
+			return false;
+		return true;
+	}
+
 	double getLatitude() {
 		return latitude;
 	}
@@ -90,8 +98,6 @@ public:
 
 	void addToHistory(Position2);
 
-	bool startCriterionMet();
-	bool alarmCriterionMet();
 	bool stopAlarmCriterionMet();
 
 
@@ -103,21 +109,35 @@ public:
 
 	Position2 currentSecondPosition;
 
+	bool startCriterionMetFlag;
+	bool alarmCriterionMetFlag;
+	bool addPositionFarAwayFlag;
+
 private:
+
+	bool startCriterionMet();
+	bool alarmCriterionMet();
+	void addPositionFarAway();
 
 	//LinkedList<Position2> positionsForTesting;
 	LinkedList<Position2> positionsInCurrentSecond;
 	LinkedList<Position2> historyPositions;
 
 	static const int NUM_OF_SAMPLES_IN_BUFFER = 5;
+	static const int NUM_OF_SAMPLES_IN_CURRENT_SEC_BUFFER = 5;
 	//static const int BUFFERSIZE = 10;
 	//Position2 positions[BUFFERSIZE];
-
 
 
 	void addTestSamplesIfTriggeredByTime();
 	void printStatsToSerialBefore();
 	void printStatsToSerialAfter();
+
+	bool startCriterionSatisfied();
+	bool alarmCriterionSatisfied();
+
+	Position2 giveLastValidAvgPos();
+	Position2 giveLastValidSample();
 
 	void addPositionToBeTriggered(Position2 *array, int index, float time);
 

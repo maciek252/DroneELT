@@ -233,13 +233,13 @@ void setup(void) {
 }
 
 void printStatus() {
-	if (NO_GPS == device_mode )
+	if (NO_GPS == device_mode)
 		Serial.println(F("------------- NO GPS (try nmea)---------------"));
-	else if (NO_GPS_TRY_MAVLINK==device_mode )
+	else if (NO_GPS_TRY_MAVLINK == device_mode)
 		Serial.println(F("------------- NO GPS TRY MAVLINK ---------------"));
-	else if (GPS_SERIAL == device_mode )
+	else if (GPS_SERIAL == device_mode)
 		Serial.println(F("------------- GPS (nmea)---------------"));
-	else if (MAVLINK_SERIAL == device_mode )
+	else if (MAVLINK_SERIAL == device_mode)
 		Serial.println(F("------------- NO GPS (mavlink)---------------"));
 
 }
@@ -269,19 +269,19 @@ void displayInfo() {
 	Serial.print(F(" "));
 	if (gpsPlus.time.isValid()) {
 		if (gpsPlus.time.hour() < 10)
-			Serial.print(F("0"));
+		Serial.print(F("0"));
 		Serial.print(gpsPlus.time.hour());
 		Serial.print(F(":"));
 		if (gpsPlus.time.minute() < 10)
-			Serial.print(F("0"));
+		Serial.print(F("0"));
 		Serial.print(gpsPlus.time.minute());
 		Serial.print(F(":"));
 		if (gpsPlus.time.second() < 10)
-			Serial.print(F("0"));
+		Serial.print(F("0"));
 		Serial.print(gpsPlus.time.second());
 		Serial.print(F("."));
 		if (gpsPlus.time.centisecond() < 10)
-			Serial.print(F("0"));
+		Serial.print(F("0"));
 		Serial.print(gpsPlus.time.centisecond());
 	} else {
 		Serial.print(F("INVALID"));
@@ -401,8 +401,9 @@ void serviceMavlink() {
 #if 1
 		Serial.write('R');
 		printDouble(the_aircraft.attitude.roll, 3);
-		if (the_aircraft.attitude.roll > 45 && the_aircraft.attitude.roll < 50){
-			if(!audioInitialized){
+		if (the_aircraft.attitude.roll > 45
+				&& the_aircraft.attitude.roll < 50) {
+			if (!audioInitialized) {
 				beacon_initialize_audio();
 				audioInitialized = true;
 			}
@@ -427,16 +428,16 @@ void serviceMavlink() {
 		Serial.print(the_aircraft.location.gps_hdop);
 		Serial.write('\n');
 
-
-
 		Position2 pos;
 		pos.latitude = the_aircraft.location.gps_lat / 10000000.0;
 		pos.longitude = the_aircraft.location.gps_lon / 10000000.0;
 		pos.numOfSats = the_aircraft.gps.num_sats;
 		pos.hdop = the_aircraft.location.gps_hdop;
-		if(pos.numOfSats >=3){
-			if(ledMavlinkMode == SINGLE_FLASH)
+		if (pos.numOfSats >= 3) {
+			if (ledMavlinkMode == SINGLE_FLASH) {
 				ledMavlinkMode = DOUBLE_FLASH;
+				//ledMavlinkMode = TRIPLE_FLASH;
+			}
 			positionBuffer.addGPSPositionToOneSecondBuffers(pos);
 		}
 
@@ -462,7 +463,6 @@ bool readAndParse(uint8_t c) {
 	return result;
 }
 #endif
-
 
 void loop(void) {
 
@@ -498,10 +498,8 @@ void loop(void) {
 
 		uint8_t c = Serial.read();
 
-
-
 		// NMEA //////////////////////////////////////
-		if ( NO_GPS == device_mode) {
+		if (NO_GPS == device_mode) {
 			if (testIfNMEA6(c)) {
 
 				//ledGpsActivityTimer = millis();
@@ -526,20 +524,18 @@ void loop(void) {
 			}
 		}
 
-
 #if 1
 		if (device_mode == NO_GPS_TRY_MAVLINK
 				|| device_mode == MAVLINK_SERIAL) {
 			// bylo OK ale testujemy nmea (duzo pamieci to zjada  - niekiedy)
-			if(read_mavlink(c)){
+			if (read_mavlink(c)) {
 				device_mode = MAVLINK_SERIAL;
-				if(QUICK_FLASH == ledMavlinkMode)
+				if (QUICK_FLASH == ledMavlinkMode)
 					ledMavlinkMode = SINGLE_FLASH;
 			}
 			serviceMavlink();
 		}
 #endif
-
 
 	}
 
@@ -562,6 +558,23 @@ void loop(void) {
 	positionBuffer.tick();
 #endif
 
+	if (ledMavlinkMode == DOUBLE_FLASH
+			&& positionBuffer.startCriterionMetFlag) {
+		ledMavlinkMode = TRIPLE_FLASH;
+	}
+
+	if (ledGpsMode == DOUBLE_FLASH && positionBuffer.startCriterionMetFlag) {
+		ledGpsMode = TRIPLE_FLASH;
+	}
+
+	if (ledMavlinkMode == TRIPLE_FLASH
+			&& positionBuffer.alarmCriterionMetFlag) {
+		ledMavlinkMode = SINGLE_FLASH_REV;
+	}
+
+	if (ledGpsMode == TRIPLE_FLASH && positionBuffer.alarmCriterionMetFlag) {
+		ledGpsMode = SINGLE_FLASH_REV;
+	}
 
 	////////////////////////////////////// BUTTON ////////////////////////////////////////////////////////
 #if 1
@@ -572,42 +585,48 @@ void loop(void) {
 		//Serial.end();
 		//Serial.begin(57600);
 		//Serial.flush();
+		positionBuffer.addPositionFarAwayFlag = true;
+#if 0
+		Position2 daleko;
+		daleko.latitude = 51.21446;
+		daleko.longitude = 20.17716;
+		daleko.numOfSats = 5;
+		daleko.hdop = 20;
+		positionBuffer.addGPSPositionToOneSecondBuffers(daleko);
+#endif
 		Serial.write('m');
 		//Serial.print(freeMemory2());
 		//Serial.write('b');
 		//Serial.print("f");
 		/*
-		if (OFF == ledMavlinkMode)
-			ledMavlinkMode = SINGLE_FLASH;		// RED in Tx100mW
-		else if (SINGLE_FLASH == ledMavlinkMode)
-			ledMavlinkMode = DOUBLE_FLASH;
-		else if (DOUBLE_FLASH == ledMavlinkMode)
-			ledMavlinkMode = DOUBLE_FLASH_REV;
-		else
-			ledMavlinkMode = OFF;
-			*/
+		 if (OFF == ledMavlinkMode)
+		 ledMavlinkMode = SINGLE_FLASH;		// RED in Tx100mW
+		 else if (SINGLE_FLASH == ledMavlinkMode)
+		 ledMavlinkMode = DOUBLE_FLASH;
+		 else if (DOUBLE_FLASH == ledMavlinkMode)
+		 ledMavlinkMode = DOUBLE_FLASH_REV;
+		 else
+		 ledMavlinkMode = OFF;
+		 */
 	}
 #endif
-
-
 
 }
 
 #if 0
-	Serial.write("S");
-	//return;
-	Position result = positionBuffer.testWawer5();
-	Serial.println(result.getLatitude());
-	Serial.println(result.getLongitude());
-	printDouble(3.123456789, 6);
-	printDouble(result.getLatitude(), 6);
-	printDouble(result.getLongitude(), 6);
+Serial.write("S");
+//return;
+Position result = positionBuffer.testWawer5();
+Serial.println(result.getLatitude());
+Serial.println(result.getLongitude());
+printDouble(3.123456789, 6);
+printDouble(result.getLatitude(), 6);
+printDouble(result.getLongitude(), 6);
 
-	double distanceWawerWodynska = positionBuffer.testDistanceWawerWodynska1();
-	Serial.println("distance Wawer-Wodynska");
-	printDouble(distanceWawerWodynska, 4);
-	return;
+double distanceWawerWodynska = positionBuffer.testDistanceWawerWodynska1();
+Serial.println("distance Wawer-Wodynska");
+printDouble(distanceWawerWodynska, 4);
+return;
 #endif
-
 
 #endif

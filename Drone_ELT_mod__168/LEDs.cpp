@@ -57,6 +57,23 @@ void serviceLED(LED_STATE ledMode, long &ledTimer, bool & ledState,
 				ledFlashCounter = 0;
 		}
 		break;
+	case TRIPLE_FLASH:
+			if (!ledState && millis() - ledTimer > led_interval_singleBreak
+					&& ledFlashCounter == 0) {
+				ledState = true;
+				ledTimer = millis();
+			} else if (!ledState && millis() - ledTimer > led_interval_singleFlash
+					&& ledFlashCounter > 0) {
+				ledState = true;
+				ledTimer = millis();
+			} else if (ledState && millis() - ledTimer > led_interval_singleFlash) {
+				ledState = false;
+				ledTimer = millis();
+				ledFlashCounter++;
+				if (ledFlashCounter == 3)
+					ledFlashCounter = 0;
+			}
+			break;
 	case DOUBLE_FLASH_REV:
 		if (ledState && millis() - ledTimer > led_interval_singleBreak
 				&& ledFlashCounter == 0) {
