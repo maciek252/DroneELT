@@ -26,7 +26,7 @@ void serviceLED(LED_STATE ledMode, long &ledTimer, bool & ledState,
 			ledState = false;
 			ledTimer = millis();
 		} else if (!ledState
-				&& millis() - ledTimer > led_interval_singleFlash + 1000) {
+				&& millis() - ledTimer > led_interval_singleFlash + 300) {
 			ledState = true;
 			ledTimer = millis();
 		}
@@ -100,3 +100,4 @@ void serviceLED(LED_STATE ledMode, long &ledTimer, bool & ledState,
 		break;
 	}
 }
+

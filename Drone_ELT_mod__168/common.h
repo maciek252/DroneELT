@@ -1,5 +1,13 @@
 //####### COMMON FUNCTIONS #########
 
+//#include "LEDs.h"
+extern void mavlinkLedOn();
+extern void mavlinkLedOff();
+extern void gpsLedOn();
+extern void gpsLedOff();
+
+
+
 void rfmSetCarrierFrequency(uint32_t f);
 void rfmSetPower(uint8_t p);
 uint8_t rfmGetRSSI(void);
@@ -287,15 +295,28 @@ void beacon_send_prelude(int8_t numOfSounds) {
 }
 
 void beacon_short_sound() {
+
+	//mavlinkLedOn();
+	//gpsLedOff();
 	beacon_tone(540, 5);
 	watchdogReset();
 	delayMicroseconds(1000);
+	//mavlinkLedOff();
+
+
 }
 
 void beacon_long_sound() {
+
+	//mavlinkLedOn();
+	//gpsLedOn();
+
 	beacon_tone(350, 5);
 	watchdogReset();
 	delayMicroseconds(1000);
+
+	//mavlinkLedOff();
+	//gpsLedOff();
 }
 
 void beacon_send_digit(int8_t numm) {

@@ -5,18 +5,34 @@ DroneELT is an analogue of ELT (Emergency Locator Transmitter) rescue system for
 
 *WARNING: some features from the description below are currently being implemented. See descriptions of the released versions.*
 
+##Data
+
+MAVlink - standard settings, the same as for MinimOSD:
+*RAW_SENSORS=2
+*EXTENDED_STATUS=2
+*RC_CHANNELS=5
+*POSITION=2
+*EXTRA1=5
+*EXTRA2=2
+
+As of current, no MAVlink is sent (the TX serial line is used for diagnostics)
+
+GPS - NMEA, messages GN*** (including glonass), not tested for GP*** but should 
+work
+
+
 ##LEDs 
 
 LEDs are used for signalling the current state of the device with respect to MAVlink and/or NMEA data received:
 
-* __OFF__ - no data, drone not started (detected from data)
+* __FAST BLINKING__ - waiting for data (every 6 seconds changes between MAVLINK and NMEA led)
 * __1 FLASH__ (flash means LED ON, otherwise OFF) - receiving data (MAVLINK or NMEA),
  no valid gps fix
 * __2 FLASHES__ - receiving data, valid fix, drone not started yet
-* __1 FLASH INVERTED__ (flash means LED OFF, otherwise ON) - receiving data, valid fix, drone started (move detected)
-~~* ON - drone started, receiving no data, timeout to triggering alarm running (not used)~~
-* __BOTH LEDS ON__: transmitting alarm, long sound
-* __ONE LED ON__: transmitting alarm, short sound
+* __3_FLASHES__ (flash means LED OFF, otherwise ON) - receiving data, valid fix, drone started (move detected)
+* __RED LED ON__: started transmitting alarm
+~~* __BOTH LEDS ON__: transmitting alarm, long sound~~
+~~* __ONE LED ON__: transmitting alarm, short sound~~
 
 
 OrangeLRS Tx: red LED - MAVlink, blue LED - GPS NMEA
@@ -41,7 +57,7 @@ for average positions from every last 6 seconds:
 * 0 or 1 valid fixes
 * 2-6 fixes, less than 3 meters between averages from every of these valid samples
 
-When the alarm is started, after transmitting a single sequence twice, the position is updated (average from 1 second), then transmitted twice, and so on.
+When the alarm is started, the position is no longer updated.
 
 ##Format of messages is as follows:
 
@@ -94,10 +110,10 @@ Predefined settings
 
 ##Compilation
 
-The main branch is placed in the folder Drone_ELT_mod/.
-The code compiles using Arduino 1.0.3. It is planned to refactor it for more recent versions.  There is a makefile using the project Arduino-Makefile, which can be run by executing the script m.sh (the original Makefile is left for ArduinoIDE).
+The main branch is placed in the folder Drone_ELT_mod__168/.
+The code compiles using Arduino 1.6.8. There is a makefile using the project Arduino-Makefile, which can be run by executing the script m.sh (the original Makefile is left for ArduinoIDE).
 
-There is an eclipse project, but it currently does not use the arduino plugin, because it is restricted to versions later than 1.5.x. It is placed in folder Drone_ELT_mod2/, but it refers to the source from Drone_ELT_mod/.
+There is an eclipse project, but it currently does not use the arduino plugin. It is placed in folder Drone_ELT_mod2/, but it refers to the source from Drone_ELT_mod/.
 
 ##TODO:
 
@@ -105,6 +121,7 @@ There is an eclipse project, but it currently does not use the arduino plugin, b
 * Android app for decoding messages
 * sign of the position 
 * transmitting other data (altitude?)
+* choosing the best sample (for example, by looking at HDOP)
 * configuration from menu over serial link, similarily as in OrangeLRSng software. Storing the configuration in EEPROM memory.
 * transmitting not only the last position, but some number of most recent valid positions, or an average?
-* consider switching the alarm off
+* consider switching the alarm off/updating position?

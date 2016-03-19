@@ -41,4 +41,11 @@ enum LED_STATE {
 void serviceLED(LED_STATE ledMode, long &ledTimer, bool & ledState,
 		int &ledFlashCounter);
 
+
+/*
+void mavlinkLedOn();
+void mavlinkLedOff();
+void gpsLedOn();
+void gpsLedOff();
+*/
 #endif /* DRONE_ELT_MOD_LEDS_H_ */

@@ -110,6 +110,8 @@ static TinyGPS tinyGPS;
 
 static bool audioInitialized = false;
 
+static bool playingAlarm = false;
+
 static TinyGPSPlus gpsPlus;
 static TinyGPSCustom magneticVariation(gpsPlus, "GNRMC", 10);
 
@@ -352,51 +354,12 @@ bool testIfNMEA6(uint8_t inChar) {
 ////////////////////////////////////////////////// service mavlink /////////////////////////////////////
 void serviceMavlink() {
 
-	uint32_t timeUs, timeMs;
 	float mavLinkTimer = 0;
 
-	//        updateLBeep(false);
-	//        buzzerOff();
-
-	//read_mavlink(c);
-	//    return;
-	//  watchdogReset();
-
-#if 0
-	if (millis() > mavLinkTimer + 100) {
-		mavLinkTimer = millis();
-		///       OnMavlinkTimer();
-
-		//                read_mavlink();
-		//                Serial.flush();
-	}
-#endif
 	if (millis() > lastLED + 1000) {
 		lastLED = millis();
 		//Serial.flush();
-		/*
-		 beacon_initialize_audio();
-		 beacon_tone(840,5);
-		 watchdogReset();
-		 beacon_finish_audio();
-		 */
-		//Serial.write("okoeee");
 		Serial.write('Q');
-		//return;
-
-		//http://forum.arduino.cc/index.php?topic=44262.0
-		//http://stackoverflow.com/questions/27651012/arduino-sprintf-float-not-formatting
-		//    osd_roll = 2.35;
-#if 0
-		char buf[6];
-		dtostrf(osd_roll, 5, 1, buf);
-		Serial.write(buf[0]);
-		Serial.write(buf[1]);
-		Serial.write(buf[2]);
-		Serial.write(buf[3]);
-		Serial.write(buf[4]);
-		Serial.write(buf[5]);
-#endif
 
 #if 1
 		Serial.write('R');
@@ -450,21 +413,31 @@ void serviceMavlink() {
 #if 1
 bool readAndParse(uint8_t c) {
 
-	//while (Serial.available() > 0)
-
-	//Serial.write(c);
-#if 1
 	//bool result = tinyGPS.encode(c);
 	bool result = gpsPlus.encode((char) c);
 	//bool result = gpsPlus.test(c);
-	//bool result = encode(c);
-#endif
-
 	return result;
 }
 #endif
 
 void loop(void) {
+
+	if (playingAlarm) {
+		Serial.println(F("ALARM!"));
+		if (!audioInitialized) {
+			beacon_initialize_audio();
+			audioInitialized = true;
+		}
+		delay(1000);
+
+		//beacon_send_number(92.453, 2, 3, 2);
+		beacon_send_number(positionBuffer.lastValidPosition.latitude, 2, 6, 2);
+		//delay(1000);			//beacon_finish_audio();
+		delay(1000);
+		beacon_send_number(positionBuffer.lastValidPosition.longitude, 2, 6, 2);
+		delay(1000);
+		return;
+	}
 
 #if 1
 	if (millis() - detectionTimer > 6000) {
@@ -486,14 +459,6 @@ void loop(void) {
 	}
 #endif
 
-#if 0
-	beacon_initialize_audio();
-	while(true) {
-		beacon_send_number(92.453, 2, 3, 2);
-		delay(1000); // must be here when transmitting several numbers
-	}
-#endif
-
 	while (Serial.available() > 0) {
 
 		uint8_t c = Serial.read();
@@ -502,7 +467,6 @@ void loop(void) {
 		if (NO_GPS == device_mode) {
 			if (testIfNMEA6(c)) {
 
-				//ledGpsActivityTimer = millis();
 				device_mode = GPS_SERIAL;
 				ledGpsMode = SINGLE_FLASH;
 			}
@@ -510,8 +474,10 @@ void loop(void) {
 		if (GPS_SERIAL == device_mode) {
 			if (gpsPlus.encode(c)) {
 				Position2 pos;
-				if (gpsPlus.satellites.isValid()) {
-					ledGpsMode = DOUBLE_FLASH;
+				if (gpsPlus.satellites.isValid()
+						&& gpsPlus.satellites.value() >= 3) {
+					if (SINGLE_FLASH == ledGpsMode)
+						ledGpsMode = DOUBLE_FLASH;
 					pos.latitude = gpsPlus.location.lat();
 					pos.longitude = gpsPlus.location.lng();
 					pos.numOfSats = gpsPlus.satellites.value();
@@ -567,13 +533,20 @@ void loop(void) {
 		ledGpsMode = TRIPLE_FLASH;
 	}
 
+#if 0
 	if (ledMavlinkMode == TRIPLE_FLASH
 			&& positionBuffer.alarmCriterionMetFlag) {
 		ledMavlinkMode = SINGLE_FLASH_REV;
 	}
-
 	if (ledGpsMode == TRIPLE_FLASH && positionBuffer.alarmCriterionMetFlag) {
 		ledGpsMode = SINGLE_FLASH_REV;
+	}
+#endif
+	if ((ledGpsMode == TRIPLE_FLASH || ledMavlinkMode == TRIPLE_FLASH)
+			&& positionBuffer.alarmCriterionMetFlag) {
+		//ledGpsMode = SINGLE_FLASH_REV;
+		playingAlarm = true;
+		return;
 	}
 
 	////////////////////////////////////// BUTTON ////////////////////////////////////////////////////////
@@ -585,15 +558,11 @@ void loop(void) {
 		//Serial.end();
 		//Serial.begin(57600);
 		//Serial.flush();
-		positionBuffer.addPositionFarAwayFlag = true;
-#if 0
-		Position2 daleko;
-		daleko.latitude = 51.21446;
-		daleko.longitude = 20.17716;
-		daleko.numOfSats = 5;
-		daleko.hdop = 20;
-		positionBuffer.addGPSPositionToOneSecondBuffers(daleko);
-#endif
+
+//		positionBuffer.addPositionFarAwayFlag = true;
+
+		positionBuffer.startCriterionMetFlag = true;
+
 		Serial.write('m');
 		//Serial.print(freeMemory2());
 		//Serial.write('b');
@@ -611,6 +580,22 @@ void loop(void) {
 	}
 #endif
 
+}
+
+void mavlinkLedOn() {
+	ledMavlinkMode = ON;
+}
+
+void mavlinkLedOff() {
+	ledMavlinkMode = OFF;
+}
+
+void gpsLedOn() {
+	ledGpsMode = ON;
+}
+
+void gpsLedOff() {
+	ledGpsMode = OFF;
 }
 
 #if 0

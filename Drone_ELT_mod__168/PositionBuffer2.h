@@ -107,7 +107,9 @@ public:
 
 	void tick();
 
-	Position2 currentSecondPosition;
+	//Position2 currentSecondPosition;
+	Position2 lastValidPosition;
+
 
 	bool startCriterionMetFlag;
 	bool alarmCriterionMetFlag;
@@ -123,7 +125,8 @@ private:
 	LinkedList<Position2> positionsInCurrentSecond;
 	LinkedList<Position2> historyPositions;
 
-	static const int NUM_OF_SAMPLES_IN_BUFFER = 5;
+	static const int TICK_INTERVAL = 3000;
+	static const int NUM_OF_SAMPLES_IN_BUFFER = 6;
 	static const int NUM_OF_SAMPLES_IN_CURRENT_SEC_BUFFER = 5;
 	//static const int BUFFERSIZE = 10;
 	//Position2 positions[BUFFERSIZE];

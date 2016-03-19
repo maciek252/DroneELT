@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
-		<cconfiguration id="it.baeyens.arduino.core.toolChain.release.1100617430">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="it.baeyens.arduino.core.toolChain.release.1100617430" moduleId="org.eclipse.cdt.core.settings" name="Release">
+		<cconfiguration id="it.baeyens.arduino.core.toolChain.release.1296698196">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="it.baeyens.arduino.core.toolChain.release.1296698196" moduleId="org.eclipse.cdt.core.settings" name="Release">
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -12,19 +12,19 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration buildProperties="" id="it.baeyens.arduino.core.toolChain.release.1100617430" name="Release" parent="org.eclipse.cdt.build.core.emptycfg">
-					<folderInfo id="it.baeyens.arduino.core.toolChain.release.1100617430.612123423" name="/" resourcePath="">
-						<toolChain id="it.baeyens.arduino.core.toolChain.release.297844826" name="Arduino Toolchain" superClass="it.baeyens.arduino.core.toolChain.release">
-							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="it.baeyens.arduino.targetplatform.1951614901" name="Arduino Target" osList="all" superClass="it.baeyens.arduino.targetplatform"/>
-							<builder id="it.baeyens.arduino.sketch.builder.2086637610" managedBuildOn="false" name="Arduino sketch builder.Release" superClass="it.baeyens.arduino.sketch.builder"/>
-							<tool id="it.baeyens.arduino.tool.sketch.compiler.cpp.106185358" name="Arduino C++ Compiler" superClass="it.baeyens.arduino.tool.sketch.compiler.cpp"/>
-							<tool id="it.baeyens.arduino.tool.compiler.c.1267377706" name="Arduino C Compiler" superClass="it.baeyens.arduino.tool.compiler.c"/>
-							<tool id="it.baeyens.arduino.tool.sketch.compiler.s.1279016864" name="Arduino Assembler" superClass="it.baeyens.arduino.tool.sketch.compiler.s"/>
-							<tool id="it.baeyens.arduino.tool.ar.382210143" name="Arduino archiver" superClass="it.baeyens.arduino.tool.ar"/>
-							<tool id="it.baeyens.arduino.tool.combine.1303366809" name="Arduino combiner" superClass="it.baeyens.arduino.tool.combine"/>
-							<tool id="it.baeyens.arduino.tool.objcopy.eep.868517008" name="Arduino tool Create eeprom" superClass="it.baeyens.arduino.tool.objcopy.eep"/>
-							<tool id="it.baeyens.arduino.tool.objcopy.flash.773472913" name="Arduino tool Create hex" superClass="it.baeyens.arduino.tool.objcopy.flash"/>
-							<tool id="it.baeyens.arduino.tool.size.1186485863" name="Arduino tool Print Size" superClass="it.baeyens.arduino.tool.size"/>
+				<configuration buildProperties="" id="it.baeyens.arduino.core.toolChain.release.1296698196" name="Release" parent="org.eclipse.cdt.build.core.emptycfg">
+					<folderInfo id="it.baeyens.arduino.core.toolChain.release.1296698196.63237858" name="/" resourcePath="">
+						<toolChain id="it.baeyens.arduino.core.toolChain.release.1173028530" name="Arduino Toolchain" superClass="it.baeyens.arduino.core.toolChain.release">
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="it.baeyens.arduino.targetplatform.822139093" name="Arduino Target" osList="all" superClass="it.baeyens.arduino.targetplatform"/>
+							<builder id="it.baeyens.arduino.sketch.builder.231142161" managedBuildOn="false" name="Arduino sketch builder.Release" superClass="it.baeyens.arduino.sketch.builder"/>
+							<tool id="it.baeyens.arduino.tool.sketch.compiler.cpp.1604809923" name="Arduino C++ Compiler" superClass="it.baeyens.arduino.tool.sketch.compiler.cpp"/>
+							<tool id="it.baeyens.arduino.tool.compiler.c.973821105" name="Arduino C Compiler" superClass="it.baeyens.arduino.tool.compiler.c"/>
+							<tool id="it.baeyens.arduino.tool.sketch.compiler.s.399728742" name="Arduino Assembler" superClass="it.baeyens.arduino.tool.sketch.compiler.s"/>
+							<tool id="it.baeyens.arduino.tool.ar.1752340707" name="Arduino archiver" superClass="it.baeyens.arduino.tool.ar"/>
+							<tool id="it.baeyens.arduino.tool.combine.1650477926" name="Arduino combiner" superClass="it.baeyens.arduino.tool.combine"/>
+							<tool id="it.baeyens.arduino.tool.objcopy.eep.997946031" name="Arduino tool Create eeprom" superClass="it.baeyens.arduino.tool.objcopy.eep"/>
+							<tool id="it.baeyens.arduino.tool.objcopy.flash.1647384045" name="Arduino tool Create hex" superClass="it.baeyens.arduino.tool.objcopy.flash"/>
+							<tool id="it.baeyens.arduino.tool.size.1370340505" name="Arduino tool Print Size" superClass="it.baeyens.arduino.tool.size"/>
 						</toolChain>
 					</folderInfo>
 				</configuration>
@@ -32,11 +32,11 @@
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 	</storageModule>
-	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="Drone_ELT_mod__168.null.1901324022" name="Drone_ELT_mod__168"/>
-	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+	</storageModule>
+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+		<project id="Drone_ELT_mod__168.null.1302736524" name="Drone_ELT_mod__168"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 </cproject>

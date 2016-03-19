@@ -96,13 +96,14 @@ void PositionBuffer::addGPSPositionToOneSecondBuffers(Position2 position) {
 	if (positionsInCurrentSecond.size() > NUM_OF_SAMPLES_IN_BUFFER)
 		positionsInCurrentSecond.remove(0);
 	positionsInCurrentSecond.add(0, position);
+	lastValidPosition = position;
 	//positions[writePos] = position;
 	//writePos = nextForward(writePos);
 }
 
-void PositionBuffer::updateCurrentSecondPosition(Position2 position) {
-	currentSecondPosition.update(position);
-}
+//void PositionBuffer::updateCurrentSecondPosition(Position2 position) {
+//	currentSecondPosition.update(position);
+//}
 
 #if 0
 Position2 PositionBuffer::averageFromRange(int previousBegin, int previousEnd) {
@@ -153,7 +154,7 @@ double PositionBuffer::testDistanceWawerWodynska1() {
 
 void PositionBuffer::tick() {
 
-	if (millis() - oneSecondTimer > 1000) {
+	if (millis() - oneSecondTimer > TICK_INTERVAL) {
 		oneSecondTimer = millis();
 		//Serial.write('t');
 		oneSecondTick();
@@ -197,8 +198,8 @@ void PositionBuffer::addToHistory(Position2 p) {
 
 	//positions[writePos] = p;
 	//writePos = nextForward(writePos);
-	if (historyPositions.size() == 5)
-		historyPositions.remove(4);
+	if (historyPositions.size() == NUM_OF_SAMPLES_IN_BUFFER)
+		historyPositions.remove(NUM_OF_SAMPLES_IN_BUFFER - 1);
 
 	historyPositions.add(0, p);
 
@@ -213,31 +214,12 @@ void PositionBuffer::oneSecondTick() {
 
 	//addPositionToBeTriggered(positionValidPKPWawer, 0, 3);
 
-	//int i = millis() % 10;
-
-//	Position nowa;
-//	nowa.fired = false;
-//	nowa.numOfSats = i;
-	//positionsForTesting.add(0, nowa);
-	// adding test samples!
-#if 0
-	for(int numOfTestSamples = 0; numOfTestSamples < random(0,3); numOfTestSamples++) {
-		Position2 pos;
-		pos.latitude = random(0,100)/100.0;
-		pos.longitude = random(0,100)/100.0;
-		pos.numOfSats = random(2,7);
-		pos.hdop = (random(1,1000) / 1000.0);
-		addGPSPositionToOneSecondBuffers(pos);
-		//addGPSPositionToOneSecondBuffers(currentSecondPosition);
-	}
-#endif
-
 	printStatsToSerialBefore();
 
 	Position2 avg = averageFromCurrentSecPositionsAndCleanBuffer();
 	addToHistory(avg);
 
-	currentSecondPosition.resetPosition();
+	//currentSecondPosition.resetPosition();
 
 	printStatsToSerialAfter();
 
@@ -383,7 +365,7 @@ bool PositionBuffer::alarmCriterionSatisfied() {
 				continue;
 			double distanceInMeters = TinyGPSPlus::distanceBetween(p.latitude,
 					p.longitude, pj.latitude, pj.longitude);
-			if (distanceInMeters > 5.0)
+			if (distanceInMeters > 4.0)
 				return false;
 		}
 	}
@@ -398,6 +380,8 @@ Position2 PositionBuffer::giveLastValidAvgPos() {
 Position2 PositionBuffer::giveLastValidSample() {
 
 }
+
+
 
 void PositionBuffer::addPositionFarAway() {
 	Position2 daleko;
