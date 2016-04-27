@@ -336,8 +336,11 @@ bool PositionBuffer::startCriterionSatisfied() {
 
 	double distanceInMeters = TinyGPSPlus::distanceBetween(last.latitude,
 			last.longitude, beforeFive.latitude, beforeFive.longitude);
-	if (distanceInMeters > 15.0)
+	if (distanceInMeters > 15.0 && distanceInMeters < 1000.0){
+		Serial.println(F("start criterion satisfied! distance:"));
+		Serial.println(distanceInMeters);
 		return true;
+	}
 	return false;
 }
 
@@ -352,8 +355,10 @@ bool PositionBuffer::alarmCriterionSatisfied() {
 		if (p.isValid())
 			numOfValidPositions++;
 	}
-	if (numOfValidPositions <= 1)
+	if (numOfValidPositions <= 1){
+		Serial.println(F("alarm: 0 or 1 valid pos"));
 		return true;
+	}
 
 	for (int i = 0; i < historyPositions.size(); i++) {
 		Position2 p = historyPositions.get(i);

@@ -41,8 +41,11 @@ OrangeLRS Rx: red LED - MAVlink, green LED - GPS NMEA
 
 ##Button
 
-If present (in OrangeLRS Tx, but no Rx), when pressed the MAVLINK diode and the buzzer go on. The aim is to check if the device is alive.
-For OrangeLRS Rx, the button pressing effect is achieved by connecting CH3 to GND.
+Button is present in OrangeLRS Tx. For OrangeLRS Rx, the button pressing effect is achieved by connecting CH3 to GND.
+
+Pressing button while connecting power - the device starts transmitting the number 12.345, to test if the transmition module works and if a PMR radio can hear it.
+
+If the GPS signal is present (one of leds blinking twice), pressing the button activates the start criterion, independently of the samples received so far.
 
 ##Start and triggering alarm criteria
 

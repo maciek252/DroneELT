@@ -9,7 +9,7 @@
 // ** by Kari Hautio - kha @ AeroQuad/RCGroups/IRC(Freenode)
 // ** other commits by cTn-dev, rlboyd, DTFUHF, pwarren
 //
-// Developer chat at IRC: #openLRS @ freenode
+// Developer chat at IRC: #openLRS @ freenodem
 //
 // This code is based on original OpenLRS and thUndeadMod
 //

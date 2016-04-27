@@ -6,7 +6,7 @@
 
 //#include <fifo.h>
 #include <aircraft.h>
-#include <mavlink2.h>
+#include <mavlink.h>
 //#include <asynch_tx.h>
 //#include <frsky.h>
 
@@ -227,6 +227,15 @@ void setup(void) {
 	watchdogConfig (WATCHDOG_2S);
 
 //	beacon_initialize_audio();
+
+	if (0 == digitalRead(BTN)) {
+		Serial.println(F("ALARM-test! Transmitting 12.345"));
+		beacon_initialize_audio();
+		while(true)
+			beacon_send_number(12.345, 2, 3, 2);
+		Serial.println(F("ALARM-test done!"));
+	}
+
 
 	return;
 /////////////////////////////////////////////////
@@ -524,14 +533,17 @@ void loop(void) {
 	positionBuffer.tick();
 #endif
 
-	if (ledMavlinkMode == DOUBLE_FLASH
-			&& positionBuffer.startCriterionMetFlag) {
-		ledMavlinkMode = TRIPLE_FLASH;
+	if(positionBuffer.startCriterionMetFlag || (0 == digitalRead(BTN))){
+
+		if (ledMavlinkMode == DOUBLE_FLASH) {
+			ledMavlinkMode = TRIPLE_FLASH;
+		} else if (ledGpsMode == DOUBLE_FLASH) {
+			ledGpsMode = TRIPLE_FLASH;
+		}
 	}
 
-	if (ledGpsMode == DOUBLE_FLASH && positionBuffer.startCriterionMetFlag) {
-		ledGpsMode = TRIPLE_FLASH;
-	}
+
+
 
 #if 0
 	if (ledMavlinkMode == TRIPLE_FLASH
@@ -543,7 +555,7 @@ void loop(void) {
 	}
 #endif
 	if ((ledGpsMode == TRIPLE_FLASH || ledMavlinkMode == TRIPLE_FLASH)
-			&& positionBuffer.alarmCriterionMetFlag) {
+			&& positionBuffer.alarmCriterionMetFlag ){
 		//ledGpsMode = SINGLE_FLASH_REV;
 		playingAlarm = true;
 		return;
