@@ -207,6 +207,8 @@ void PositionBuffer::addToHistory(Position2 p) {
 
 void PositionBuffer::oneSecondTick() {
 
+	Serial.print(F("PB tick"));
+
 	if (addPositionFarAwayFlag) {
 		addPositionFarAwayFlag = false;
 		addPositionFarAway();
@@ -216,7 +218,9 @@ void PositionBuffer::oneSecondTick() {
 
 	printStatsToSerialBefore();
 
+	Serial.print(F("PB AAA"));
 	Position2 avg = averageFromCurrentSecPositionsAndCleanBuffer();
+	Serial.print(F("PB adding avg to hist"));
 	addToHistory(avg);
 
 	//currentSecondPosition.resetPosition();
@@ -228,6 +232,8 @@ void PositionBuffer::oneSecondTick() {
 	if (alarmCriterionSatisfied())
 		alarmCriterionMetFlag = true;
 
+
+	Serial.print(F("PB tick DONE"));
 }
 
 void PositionBuffer::printStatsToSerialBefore() {

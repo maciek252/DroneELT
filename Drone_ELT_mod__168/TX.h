@@ -12,6 +12,8 @@
 
 #include "LEDs.h"
 
+#include "OneButton.h"
+
 #include "Utils.h"
 //#include "MemoryFree.h"
 //#include "PositionBuffer.h"
@@ -60,6 +62,8 @@ const char *gpsStream =
 "$GNGGA,232617.80,5212.86936,N,02110.62812,E,1,12,0.66,103.0,M,34.1,M,,*45\r\n";
 
 #endif
+
+OneButton button(11, true);
 
 #if 0
 class Poss {
@@ -170,8 +174,65 @@ int last_osd_satellites_visible = 0;
 
 uint8_t RF_channel = 0;
 
+void sendCurrentPosition() {
+
+	Serial.println(F("ALARM!"));
+	//if (!audioInitialized) {
+	if(true){
+		beacon_initialize_audio();
+		audioInitialized = true;
+	}
+	delay(1000);
+
+	//beacon_send_number(92.453, 2, 3, 2);
+	beacon_send_number(positionBuffer.lastValidPosition.latitude, 2, 6, 2);
+	//delay(1000);			//beacon_finish_audio();
+	delay(1000);
+	beacon_send_number(positionBuffer.lastValidPosition.longitude, 2, 6, 2);
+	delay(1000);
+	beacon_finish_audio();
+}
+
+void doubleclick() {
+
+	if (ledMavlinkMode == SINGLE_FLASH || ledMavlinkMode == QUICK_FLASH
+			|| ledGpsMode == SINGLE_FLASH || ledGpsMode == QUICK_FLASH) {
+
+		Serial.println(F("ALARM-test! Transmitting 12.345"));
+		beacon_initialize_audio();
+		//while (true)
+		beacon_send_number(12.3, 2, 1, 2);
+		beacon_finish_audio();
+		Serial.println(F("ALARM-test done!"));
+
+	} else if (ledMavlinkMode == DOUBLE_FLASH ||
+			ledGpsMode == DOUBLE_FLASH
+	) {
+		Serial.println(F("ALARM-test! Transmitting current pos"));
+		sendCurrentPosition();
+		Serial.println(F("ALARM-test curr pos done!"));
+		//beacon_finish_audio();
+	}
+
+}
+
+void singleclick() {
+	//positionBuffer.startCriterionMetFlag = true;
+
+	if (ledMavlinkMode == DOUBLE_FLASH) {
+		ledMavlinkMode = TRIPLE_FLASH;
+	} else if (ledGpsMode == DOUBLE_FLASH) {
+		ledGpsMode = TRIPLE_FLASH;
+	}
+
+}
+
 void setup(void) {
 	uint32_t start;
+
+	//button.attachClick(singleclick);
+	button.attachDoubleClick(doubleclick);
+	//button.attachLongPressStart(singleclick);
 
 	watchdogConfig (WATCHDOG_OFF);
 
@@ -180,14 +241,14 @@ void setup(void) {
 	pinMode(SDN_pin, OUTPUT); //SDN
 	digitalWrite(SDN_pin, 0);
 #endif
-	//LED and other interfaces
+//LED and other interfaces
 	pinMode(Red_LED, OUTPUT); //RED LED
 	pinMode(Green_LED, OUTPUT); //GREEN LED
 #ifdef Red_LED2
 			pinMode(Red_LED2, OUTPUT); //RED LED
 			pinMode(Green_LED2, OUTPUT);//GREEN LED
 #endif
-	pinMode(BTN, INPUT); //Buton
+	//pinMode(BTN, INPUT); //Buton
 	pinMode(PPM_IN, INPUT); //PPM from TX
 	digitalWrite(PPM_IN, HIGH); // enable pullup for TX:s with open collector output
 #if defined (RF_OUT_INDICATOR)
@@ -199,11 +260,11 @@ void setup(void) {
 //  Serial.setBuffers(serial_rxbuffer, SERIAL_BUF_RX_SIZE, serial_txbuffer, SERIAL_BUF_TX_SIZE);
 //  Serial.begin(115200);
 	Serial.begin(57600);
-	//Serial.setTimeout(15000UL);
+//Serial.setTimeout(15000UL);
 	profileInit();
 	txReadEeprom();
 
-	//setupPPMinput();
+//setupPPMinput();
 
 	setupRfmInterrupt();
 
@@ -215,12 +276,12 @@ void setup(void) {
 	Red_LED_ON;
 
 	printVersion(version);
-	//Serial.print(" on HW ");
-	//Serial.println(BOARD_TYPE);
-	//Serial.flush();
+//Serial.print(" on HW ");
+//Serial.println(BOARD_TYPE);
+//Serial.flush();
 
 //  beacon_send_number(7, 2, 2, 2);
-	// przeniesione tu:
+// przeniesione tu:
 	init_rfm(0);
 	rfmSetChannel(RF_channel);
 //	rx_reset();
@@ -228,14 +289,15 @@ void setup(void) {
 
 //	beacon_initialize_audio();
 
-	if (0 == digitalRead(BTN)) {
-		Serial.println(F("ALARM-test! Transmitting 12.345"));
-		beacon_initialize_audio();
-		while(true)
-			beacon_send_number(12.345, 2, 3, 2);
-		Serial.println(F("ALARM-test done!"));
-	}
-
+	/*
+	 if (0 == digitalRead(BTN)) {
+	 Serial.println(F("ALARM-test! Transmitting 12.345"));
+	 beacon_initialize_audio();
+	 while(true)
+	 beacon_send_number(12.345, 2, 3, 2);
+	 Serial.println(F("ALARM-test done!"));
+	 }
+	 */
 
 	return;
 /////////////////////////////////////////////////
@@ -322,24 +384,24 @@ static void serviceLEDs() {
 }
 
 bool testIfNMEA6(uint8_t inChar) {
-	//Serial.setTimeout(15000UL);
+//Serial.setTimeout(15000UL);
 
-	//String str = Serial.readString();
-	//str = Serial.readStringUntil('');
-	//return true;
-	//uint8_t
-	//byte inChar = Serial.read(); // Read a character
-	//continue;
+//String str = Serial.readString();
+//str = Serial.readStringUntil('');
+//return true;
+//uint8_t
+//byte inChar = Serial.read(); // Read a character
+//continue;
 
-	//	 if (!( (inChar >= 'a' && inChar <= 'z') || (inChar >= 'A' && inChar <= 'Z') || (inChar >= '0' && inChar <= '9')))
-	//	 continue;
+//	 if (!( (inChar >= 'a' && inChar <= 'z') || (inChar >= 'A' && inChar <= 'Z') || (inChar >= '0' && inChar <= '9')))
+//	 continue;
 
 #if 0
 	Serial.write('v');
 	Serial.write(inChar);
 #endif
 
-	//return true;
+//return true;
 
 	if (nmeaDetectionCounter == 0 && inChar == 'G') {
 		nmeaDetectionCounter = 1;
@@ -370,8 +432,8 @@ void serviceMavlink() {
 		//Serial.flush();
 		Serial.write('Q');
 
-#if 1
-		Serial.write('R');
+#if 0
+
 		printDouble(the_aircraft.attitude.roll, 3);
 		if (the_aircraft.attitude.roll > 45
 				&& the_aircraft.attitude.roll < 50) {
@@ -388,6 +450,9 @@ void serviceMavlink() {
 			Serial.begin(57600);
 
 		}
+#endif
+
+#if 1
 
 		Serial.write('\n');
 		Serial.write('L');
@@ -422,9 +487,9 @@ void serviceMavlink() {
 #if 1
 bool readAndParse(uint8_t c) {
 
-	//bool result = tinyGPS.encode(c);
+//bool result = tinyGPS.encode(c);
 	bool result = gpsPlus.encode((char) c);
-	//bool result = gpsPlus.test(c);
+//bool result = gpsPlus.test(c);
 	return result;
 }
 #endif
@@ -432,21 +497,13 @@ bool readAndParse(uint8_t c) {
 void loop(void) {
 
 	if (playingAlarm) {
-		Serial.println(F("ALARM!"));
-		if (!audioInitialized) {
-			beacon_initialize_audio();
-			audioInitialized = true;
-		}
-		delay(1000);
-
-		//beacon_send_number(92.453, 2, 3, 2);
-		beacon_send_number(positionBuffer.lastValidPosition.latitude, 2, 6, 2);
-		//delay(1000);			//beacon_finish_audio();
-		delay(1000);
-		beacon_send_number(positionBuffer.lastValidPosition.longitude, 2, 6, 2);
-		delay(1000);
+		sendCurrentPosition();
 		return;
 	}
+
+
+	button.tick();
+
 
 #if 1
 	if (millis() - detectionTimer > 6000) {
@@ -523,17 +580,19 @@ void loop(void) {
 	return;
 #endif
 
-	//beacon_initialize_audio();
-	//beacon_send_number(2.4553, 2, 5, 3);
+//beacon_initialize_audio();
+//beacon_send_number(2.4553, 2, 5, 3);
 
-	//poss.resetPosition();
+//poss.resetPosition();
 
 #if 1
 	serviceLEDs();
 	positionBuffer.tick();
 #endif
 
-	if(positionBuffer.startCriterionMetFlag || (0 == digitalRead(BTN))){
+	if (positionBuffer.startCriterionMetFlag
+//|| (0 == digitalRead(BTN))
+	) {
 
 		if (ledMavlinkMode == DOUBLE_FLASH) {
 			ledMavlinkMode = TRIPLE_FLASH;
@@ -541,9 +600,6 @@ void loop(void) {
 			ledGpsMode = TRIPLE_FLASH;
 		}
 	}
-
-
-
 
 #if 0
 	if (ledMavlinkMode == TRIPLE_FLASH
@@ -555,26 +611,17 @@ void loop(void) {
 	}
 #endif
 	if ((ledGpsMode == TRIPLE_FLASH || ledMavlinkMode == TRIPLE_FLASH)
-			&& positionBuffer.alarmCriterionMetFlag ){
+			&& positionBuffer.alarmCriterionMetFlag) {
 		//ledGpsMode = SINGLE_FLASH_REV;
 		playingAlarm = true;
 		return;
 	}
 
-	////////////////////////////////////// BUTTON ////////////////////////////////////////////////////////
-#if 1
+////////////////////////////////////// BUTTON ////////////////////////////////////////////////////////
+#if 0
 	if (0 == digitalRead(BTN)) {
 		printStatus();
-		//beep();
-		//Serial.setTimeout(15000UL);
-		//Serial.end();
-		//Serial.begin(57600);
-		//Serial.flush();
-
-//		positionBuffer.addPositionFarAwayFlag = true;
-
 		positionBuffer.startCriterionMetFlag = true;
-
 		Serial.write('m');
 		//Serial.print(freeMemory2());
 		//Serial.write('b');

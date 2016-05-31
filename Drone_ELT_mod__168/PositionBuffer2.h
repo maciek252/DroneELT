@@ -126,7 +126,7 @@ private:
 	LinkedList<Position2> historyPositions;
 
 	static const int TICK_INTERVAL = 3000;
-	static const int NUM_OF_SAMPLES_IN_BUFFER = 6;
+	static const int NUM_OF_SAMPLES_IN_BUFFER = 5;
 	static const int NUM_OF_SAMPLES_IN_CURRENT_SEC_BUFFER = 5;
 	//static const int BUFFERSIZE = 10;
 	//Position2 positions[BUFFERSIZE];
