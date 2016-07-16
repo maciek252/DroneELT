@@ -126,8 +126,12 @@ private:
 	LinkedList<Position2> historyPositions;
 
 	static const int TICK_INTERVAL = 3000;
-	static const int NUM_OF_SAMPLES_IN_BUFFER = 5;
-	static const int NUM_OF_SAMPLES_IN_CURRENT_SEC_BUFFER = 5;
+	// free mem for local vars  ~574
+	static const int NUM_OF_SAMPLES_IN_BUFFER = 5; // this is OK, works well
+	//static const int NUM_OF_SAMPLES_IN_BUFFER = 3; // for 3 and mavlink - free mem = 338 const OK
+	//static const int NUM_OF_SAMPLES_IN_BUFFER = 4; // for 4 and mavlink - free mem = 313 const OK
+	static const int NUM_OF_SAMPLES_IN_CURRENT_SEC_BUFFER = 5; // OK
+	//static const int NUM_OF_SAMPLES_IN_CURRENT_SEC_BUFFER = 4; // works, but maybe 5 better?
 	//static const int BUFFERSIZE = 10;
 	//Position2 positions[BUFFERSIZE];
 

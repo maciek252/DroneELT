@@ -97,7 +97,7 @@ static uint8_t default_hop_list[] = {DEFAULT_HOPLIST};
 #  define BINDING_FREQUENCY 435000000 // Hz
 #endif
 
-#define MAXHOPS      24
+#define MAXHOPS      1
 #define PPM_CHANNELS 16
 
 uint8_t activeProfile = 0;
@@ -113,20 +113,6 @@ struct tx_config {
 #define TX_CONFIG_GETMINCH() (tx_config.flags >> 28)
 #define TX_CONFIG_SETMINCH(x) (tx_config.flags = (tx_config.flags & 0x0fffffff) | (((uint32_t)(x) & 0x0f) << 28))
 
-struct RX_config {
-  uint8_t  rx_type; // RX type fillled in by RX, do not change
-  uint8_t  pinMapping[13];
-  uint8_t  flags;
-  uint8_t  RSSIpwm; //0-15 inject composite, 16-31 inject quality, 32-47 inject RSSI, 48-63 inject quality & RSSI on two separate channels
-  uint32_t beacon_frequency;
-  uint8_t  beacon_deadtime;
-  uint8_t  beacon_interval;
-  uint16_t minsync;
-  uint8_t  failsafeDelay;
-  uint8_t  ppmStopDelay;
-  uint8_t  pwmStopDelay;
-} rx_config;
-
 
 struct bind_data {
   uint8_t version;
@@ -140,6 +126,7 @@ struct bind_data {
   uint8_t flags;
   uint8_t serial_downlink; // 0-COM_BUF_MAXSIZE, max byte count for serial downlink
 } bind_data;
+
 
 struct rfm22_modem_regs {
   uint32_t bps;
@@ -365,6 +352,7 @@ void txInitDefaults()
   }
 }
 
+#if 0
 void bindRandomize(void)
 {
   uint8_t emergency_counter = 0;
@@ -406,6 +394,7 @@ again:
     bind_data.hopchannel[c] = ch;
   }
 }
+#endif
 
 void txWriteEeprom()
 {
@@ -418,7 +407,7 @@ void txReadEeprom()
   if ((!accessEEPROM(0, false)) || (!accessEEPROM(1, false))) {
     txInitDefaults();
     bindInitDefaults();
-    bindRandomize();
+    //bindRandomize();
     txWriteEeprom();
   }
 }

@@ -43,9 +43,11 @@ OrangeLRS Rx: red LED - MAVlink, green LED - GPS NMEA
 
 Button is present in OrangeLRS Tx. For OrangeLRS Rx, the button pressing effect is achieved by connecting CH3 to GND.
 
-Pressing button while connecting power - the device starts transmitting the number 12.345, to test if the transmition module works and if a PMR radio can hear it.
+Double clicking the button when there is no valid GPS position: transmits "123.45"
 
-If the GPS signal is present (one of leds blinking twice), pressing the button activates the start criterion, independently of the samples received so far.
+Double clicking the button when there is a valid GPS position but no start detected: transmits the current position
+
+Double clicking after detecting the start: no effect
 
 ##Start and triggering alarm criteria
 

@@ -30,15 +30,15 @@ void Position2::update(Position2 position) {
 
 void Position2::writeStatToSerial() {
 	//printDouble( 1.2925254, 5);
-	Serial.print("lat=");
+	Serial.print(F("lat="));
 	//printDouble(latitude, 5);
 	Serial.print(latitude, 5);
-	Serial.print(" long=");
+	Serial.print(F(" long="));
 	Serial.print(longitude, 5);
-	Serial.print(" ns=");
+	Serial.print(F(" ns="));
 	//Serial.print(numOfSats, DEC);
 	Serial.print(numOfSats);
-	Serial.print(" hdop=");
+	Serial.print(F(" hdop="));
 	Serial.println(hdop, 2);
 	//Serial.print(numOfSamples);
 
@@ -177,7 +177,7 @@ void PositionBuffer::fifthSecondTick() {
 		Position2 p = positionsForTesting.get(i);
 		if (!p.fired && p.triggerTime * 1000.0 > millis()) {
 			p.fired = true;
-			Serial.println("adding test position");
+			Serial.println(F("adding test position"));
 			//printDouble(p.latitude, 5);
 			//addGPSPositionToOneSecondBuffers(p);
 			updateCurrentSecondPosition(p);
@@ -216,16 +216,19 @@ void PositionBuffer::oneSecondTick() {
 
 	//addPositionToBeTriggered(positionValidPKPWawer, 0, 3);
 
+#if DEBUG
 	printStatsToSerialBefore();
-
 	Serial.print(F("PB AAA"));
+#endif
 	Position2 avg = averageFromCurrentSecPositionsAndCleanBuffer();
 	Serial.print(F("PB adding avg to hist"));
 	addToHistory(avg);
 
 	//currentSecondPosition.resetPosition();
 
+#if DEBUG
 	printStatsToSerialAfter();
+#endif
 
 	if (startCriterionSatisfied())
 		startCriterionMetFlag = true;
@@ -233,6 +236,8 @@ void PositionBuffer::oneSecondTick() {
 		alarmCriterionMetFlag = true;
 
 
+	Serial.print(F("-fm ="));
+	Serial.println(freeMemory2());
 	Serial.print(F("PB tick DONE"));
 }
 

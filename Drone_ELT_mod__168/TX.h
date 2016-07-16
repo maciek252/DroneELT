@@ -12,6 +12,8 @@
 
 #include "LEDs.h"
 
+#define DEBUG 0
+
 #include "OneButton.h"
 
 #include "Utils.h"
@@ -127,6 +129,8 @@ static long ledMavlinkActivityTimer = 0.0;
 
 static int nmeaDetectionCounter = 0;
 
+static long noSerialReceivedTimer = 0;
+
 enum DEVICE_MODE {
 	NO_GPS,
 	NO_GPS_TRY_MAVLINK,
@@ -178,7 +182,7 @@ void sendCurrentPosition() {
 
 	Serial.println(F("ALARM!"));
 	//if (!audioInitialized) {
-	if(true){
+	if (true) {
 		beacon_initialize_audio();
 		audioInitialized = true;
 	}
@@ -197,20 +201,25 @@ void doubleclick() {
 
 	if (ledMavlinkMode == SINGLE_FLASH || ledMavlinkMode == QUICK_FLASH
 			|| ledGpsMode == SINGLE_FLASH || ledGpsMode == QUICK_FLASH) {
-
+#if DEBUG
 		Serial.println(F("ALARM-test! Transmitting 12.345"));
+#endif
 		beacon_initialize_audio();
 		//while (true)
 		beacon_send_number(12.3, 2, 1, 2);
 		beacon_finish_audio();
+#if DEBUG
 		Serial.println(F("ALARM-test done!"));
+#endif
 
-	} else if (ledMavlinkMode == DOUBLE_FLASH ||
-			ledGpsMode == DOUBLE_FLASH
-	) {
+	} else if (ledMavlinkMode == DOUBLE_FLASH || ledGpsMode == DOUBLE_FLASH) {
+#if DEBUG
 		Serial.println(F("ALARM-test! Transmitting current pos"));
+#endif
 		sendCurrentPosition();
+#if DEBUG
 		Serial.println(F("ALARM-test curr pos done!"));
+#endif
 		//beacon_finish_audio();
 	}
 
@@ -453,7 +462,7 @@ void serviceMavlink() {
 #endif
 
 #if 1
-
+#if DEBUG
 		Serial.write('\n');
 		Serial.write('L');
 		printDouble(the_aircraft.location.gps_lat / 10000000.0, 7);
@@ -464,6 +473,7 @@ void serviceMavlink() {
 		Serial.write('H');
 		Serial.print(the_aircraft.location.gps_hdop);
 		Serial.write('\n');
+#endif
 
 		Position2 pos;
 		pos.latitude = the_aircraft.location.gps_lat / 10000000.0;
@@ -501,9 +511,20 @@ void loop(void) {
 		return;
 	}
 
-
 	button.tick();
 
+	if (millis() - noSerialReceivedTimer > 2000) {
+		if ((SINGLE_FLASH == ledGpsMode || DOUBLE_FLASH == ledGpsMode)) {
+			//updateLBeep(true);
+			ledGpsMode = QUICK_FLASH;
+			device_mode = NO_GPS;
+		} else if ((SINGLE_FLASH == ledMavlinkMode
+				|| DOUBLE_FLASH == ledMavlinkMode)) {
+			//updateLBeep(true);
+			ledMavlinkMode = QUICK_FLASH;
+			device_mode = NO_GPS_TRY_MAVLINK;
+		}
+	}
 
 #if 1
 	if (millis() - detectionTimer > 6000) {
@@ -526,6 +547,8 @@ void loop(void) {
 #endif
 
 	while (Serial.available() > 0) {
+
+		noSerialReceivedTimer = millis();
 
 		uint8_t c = Serial.read();
 
