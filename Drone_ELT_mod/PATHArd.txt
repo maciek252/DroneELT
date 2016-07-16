@@ -1,3 +1,0 @@
-export ARDMK_DIR=/home/maciek/k/Arduino-Makefile
-export ARDUINO_DIR=/home/maciek/k/arduino-1.0.3
-export AVR_TOOLS_DIR=/home/maciek/k/arduino-1.0.3/hardware/tools/avr
